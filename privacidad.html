@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="True Therian · Política de Privacidad conforme al RGPD y LOPDGDD.">
+<title>Política de Privacidad · True Therian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ob:#0a0a0a;--moss:#1a2421;--am:#ffb300;--am10:rgba(255,179,0,.10);--am30:rgba(255,179,0,.30);--tp:#e8e0d0;--tm:#7a7060;--card:#111410}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--ob);color:var(--tp);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden}
+body::before{content:'ΘΔ';position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:55vw;color:rgba(26,36,33,.18);font-family:'Cinzel',serif;pointer-events:none;z-index:0;user-select:none;line-height:1}
+.fog{position:fixed;pointer-events:none;z-index:50}
+.fog.t{top:0;left:0;right:0;height:100px;background:linear-gradient(to bottom,rgba(10,10,10,.95),transparent)}
+.fog.b{bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,rgba(10,10,10,.95),transparent)}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:18px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,8,8,.97);border-bottom:1px solid rgba(255,179,0,.12)}
+.nav-logo{font-family:'Cinzel',serif;font-size:1.25rem;font-weight:900;letter-spacing:.12em;color:var(--am);text-decoration:none;line-height:1.2;display:inline-block;animation:heartbeat 3s ease-in-out infinite}
+.nav-logo small{display:block;font-size:.5rem;font-family:'Inter',sans-serif;font-weight:300;letter-spacing:.45em;color:var(--tm);text-transform:uppercase}
+@keyframes heartbeat{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(255,179,0,.3))}40%{transform:scale(1.05);filter:drop-shadow(0 0 22px rgba(255,179,0,.7))}55%{transform:scale(1)}70%{transform:scale(1.02);filter:drop-shadow(0 0 14px rgba(255,179,0,.5))}}
+.nav-links{display:flex;gap:2rem;list-style:none;align-items:center}
+.nav-links a{font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--tm);text-decoration:none;transition:color .3s}
+.nav-links a:hover{color:var(--am)}
+.nav-btn{background:transparent;border:1px solid var(--am);color:var(--am);padding:8px 20px;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:all .3s;font-family:'Inter',sans-serif;text-decoration:none;display:inline-block}
+.nav-btn:hover{background:var(--am);color:var(--ob)}
+.nav-ham{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;z-index:400}
+.nav-ham span{display:block;width:24px;height:1px;background:var(--am)}
+/* LAYOUT */
+.doc-wrap{max-width:860px;margin:0 auto;padding:130px 48px 100px;position:relative;z-index:1}
+/* TABLE OF CONTENTS */
+.toc{background:var(--card);border:1px solid rgba(255,179,0,.12);padding:28px;margin-bottom:50px;border-left:3px solid var(--am)}
+.toc h3{font-family:'Cinzel',serif;font-size:.9rem;font-weight:700;letter-spacing:.15em;color:var(--am);margin-bottom:16px}
+.toc ol{padding-left:20px}
+.toc ol li{margin-bottom:6px}
+.toc ol li a{font-size:.82rem;color:var(--tm);text-decoration:none;transition:color .3s}
+.toc ol li a:hover{color:var(--am)}
+/* DOC HEADER */
+.doc-header{margin-bottom:50px}
+.doc-eyebrow{font-size:.62rem;letter-spacing:.5em;text-transform:uppercase;color:var(--am);margin-bottom:1.2rem;display:flex;align-items:center;gap:1rem}
+.doc-eyebrow::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--am30),transparent)}
+.doc-h1{font-family:'Cinzel',serif;font-size:clamp(1.8rem,5vw,3.5rem);font-weight:900;line-height:1.1;margin-bottom:1rem}
+.doc-h1 em{color:var(--am);font-style:normal}
+.doc-date{font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tm);margin-bottom:1.5rem}
+.doc-intro{line-height:1.9;color:rgba(232,224,208,.72);font-size:.95rem;border-left:2px solid rgba(255,179,0,.3);padding-left:20px;font-style:italic}
+/* SECTIONS */
+.doc-section{margin-bottom:50px;scroll-margin-top:100px}
+.doc-section h2{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:700;color:var(--am);margin-bottom:1.2rem;padding-bottom:.6rem;border-bottom:1px solid rgba(255,179,0,.15);letter-spacing:.08em}
+.doc-section h3{font-size:.88rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:rgba(232,224,208,.8);margin:1.4rem 0 .6rem}
+.doc-section p{line-height:1.9;color:rgba(232,224,208,.72);font-size:.9rem;margin-bottom:1rem}
+.doc-section p em{color:var(--am);font-style:normal}
+.doc-section ul,.doc-section ol{padding-left:20px;margin-bottom:1rem}
+.doc-section ul li,.doc-section ol li{line-height:1.8;color:rgba(232,224,208,.68);font-size:.9rem;margin-bottom:.4rem}
+.doc-section ul li::marker{color:var(--am)}
+.highlight-box{background:rgba(255,179,0,.06);border:1px solid rgba(255,179,0,.2);padding:18px 20px;margin:1.2rem 0;border-left:3px solid var(--am)}
+.highlight-box p{margin:0;font-size:.88rem;color:rgba(232,224,208,.8)}
+.contact-block{background:var(--card);border:1px solid rgba(255,179,0,.12);padding:24px;margin-top:1.2rem}
+.contact-block p{margin-bottom:.5rem;font-size:.88rem}
+.contact-block strong{color:var(--am);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;display:block;margin-bottom:.3rem}
+/* BACK TO TOP */
+.back-top{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tm);text-decoration:none;transition:color .3s;margin-top:40px}
+.back-top:hover{color:var(--am)}
+/* FOOTER */
+footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:40px 48px;position:relative;z-index:1}
+.footer-bottom{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.nexus-logo-sm{display:flex;align-items:center;gap:10px}
+.nexus-text-sm{font-family:'Cinzel',serif;font-size:1rem;font-weight:900;letter-spacing:.2em;background:linear-gradient(135deg,#fff 0%,var(--am) 50%,#ff6b00 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.footer-links{display:flex;gap:2rem;list-style:none;flex-wrap:wrap}
+.footer-links a{font-size:.72rem;letter-spacing:.15em;color:var(--tm);text-decoration:none;transition:color .3s}
+.footer-links a:hover{color:var(--am)}
+.footer-copy{font-size:.68rem;color:rgba(122,112,96,.5)}
+@media(max-width:768px){
+  nav{padding:14px 20px}
+  .nav-links{display:none;position:fixed;inset:0;background:rgba(10,10,10,.98);flex-direction:column;align-items:center;justify-content:center;gap:2.5rem;z-index:300}
+  .nav-links.open{display:flex}
+  .nav-ham{display:flex}.nav-btn{display:none}
+  .doc-wrap{padding:100px 20px 60px}
+  footer{padding:30px 20px}
+  .footer-bottom{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+<div class="fog t"></div><div class="fog b"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">True Therian<small>Social Link Life</small></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="index.html#que-es">¿Qué somos?</a></li>
+    <li><a href="index.html#feed">Manada</a></li>
+    <li><a href="index.html#galeria">Galería</a></li>
+    <li><a href="newsletter.html">Newsletter</a></li>
+    <li><a href="privacidad.html" style="color:var(--am)">Privacidad</a></li>
+    <li><a href="newsletter.html" class="nav-btn">Unirte</a></li>
+  </ul>
+  <button class="nav-ham" id="navHam" onclick="toggleNav()"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="doc-wrap">
+  <div class="doc-header">
+    <p class="doc-eyebrow">Documento Legal</p>
+    <h1 class="doc-h1">Política de <em>Privacidad</em></h1>
+    <p class="doc-date">Última actualización: 1 de enero de 2025 · Versión 1.0</p>
+    <p class="doc-intro">El presente documento regula la Política de Privacidad de True Therian · Social Link Life, en cumplimiento del Reglamento (UE) 2016/679 (RGPD), la Ley Orgánica 3/2018 (LOPDGDD) y la Ley 34/2002 de Servicios de la Sociedad de la Información (LSSI). Te rogamos que leas este documento con atención antes de facilitarnos tus datos personales.</p>
+  </div>
+
+  <div class="toc">
+    <h3>Índice de Contenidos</h3>
+    <ol>
+      <li><a href="#responsable">Responsable del Tratamiento</a></li>
+      <li><a href="#datos">Datos que Recopilamos</a></li>
+      <li><a href="#finalidad">Finalidad y Base Jurídica</a></li>
+      <li><a href="#conservacion">Conservación de Datos</a></li>
+      <li><a href="#destinatarios">Destinatarios y Cesiones</a></li>
+      <li><a href="#derechos">Tus Derechos</a></li>
+      <li><a href="#cookies">Política de Cookies</a></li>
+      <li><a href="#menores">Protección de Menores</a></li>
+      <li><a href="#seguridad">Seguridad</a></li>
+      <li><a href="#terminos">Términos de Uso</a></li>
+      <li><a href="#modificaciones">Modificaciones</a></li>
+      <li><a href="#contacto">Contacto y Reclamaciones</a></li>
+    </ol>
+  </div>
+
+  <!-- 1 -->
+  <div class="doc-section" id="responsable">
+    <h2>1. Responsable del Tratamiento</h2>
+    <p>El Responsable del Tratamiento de los datos personales recabados a través del sitio web <em>truetherian.com</em> y sus páginas asociadas es:</p>
+    <div class="contact-block">
+      <p><strong>Identidad</strong>True Therian · Social Link Life</p>
+      <p><strong>Actividad</strong>Plataforma comunitaria digital — Red social temática</p>
+      <p><strong>Email de contacto</strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b5c5c7dcc3d4d6dcd1d4d1f5c1c7c0d0c1ddd0c7dcd4db9bd6dad8">[email&#160;protected]</a></p>
+      <p><strong>DPD / Delegado de Protección de Datos</strong>No designado (plataforma no sujeta a obligación legal de DPD según Art. 37 RGPD)</p>
+    </div>
+  </div>
+
+  <!-- 2 -->
+  <div class="doc-section" id="datos">
+    <h2>2. Datos que Recopilamos</h2>
+    <h3>2.1 Formulario de Newsletter</h3>
+    <p>Cuando te suscribes a nuestro newsletter a través del formulario de la página <em>newsletter.html</em>, recabamos los siguientes datos:</p>
+    <ul>
+      <li><strong>Nombre en la manada / apodo:</strong> identificador de comunidad elegido por el usuario.</li>
+      <li><strong>País y ciudad:</strong> datos de localización geográfica aproximada.</li>
+      <li><strong>Dirección de email:</strong> único dato de contacto personal que tratamos.</li>
+      <li><strong>Especie therian (opcional):</strong> dato de identidad de comunidad, de carácter voluntario.</li>
+      <li><strong>Mensaje opcional:</strong> texto libre de carácter voluntario.</li>
+      <li><strong>Consentimiento RGPD:</strong> registro de la aceptación del usuario, con marca temporal.</li>
+    </ul>
+    <h3>2.2 Publicaciones en el Feed</h3>
+    <p>El feed de la plataforma funciona en modo <em>sesión local</em>. Las publicaciones (texto y links externos) no se transmiten ni almacenan en ningún servidor propio. No recopilamos datos personales derivados del uso del feed.</p>
+    <h3>2.3 Datos de Navegación</h3>
+    <p>Como toda página web, nuestros servidores pueden registrar datos técnicos de acceso (dirección IP, navegador, sistema operativo, URL visitada, fecha y hora) con fines exclusivamente técnicos y de seguridad. Estos datos son anonimizados en un plazo máximo de 30 días.</p>
+    <div class="highlight-box"><p>⚠️ <em>No almacenamos imágenes de usuarios en nuestros servidores.</em> Los links a TikTok e Instagram que los usuarios publican en el feed son contenido externo de plataformas terceras sujetas a sus propias políticas.</p></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="doc-section" id="finalidad">
+    <h2>3. Finalidad y Base Jurídica del Tratamiento</h2>
+    <p>Tratamos tus datos con las siguientes finalidades y bases jurídicas (Art. 6 RGPD):</p>
+    <ul>
+      <li><strong>Gestión del newsletter:</strong> envío de comunicaciones periódicas sobre la comunidad True Therian. Base jurídica: <em>Consentimiento expreso</em> del interesado (Art. 6.1.a RGPD).</li>
+      <li><strong>Construcción de directorio comunitario:</strong> creación de un mapa de la comunidad therian global. Base jurídica: <em>Interés legítimo</em> del responsable (Art. 6.1.f RGPD), siempre subordinado al derecho de oposición del usuario.</li>
+      <li><strong>Seguridad técnica:</strong> registros de acceso para prevención de ataques y análisis de errores. Base jurídica: <em>Obligación legal e interés legítimo</em>.</li>
+    </ul>
+    <p>Nunca utilizaremos tus datos para finalidades distintas a las declaradas sin informarte previamente y, en su caso, sin recabar tu consentimiento adicional.</p>
+  </div>
+
+  <!-- 4 -->
+  <div class="doc-section" id="conservacion">
+    <h2>4. Conservación de los Datos</h2>
+    <p>Los datos del formulario de newsletter se conservarán mientras el usuario permanezca suscrito y no ejerza su derecho de supresión o revocación del consentimiento.</p>
+    <p>Una vez cancelada la suscripción, los datos serán eliminados en un plazo máximo de <em>30 días hábiles</em>, salvo obligación legal de conservación (Art. 17 RGPD).</p>
+    <p>Los registros técnicos de navegación se eliminan de forma automatizada en un máximo de <em>30 días</em>.</p>
+  </div>
+
+  <!-- 5 -->
+  <div class="doc-section" id="destinatarios">
+    <h2>5. Destinatarios y Cesiones de Datos</h2>
+    <p>Tus datos <em>no serán cedidos ni vendidos a terceros</em> con fines comerciales. Únicamente podrán ser accedidos por:</p>
+    <ul>
+      <li><strong>Formspree Inc.</strong> (procesador de formularios web, con sede en EE.UU. — tratamiento amparado en cláusulas contractuales tipo de la Comisión Europea, Art. 46 RGPD). Política de privacidad: formspree.io/legal/privacy-policy</li>
+      <li><strong>Proveedor de hosting del sitio web</strong> en calidad de encargado del tratamiento, con las garantías contractuales exigidas por el Art. 28 RGPD.</li>
+      <li><strong>Autoridades competentes</strong> cuando exista obligación legal.</li>
+    </ul>
+    <p>Las publicaciones que enlacen a TikTok o Instagram son redirigidas directamente a los servidores de dichas plataformas. True Therian no tiene control ni acceso sobre los datos que esas plataformas puedan recoger del usuario al cargar los embeds. Consulta sus respectivas políticas de privacidad.</p>
+  </div>
+
+  <!-- 6 -->
+  <div class="doc-section" id="derechos">
+    <h2>6. Tus Derechos</h2>
+    <p>En virtud del RGPD y la LOPDGDD, tienes derecho a:</p>
+    <ul>
+      <li><strong>Acceso:</strong> conocer qué datos tuyos tratamos.</li>
+      <li><strong>Rectificación:</strong> corregir datos inexactos o incompletos.</li>
+      <li><strong>Supresión ("derecho al olvido"):</strong> solicitar la eliminación de tus datos.</li>
+      <li><strong>Limitación del tratamiento:</strong> restringir el uso de tus datos en determinadas circunstancias.</li>
+      <li><strong>Portabilidad:</strong> recibir tus datos en formato estructurado y legible por máquina.</li>
+      <li><strong>Oposición:</strong> oponerte al tratamiento basado en interés legítimo.</li>
+      <li><strong>Revocación del consentimiento:</strong> retirar tu consentimiento en cualquier momento, sin que ello afecte a la licitud del tratamiento anterior.</li>
+      <li><strong>No ser objeto de decisiones automatizadas:</strong> no aplicamos perfilado automatizado con efectos significativos.</li>
+    </ul>
+    <div class="highlight-box"><p>Para ejercer cualquiera de estos derechos, envía un email a <em><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c1b1b3a8b7a0a2a8a5a0a581b5b3b4a4b5a9a4b3a8a0afefa2aeac">[email&#160;protected]</a></em> indicando el derecho que deseas ejercer, tu nombre en la manada y el email con el que te suscribiste. Responderemos en un plazo máximo de <em>30 días</em> (prorrogable 2 meses en casos complejos).</p></div>
+    <p>Si consideras que tus derechos han sido vulnerados, puedes presentar una reclamación ante la <em>Agencia Española de Protección de Datos (AEPD)</em> en www.aepd.es, o ante la autoridad supervisora del país de tu residencia.</p>
+  </div>
+
+  <!-- 7 -->
+  <div class="doc-section" id="cookies">
+    <h2>7. Política de Cookies</h2>
+    <p>True Therian · Social Link Life utiliza únicamente <em>cookies técnicas estrictamente necesarias</em> para el funcionamiento del sitio web (sesión, preferencias de navegación). No utilizamos cookies de seguimiento, analíticas ni publicitarias propias.</p>
+    <h3>Cookies de terceros cargadas con embeds</h3>
+    <p>Al cargar un embed de TikTok o Instagram dentro del feed, dichas plataformas pueden depositar sus propias cookies en tu dispositivo. Este comportamiento está fuera de nuestro control. Para evitarlo, puedes bloquear las cookies de terceros en la configuración de tu navegador.</p>
+    <h3>Gestión de cookies</h3>
+    <p>Puedes gestionar, desactivar o eliminar las cookies desde la configuración de tu navegador:</p>
+    <ul>
+      <li>Chrome: Configuración → Privacidad y seguridad → Cookies</li>
+      <li>Firefox: Opciones → Privacidad y seguridad</li>
+      <li>Safari: Preferencias → Privacidad</li>
+      <li>Edge: Configuración → Cookies y permisos del sitio</li>
+    </ul>
+  </div>
+
+  <!-- 8 -->
+  <div class="doc-section" id="menores">
+    <h2>8. Protección de Menores</h2>
+    <p>True Therian está dirigida a usuarios mayores de <em>14 años</em>, conforme al Art. 8 RGPD y el Art. 7 LOPDGDD que establece la edad mínima de consentimiento en 14 años en España.</p>
+    <p>Si tienes conocimiento de que un menor de 14 años nos ha facilitado datos personales sin el consentimiento de sus padres o tutores legales, te rogamos que nos lo comuniques a <em><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2b5b59425d4a48424f4a4f6b5f595e4e5f434e59424a4505484446">[email&#160;protected]</a></em> para proceder a su inmediata eliminación.</p>
+  </div>
+
+  <!-- 9 -->
+  <div class="doc-section" id="seguridad">
+    <h2>9. Seguridad de los Datos</h2>
+    <p>Aplicamos medidas técnicas y organizativas adecuadas para garantizar un nivel de seguridad apropiado al riesgo, incluyendo:</p>
+    <ul>
+      <li>Transmisión de datos mediante protocolo <em>HTTPS/TLS</em>.</li>
+      <li>Acceso restringido a datos personales únicamente al personal autorizado.</li>
+      <li>No almacenamiento de imágenes ni archivos multimedia de usuarios en servidores propios.</li>
+      <li>Uso de proveedores de formulario con certificación de seguridad reconocida.</li>
+    </ul>
+    <p>En caso de brecha de seguridad que afecte a tus derechos y libertades, serás notificado en el plazo establecido por el Art. 34 RGPD (máximo 72 horas para notificación a la autoridad supervisora).</p>
+  </div>
+
+  <!-- 10 -->
+  <div class="doc-section" id="terminos">
+    <h2>10. Términos de Uso</h2>
+    <h3>Uso aceptable de la plataforma</h3>
+    <p>Al utilizar True Therian · Social Link Life, el usuario se compromete a:</p>
+    <ul>
+      <li>No publicar contenido ilegal, ofensivo, difamatorio o que infrinja derechos de terceros.</li>
+      <li>No compartir links a contenido que viole los términos de servicio de TikTok o Instagram.</li>
+      <li>No suplantar la identidad de otras personas o entidades.</li>
+      <li>Respetar el Código de la Manada y la diversidad de la comunidad therian.</li>
+      <li>No utilizar la plataforma con fines comerciales o publicitarios no autorizados.</li>
+    </ul>
+    <h3>Exención de responsabilidad sobre contenido externo</h3>
+    <p>True Therian actúa como plataforma de enlace. No somos responsables del contenido publicado en plataformas externas (TikTok, Instagram) ni de la disponibilidad de dichos embeds. Los links publicados en el feed son responsabilidad exclusiva de quien los comparte.</p>
+    <h3>Propiedad intelectual</h3>
+    <p>El diseño, textos, logotipos y elementos gráficos originales de True Therian · Social Link Life son propiedad del titular del sitio web. Queda prohibida su reproducción sin autorización expresa. Los contenidos de terceros (TikTok, Instagram) pertenecen a sus respectivos creadores.</p>
+    <h3>Ley aplicable y jurisdicción</h3>
+    <p>La presente política se rige por la legislación española y de la Unión Europea. Para cualquier controversia, las partes se someten a los Juzgados y Tribunales de España, sin perjuicio de los fueros que pudieran corresponder al usuario como consumidor.</p>
+  </div>
+
+  <!-- 11 -->
+  <div class="doc-section" id="modificaciones">
+    <h2>11. Modificaciones de esta Política</h2>
+    <p>Nos reservamos el derecho a actualizar esta Política de Privacidad para adaptarla a cambios legislativos, jurisprudenciales o técnicos. En caso de cambios sustanciales que afecten al tratamiento de tus datos, te lo notificaremos por email si eres suscriptor.</p>
+    <p>La versión vigente siempre estará disponible en esta página con su fecha de actualización.</p>
+  </div>
+
+  <!-- 12 -->
+  <div class="doc-section" id="contacto">
+    <h2>12. Contacto y Reclamaciones</h2>
+    <p>Para cualquier consulta sobre esta Política, para ejercer tus derechos o para comunicar cualquier incidencia relacionada con la privacidad:</p>
+    <div class="contact-block">
+      <p><strong>Email de privacidad</strong><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5b2b29322d3a38323f3a3f1b2f292e3e2f333e29323a3575383436">[email&#160;protected]</a></p>
+      <p><strong>Plazo de respuesta</strong>Máximo 30 días hábiles (Art. 12 RGPD)</p>
+      <p><strong>Autoridad supervisora</strong>Agencia Española de Protección de Datos (AEPD) · www.aepd.es · Teléfono: 901 100 099</p>
+    </div>
+  </div>
+
+  <a href="#" class="back-top">↑ Volver al inicio</a>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <div class="nexus-logo-sm">
+      <svg width="32" height="32" viewBox="0 0 44 44" fill="none">
+        <circle cx="22" cy="22" r="20" stroke="url(#ng3)" stroke-width="1.5"/>
+        <polygon points="22,4 38,14 38,30 22,40 6,30 6,14" fill="none" stroke="url(#ng3)" stroke-width=".8"/>
+        <circle cx="22" cy="22" r="5" fill="#ffb300" opacity=".9"/>
+        <line x1="22" y1="4" x2="22" y2="17" stroke="#ffb300" stroke-width=".8" opacity=".5"/>
+        <line x1="22" y1="27" x2="22" y2="40" stroke="#ffb300" stroke-width=".8" opacity=".5"/>
+        <line x1="38" y1="14" x2="27" y2="19" stroke="#ffb300" stroke-width=".8" opacity=".5"/>
+        <line x1="17" y1="25" x2="6" y2="30" stroke="#ffb300" stroke-width=".8" opacity=".5"/>
+        <line x1="6" y1="14" x2="17" y2="19" stroke="#ffb300" stroke-width=".8" opacity=".5"/>
+        <line x1="27" y1="25" x2="38" y2="30" stroke="#ffb300" stroke-width=".8" opacity=".5"/>
+        <defs><linearGradient id="ng3" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff" stop-opacity=".4"/><stop offset="50%" stop-color="#ffb300"/><stop offset="100%" stop-color="#ff6b00"/></linearGradient></defs>
+      </svg>
+      <span class="nexus-text-sm">NEXU

@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="es" data-lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="True Therian · Social Link Life — La red social donde tu identidad animal y tu verdad se conectan.">
+<title>True Therian · Social Link Life</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ===== VARIABLES ===== */
+:root{
+  --ob:#0a0a0a;--moss:#1a2421;--am:#ffb300;
+  --am10:rgba(255,179,0,.10);--am30:rgba(255,179,0,.30);--am50:rgba(255,179,0,.50);
+  --tp:#e8e0d0;--tm:#7a7060;--card:#111410;
+  --red:#e53935;--green:#43a047;--blue:#1e88e5;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ob);color:var(--tp);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden}
+body::before{content:'ΘΔ';position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:55vw;color:rgba(26,36,33,.22);font-family:'Cinzel',serif;pointer-events:none;z-index:0;user-select:none;line-height:1}
+.fog{position:fixed;pointer-events:none;z-index:50}
+.fog.t{top:0;left:0;right:0;height:100px;background:linear-gradient(to bottom,rgba(10,10,10,.95),transparent)}
+.fog.b{bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,rgba(10,10,10,.95),transparent)}
+.fog.l{top:0;left:0;bottom:0;width:60px;background:linear-gradient(to right,rgba(10,10,10,.7),transparent)}
+.fog.r{top:0;right:0;bottom:0;width:60px;background:linear-gradient(to left,rgba(10,10,10,.7),transparent)}
+
+/* ===== NAV ===== */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,border .4s;gap:12px}
+nav.scrolled{background:rgba(8,8,8,.97);border-bottom:1px solid rgba(255,179,0,.12)}
+.nav-logo{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:900;letter-spacing:.1em;color:var(--am);text-decoration:none;line-height:1.2;display:inline-block;animation:heartbeat 3s ease-in-out infinite;flex-shrink:0}
+.nav-logo small{display:block;font-size:.46rem;font-family:'Inter',sans-serif;font-weight:300;letter-spacing:.4em;color:var(--tm);text-transform:uppercase}
+@keyframes heartbeat{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(255,179,0,.3))}40%{transform:scale(1.05);filter:drop-shadow(0 0 22px rgba(255,179,0,.7))}55%{transform:scale(1)}70%{transform:scale(1.02);filter:drop-shadow(0 0 14px rgba(255,179,0,.5))}}
+.nav-links{display:flex;gap:1.6rem;list-style:none;align-items:center;flex-wrap:wrap}
+.nav-links a{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tm);text-decoration:none;transition:color .3s}
+.nav-links a:hover{color:var(--am)}
+.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+/* LANG SELECTOR */
+.lang-btn{position:relative;background:none;border:1px solid rgba(255,179,0,.2);color:var(--tm);padding:6px 10px;cursor:pointer;font-family:'Inter',sans-serif;font-size:.68rem;letter-spacing:.1em;display:flex;align-items:center;gap:6px;transition:all .3s}
+.lang-btn:hover{border-color:var(--am);color:var(--am)}
+.lang-btn svg{width:14px;height:14px;fill:currentColor;flex-shrink:0}
+.lang-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:#0e110e;border:1px solid rgba(255,179,0,.2);min-width:160px;z-index:500;display:none}
+.lang-dropdown.open{display:block}
+.lang-opt{display:block;padding:9px 14px;font-size:.72rem;letter-spacing:.12em;color:var(--tm);cursor:pointer;transition:all .2s;text-align:left;width:100%;background:none;border:none;font-family:'Inter',sans-serif}
+.lang-opt:hover,.lang-opt.active{background:var(--am10);color:var(--am)}
+/* USER BUTTON */
+.user-btn{background:none;border:1px solid rgba(255,179,0,.2);color:var(--tm);padding:7px 14px;cursor:pointer;font-family:'Inter',sans-serif;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;transition:all .3s;display:flex;align-items:center;gap:6px}
+.user-btn:hover{border-color:var(--am);color:var(--am)}
+.user-btn.logged{border-color:var(--am);color:var(--am);background:var(--am10)}
+.nav-cta{background:var(--am);color:var(--ob);border:none;padding:8px 18px;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:all .3s;text-decoration:none;display:inline-block;white-space:nowrap}
+.nav-cta:hover{box-shadow:0 0 25px var(--am30)}
+.nav-ham{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;z-index:400}
+.nav-ham span{display:block;width:22px;height:1px;background:var(--am)}
+
+/* ===== HERO ===== */
+.hero{position:relative;height:100vh;min-height:680px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 24px;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0;display:grid;grid-template-columns:repeat(5,1fr);gap:3px;opacity:.22;filter:grayscale(55%) contrast(1.15)}
+.hero-bg img{width:100%;height:100%;object-fit:cover;filter:blur(.8px)}
+.hero-vignette{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse at center,rgba(10,10,10,.3) 0%,rgba(10,10,10,.88) 70%,rgba(10,10,10,.98) 100%)}
+.hero-content{position:relative;z-index:2;max-width:860px}
+.hero-eyebrow{font-size:.63rem;letter-spacing:.5em;text-transform:uppercase;color:var(--am);margin-bottom:1.4rem;text-shadow:0 0 18px var(--am30);opacity:0;animation:fadeUp .7s .4s forwards}
+.hero h1{font-family:'Cinzel',serif;font-size:clamp(2.8rem,8.5vw,7.5rem);font-weight:900;line-height:1;letter-spacing:.04em;background:linear-gradient(145deg,#fff 20%,#f0c060 55%,var(--am) 75%,#c8860a 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;opacity:0;animation:fadeUp .7s .6s forwards;display:inline-block}
+.hero-divider{width:60px;height:1px;margin:1.4rem auto;background:linear-gradient(to right,transparent,var(--am),transparent);opacity:0;animation:fadeUp .7s .75s forwards}
+.hero-tagline{font-size:.76rem;letter-spacing:.35em;text-transform:uppercase;color:var(--tm);margin-bottom:2rem;opacity:0;animation:fadeUp .7s .85s forwards}
+.hero-body{max-width:640px;margin:0 auto;line-height:1.9;font-size:.97rem;color:rgba(232,224,208,.72);font-style:italic;opacity:0;animation:fadeUp .7s 1s forwards}
+.hero-body em{color:var(--am);font-style:normal}
+.hero-cta{margin-top:2.5rem;display:flex;gap:1.2rem;justify-content:center;align-items:center;opacity:0;animation:fadeUp .7s 1.2s forwards;flex-wrap:wrap}
+.btn-am{padding:13px 38px;background:var(--am);color:var(--ob);font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:all .3s;text-decoration:none;display:inline-block}
+.btn-am:hover{box-shadow:0 0 40px var(--am50);transform:translateY(-2px)}
+.btn-ghost{padding:13px 38px;background:transparent;color:var(--tp);font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;border:1px solid rgba(232,224,208,.2);cursor:pointer;font-family:'Inter',sans-serif;transition:all .3s;text-decoration:none;display:inline-block}
+.btn-ghost:hover{border-color:var(--am);color:var(--am)}
+.scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:2;opacity:0;animation:fadeUp .7s 1.6s forwards}
+.scroll-hint span{font-size:.56rem;letter-spacing:.3em;text-transform:uppercase;color:var(--tm)}
+.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--am),transparent);animation:linePulse 2s ease-in-out infinite}
+
+/* DAILY ESSENCE BANNER */
+.essence-banner{background:linear-gradient(135deg,var(--moss),rgba(10,10,10,.8));border-bottom:1px solid rgba(255,179,0,.15);padding:10px 40px;text-align:center;position:relative;z-index:100;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap}
+.essence-label{font-size:.58rem;letter-spacing:.4em;text-transform:uppercase;color:var(--am);flex-shrink:0}
+.essence-text{font-size:.82rem;color:rgba(232,224,208,.85);font-style:italic;flex:1;min-width:200px}
+.essence-reset{font-size:.6rem;letter-spacing:.2em;color:var(--tm);flex-shrink:0}
+
+/* ONLINE BAR */
+.online-bar{position:fixed;bottom:20px;right:20px;z-index:150;background:rgba(10,10,10,.92);border:1px solid rgba(255,179,0,.2);padding:8px 14px;display:flex;align-items:center;gap:8px;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--tm)}
+.online-dot{width:7px;height:7px;border-radius:50%;background:#4caf50;animation:blink 2s ease-in-out infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 6px #4caf50}50%{opacity:.5}}
+.online-count{color:var(--am);font-weight:500}
+
+/* SECTIONS */
+section{position:relative;z-index:1;padding:100px 40px}
+.s-label{font-size:.6rem;letter-spacing:.5em;text-transform:uppercase;color:var(--am);margin-bottom:1.2rem;display:flex;align-items:center;gap:1rem}
+.s-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--am30),transparent)}
+.s-h2{font-family:'Cinzel',serif;font-size:clamp(1.6rem,4vw,3rem);font-weight:700;line-height:1.15;margin-bottom:1.8rem}
+.s-h2 em{color:var(--am);font-style:normal}
+.container{max-width:1280px;margin:0 auto}
+.divider-am{width:50px;height:2px;background:linear-gradient(to right,transparent,var(--am),transparent);margin:1.4rem 0}
+
+/* SPECIES COMPASS (visualización) */
+.compass-section{background:linear-gradient(180deg,var(--ob) 0%,var(--moss) 50%,var(--ob) 100%);padding:80px 40px}
+.compass-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.compass-canvas-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+#compassCanvas{border-radius:50%}
+.compass-legend{display:flex;flex-direction:column;gap:12px}
+.cl-item{display:flex;align-items:center;gap:12px}
+.cl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.cl-name{font-size:.82rem;letter-spacing:.1em;color:rgba(232,224,208,.75)}
+.cl-count{margin-left:auto;font-size:.75rem;color:var(--am);font-family:'Cinzel',serif}
+
+/* SHIFT MOOD */
+.mood-bar{position:sticky;top:70px;z-index:90;background:rgba(10,10,10,.95);border-bottom:1px solid rgba(255,179,0,.1);padding:10px 40px;display:flex;align-items:center;gap:16px;overflow-x:auto;scrollbar-width:none}
+.mood-bar::-webkit-scrollbar{display:none}
+.mood-label{font-size:.58rem;letter-spacing:.35em;text-transform:uppercase;color:var(--tm);flex-shrink:0}
+.mood-opts{display:flex;gap:8px;flex-shrink:0}
+.mood-opt{padding:5px 14px;background:none;border:1px solid rgba(255,179,0,.15);color:var(--tm);font-size:.66rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:all .3s;white-space:nowrap}
+.mood-opt:hover,.mood-opt.active{border-color:var(--am);color:var(--am);background:var(--am10)}
+.mood-count{font-size:.62rem;color:var(--tm);flex-shrink:0;margin-left:auto;white-space:nowrap}
+
+/* FEED */
+.feed-section{background:linear-gradient(180deg,var(--ob) 0%,#0d1410 100%)}
+.feed-header{text-align:center;margin-bottom:2.5rem}
+.feed-header p.sub{color:rgba(232,224,208,.6);line-height:1.8;max-width:650px;margin:.6rem auto 0}
+.feed-timer{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:var(--tm);margin-top:.5rem}
+.feed-timer em{color:var(--am)}
+
+/* COMPOSER */
+.composer{max-width:720px;margin:0 auto 1.5rem;background:var(--card);border:1px solid rgba(255,179,0,.14);padding:24px;position:relative}
+.composer::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,var(--am),transparent)}
+.composer-top{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+.composer-avatar{width:40px;height:40px;border-radius:50%;background:var(--moss);border:1px solid var(--am30);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.9rem;color:var(--am);font-weight:700}
+.composer textarea{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:var(--tp);padding:12px;font-size:.9rem;font-family:'Inter',sans-serif;font-weight:300;line-height:1.7;resize:none;min-height:85px;outline:none;transition:border-color .3s}
+.composer textarea::placeholder{color:var(--tm)}
+.composer textarea:focus{border-color:rgba(255,179,0,.35)}
+.char-count{text-align:right;font-size:.65rem;color:var(--tm);margin-bottom:6px}
+.char-count.warn{color:#e59300}
+.char-count.over{color:var(--red)}
+.url-row{display:flex;gap:8px;margin-bottom:8px}
+.url-row input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:var(--tp);padding:9px 12px;font-size:.8rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .3s}
+.url-row input::placeholder{color:var(--tm)}
+.url-row input:focus{border-color:rgba(255,179,0,.35)}
+.embed-preview{margin-bottom:10px;display:none}
+.ep-label{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--am);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.ep-clear{background:none;border:none;color:var(--tm);cursor:pointer;font-size:.7rem;padding:2px 6px;margin-left:auto;transition:color .3s}
+.ep-clear:hover{color:var(--red)}
+.embed-preview iframe{width:100%;min-height:320px;border:none;display:block;background:#000}
+.composer-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.composer-tags{display:flex;gap:7px;flex-wrap:wrap}
+.tag-pill{font-size:.62rem;letter-spacing:.18em;padding:4px 10px;border:1px solid rgba(255,179,0,.18);color:var(--tm);cursor:pointer;transition:all .3s;background:none;font-family:'Inter',sans-serif;text-transform:uppercase}
+.tag-pill.active,.tag-pill:hover{border-color:var(--am);color:var(--am);background:var(--am10)}
+.post-btn{padding:9px 24px;background:var(--am);color:var(--ob);border:none;cursor:pointer;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-family:'Inter',sans-serif;font-weight:500;transition:all .3s;white-space:nowrap}
+.post-btn:hover{box-shadow:0 0 20px var(--am30)}
+.post-btn:disabled{opacity:.5;cursor:not-allowed}
+/* WARN GATE */
+.warn-gate{background:rgba(229,57,53,.06);border:1px solid rgba(229,57,53,.25);padding:14px 18px;margin-bottom:12px;display:none;font-size:.8rem;color:rgba(232,224,208,.7);line-height:1.7}
+.warn-gate span{color:#e59300;display:block;margin-bottom:4px;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase}
+
+/* GHOST TYPERS */
+.ghost-zone{max-width:720px;margin:0 auto 14px;display:flex;flex-direction:column;gap:7px}
+.ghost-post{background:var(--card);border:1px solid rgba(255,179,0,.05);padding:12px 18px;display:flex;gap:10px;align-items:center;transition:opacity .4s}
+.ghost-av{width:28px;height:28px;border-radius:50%;background:var(--moss);border:1px solid rgba(255,179,0,.15);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.66rem;color:var(--am);font-family:'Cinzel',serif}
+.ghost-info{font-size:.72rem;color:var(--tm)}
+.ghost-info strong{color:rgba(232,224,208,.45);font-weight:400}
+.tdots{display:inline-flex;gap:2px;vertical-align:middle;margin-left:4px}
+.tdots span{width:3px;height:3px;border-radius:50%;background:var(--am);animation:td 1.2s ease-in-out infinite}
+.tdots span:nth-child(2){animation-delay:.2s}.tdots span:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,80%,100%{transform:scale(0);opacity:.3}40%{transform:scale(1);opacity:1}}
+
+/* FEED POSTS */
+.feed-wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.post{background:var(--card);border:1px solid rgba(255,179,0,.07);overflow:hidden;transition:border-color .3s;position:relative}
+.post:hover{border-color:rgba(255,179,0,.18)}
+.post.resonance{border-color:var(--am) !important;box-shadow:0 0 30px rgba(255,179,0,.12)}
+.post.resonance::before{content:'✦ RESONANCIA';position:absolute;top:0;left:0;right:0;background:linear-gradient(to right,transparent,rgba(255,179,0,.1),transparent);font-size:.55rem;letter-spacing:.4em;text-align:center;padding:4px;color:var(--am)}
+.post-header{display:flex;gap:10px;align-items:center;padding:18px 20px 12px}
+.post-av{width:36px;height:36px;border-radius:50%;background:var(--moss);border:1px solid var(--am30);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.85rem;color:var(--am);font-weight:700}
+.post-meta{flex:1;min-width:0}
+.post-user{font-size:.85rem;font-weight:500;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post-badges{display:inline-flex;gap:4px;margin-left:8px;vertical-align:middle}
+.badge{font-size:.55rem;padding:1px 6px;border-radius:0;letter-spacing:.1em;text-transform:uppercase;font-weight:500;white-space:nowrap}
+.badge.sp{background:var(--am10);color:var(--am);border:1px solid rgba(255,179,0,.2)}
+.badge.mood{background:rgba(67,160,71,.1);color:#81c784;border:1px solid rgba(67,160,71,.2)}
+.post-time{font-size:.67rem;color:var(--tm);margin-top:2px}
+.post-body{padding:0 20px 14px;line-height:1.85;font-size:.9rem;color:rgba(232,224,208,.82)}
+.post-tag{display:inline-block;margin:0 20px 11px;font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--am);border:1px solid var(--am10);padding:2px 9px}
+.post-embed{width:100%;min-height:320px;border:none;display:block;background:#000}
+.post-embed-wrap{width:100%;overflow:hidden}
+.post-actions{display:flex;border-top:1px solid rgba(255,179,0,.06)}
+.post-action{flex:1;padding:10px;background:none;border:none;color:var(--tm);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:5px}
+.post-action:hover{color:var(--am);background:var(--am10)}
+.post-action.howled{color:var(--am);text-shadow:0 0 10px var(--am30)}
+.post-action svg{width:13px;height:13px;fill:currentColor}
+.howl-burst{position:absolute;pointer-events:none;font-size:1.2rem;animation:burst .6s ease-out forwards;z-index:10}
+@keyframes burst{0%{opacity:1;transform:scale(.5) translateY(0)}100%{opacity:0;transform:scale(1.5) translateY(-30px)}}
+/* MEMORIA BADGE */
+.save-btn{background:none;border:none;color:var(--tm);cursor:pointer;padding:4px 8px;font-size:.65rem;transition:color .3s;position:absolute;top:16px;right:14px}
+.save-btn:hover,.save-btn.saved{color:var(--am)}
+/* EMPTY FEED */
+.empty-feed{text-align:center;padding:60px 20px;color:var(--tm)}
+.empty-feed .symbol{font-family:'Cinzel',serif;font-size:3rem;color:rgba(255,179,0,.2);display:block;margin-bottom:1rem}
+.empty-feed p{font-size:.9rem;line-height:1.8}
+
+/* PACK FINDER */
+.packfinder{background:var(--ob);padding:80px 40px}
+.pf-inner{max-width:800px;margin:0 auto}
+.pf-form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-top:1.5rem}
+.pf-input{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--tp);padding:10px 14px;font-size:.85rem;font-family:'Inter',sans-serif;outline:none;transition:border-color .3s}
+.pf-input:focus{border-color:var(--am)}
+.pf-btn{padding:10px 22px;background:var(--am);color:var(--ob);border:none;cursor:pointer;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-family:'Inter',sans-serif;font-weight:500;transition:all .3s;white-space:nowrap}
+.pf-results{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.pf-result{background:var(--card);border:1px solid rgba(255,179,0,.08);padding:16px 18px;display:flex;align-items:center;gap:12px}
+.pf-av{width:38px;height:38px;border-radius:50%;background:var(--moss);border:1px solid var(--am30);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.9rem;color:var(--am)}
+.pf-info{flex:1}
+.pf-nick{font-size:.88rem;font-weight:500}
+.pf-loc{font-size:.72rem;color:var(--tm);margin-top:2px}
+.pf-sp{font-size:.62rem;color:var(--am);letter-spacing:.15em}
+.no-results{text-align:center;padding:30px;color:var(--tm);font-size:.85rem}
+
+/* WHAT / PILLARS */
+.what{background:linear-gradient(180deg,var(--ob) 0%,var(--moss) 50%,var(--ob) 100%)}
+.what-grid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+.what-text p{line-height:1.9;color:rgba(232,224,208,.75);font-size:.95rem;margin-bottom:1.3rem}
+.what-text p em{color:var(--am);font-style:normal;font-weight:500}
+.what-visual{position:relative;height:480px}
+.img-stack img{position:absolute;object-fit:cover;border:1px solid rgba(255,179,0,.14);transition:all .5s}
+.img-stack img:nth-child(1){width:64%;height:68%;top:0;left:0;filter:grayscale(25%)}
+.img-stack img:nth-child(2){width:56%;height:62%;bottom:0;right:0;filter:grayscale(25%)}
+.img-stack img:hover{filter:grayscale(0%);box-shadow:0 0 50px rgba(255,179,0,.15);z-index:10;transform:scale(1.02)}
+.amber-accent{position:absolute;top:50%;left:-18px;width:3px;height:55%;transform:translateY(-50%);background:linear-gradient(to bottom,transparent,var(--am),transparent)}
+.pillars{background:var(--ob)}
+.pillars-header{text-align:center;max-width:700px;margin:0 auto 3rem}
+.pillars-header p{color:rgba(232,224,208,.65);line-height:1.8;margin-top:.8rem}
+.pillars-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px}
+.pillar{position:relative;overflow:hidden;height:440px;cursor:pointer;background:var(--moss)}
+.pillar img{width:100%;height:100%;object-fit:cover;transition:transform .6s,filter .6s;filter:grayscale(45%) brightness(.75)}
+.pillar:hover img{transform:scale(1.06);filter:grayscale(0%) brightness(.9)}
+.pillar-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.96) 0%,transparent 55%);display:flex;flex-direction:column;justify-content:flex-end;padding:24px}
+.pillar:hover .pillar-overlay{background:linear-gradient(to top,rgba(10,10,10,.96) 0%,rgba(255,179,0,.04) 100%)}
+.pillar-tag{font-size:.56rem;letter-spacing:.4em;text-transform:uppercase;color:var(--am);margin-bottom:.4rem}
+.pillar-name{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;margin-bottom:.4rem}
+.pillar-desc{font-size:.8rem;color:rgba(232,224,208,.55);line-height:1.6;transform:translateY(18px);opacity:0;transition:all .4s}
+.pillar:hover .pillar-desc{transform:translateY(0);opacity:1}
+.pillar-am-line{position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--am);transform:scaleX(0);transition:transform .4s;transform-origin:left}
+.pillar:hover .pillar-am-line{transform:scaleX(1)}
+
+/* GALLERY */
+.gallery-section{background:var(--ob)}
+.gallery-header{text-align:center;margin-bottom:2.5rem}
+.masonry{column-count:4;column-gap:4px;max-width:1280px;margin:0 auto}
+.m-item{break-inside:avoid;margin-bottom:4px;position:relative;overflow:hidden;cursor:pointer}
+.m-item img{width:100%;display:block;transition:transform .5s,filter .5s;filter:grayscale(30%) brightness(.82)}
+.m-item:hover img{transform:scale(1.04);filter:grayscale(0%) brightness(1)}
+.m-item-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(10,10,10,.85),transparent 50%);opacity:0;transition:opacity .3s;display:flex;align-items:flex-end;padding:14px}
+.m-item:hover .m-item-ov{opacity:1}
+.m-item-tag{font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--am)}
+#lb{position:fixed;inset:0;z-index:999;background:rgba(10,10,10,.97);display:none;align-items:center;justify-content:center}
+#lb.open{display:flex}
+#lb img{max-width:92vw;max-height:92vh;object-fit:contain;border:1px solid var(--am10)}
+#lb-close{position:fixed;top:22px;right:32px;font-size:2rem;color:var(--am);cursor:pointer;z-index:1000;background:none;border:none;font-family:'Cinzel',serif;line-height:1}
+
+/* PACK CODE */
+.pack{background:linear-gradient(180deg,var(--ob) 0%,var(--moss) 50%,var(--ob) 100%);text-align:center}
+.pack-inner{max-width:740px;margin:0 auto}
+.pack-symbol{font-family:'Cinzel',serif;font-size:4rem;color:var(--am);text-shadow:0 0 70px var(--am50);display:block;margin-bottom:1.4rem;animation:ambPulse 4s ease-in-out infinite}
+.pack p{line-height:1.9;color:rgba(232,224,208,.72);font-size:.95rem;margin-bottom:1.3rem}
+.pack p em{color:var(--am);font-style:normal}
+.pack-rules{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:2rem 0;text-align:left}
+.rule{background:rgba(26,36,33,.6);border:1px solid rgba(255,179,0,.1);padding:20px}
+.rule-icon{font-size:1.4rem;margin-bottom:.7rem;display:block}
+.rule-title{font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--am);margin-bottom:.4rem;font-weight:500}
+.rule-desc{font-size:.8rem;color:rgba(232,224,208,.6);line-height:1.7}
+
+/* MEMORIA DEL BOSQUE */
+.memoria{background:var(--ob);padding:80px 40px}
+.memoria-inner{max-width:720px;margin:0 auto}
+.memoria-grid{margin-top:1.5rem;display:flex;flex-direction:column;gap:12px}
+.mem-post{background:var(--card);border:1px solid rgba(255,179,0,.1);padding:16px 18px;border-left:3px solid var(--am);position:relative}
+.mem-unsave{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--tm);cursor:pointer;font-size:.7rem;transition:color .3s}
+.mem-unsave:hover{color:var(--red)}
+.mem-nick{font-size:.75rem;color:var(--am);letter-spacing:.1em;margin-bottom:4px}
+.mem-body{font-size:.88rem;color:rgba(232,224,208,.75);line-height:1.75}
+.mem-empty{text-align:center;padding:40px;color:var(--tm);font-size:.85rem;font-style:italic}
+
+/* FOOTER */
+footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:55px 40px 35px}
+.footer-inner{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:45px}
+.nexus-logo{display:flex;align-items:center;gap:11px;margin-bottom:.8rem}
+.nexus-text{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:900;letter-spacing:.2em;background:linear-gradient(135deg,#fff 0%,var(--am) 50%,#ff6b00 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.footer-brand p{font-size:.8rem;color:var(--tm);line-height:1.8;max-width:230px;margin-top:.4rem}
+.footer-col h4{font-size:.62rem;letter-spacing:.4em;text-transform:uppercase;color:var(--am);margin-bottom:1.1rem}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:.55rem}
+.footer-col ul li a{font-size:.8rem;color:var(--tm);text-decoration:none;transition:color .3s}
+.footer-col ul li a:hover{color:var(--am)}
+.footer-bottom{max-width:1280px;margin:2.5rem auto 0;padding-top:1.4rem;border-top:1px solid rgba(255,179,0,.06);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-copy{font-size:.68rem;color:rgba(122,112,96,.45);letter-spacing:.06em}
+
+/* ===== MODALS ===== */
+.modal-overlay{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:#0d100d;border:1px solid rgba(255,179,0,.2);padding:0;max-width:500px;width:100%;position:relative;max-height:90vh;overflow-y:auto}
+.modal-top{padding:28px 28px 0;border-bottom:none}
+.modal::before{content:'';display:block;height:2px;background:linear-gradient(to right,transparent,var(--am),transparent)}
+.modal-title{font-family:'Cinzel',serif;font-size:1.3rem;font-weight:700;color:var(--am);margin:20px 28px 8px}
+.modal-sub{font-size:.78rem;color:var(--tm);letter-spacing:.1em;margin:0 28px 20px}
+.modal-close{position:absolute;top:16px;right:20px;background:none;border:none;color:var(--tm);font-size:1.4rem;cursor:pointer;line-height:1;transition:color .3s}
+.modal-close:hover{color:var(--am)}
+.modal-body{padding:0 28px 28px}
+.mfield{margin-bottom:18px}
+.mfield label{display:block;font-size:.62rem;letter-spacing:.35em;text-transform:uppercase;color:var(--am);margin-bottom:7px}
+.mfield input,.mfield select{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:var(--tp);padding:11px 14px;font-size:.88rem;font-family:'Inter',sans-serif;font-weight:300;outline:none;transition:border-color .3s;-webkit-appearance:none}
+.mfield input::placeholder{color:var(--tm)}
+.mfield input:focus,.mfield select:focus{border-color:rgba(255,179,0,.4);background:rgba(255,179,0,.02)}
+.mfield select option{background:#111410}
+.mfield-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mfield-hint{font-size:.7rem;color:var(--tm);margin-top:5px;line-height:1.5}
+.mfield-hint.error{color:var(--red)}
+.mfield-hint.ok{color:var(--green)}
+.modal-btn{width:100%;padding:14px;background:var(--am);color:var(--ob);font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:all .3s;margin-top:6px}
+.modal-btn:hover{box-shadow:0 0 35px var(--am50)}
+.modal-btn:disabled{opacity:.5;cursor:not-allowed}
+.modal-switch{text-align:center;margin-top:14px;font-size:.78rem;color:var(--tm)}
+.modal-switch a{color:var(--am);cursor:pointer;text-decoration:none}
+.modal-switch a:hover{text-decoration:underline}
+.modal-err{background:rgba(229,57,53,.08);border:1px solid rgba(229,57,53,.25);padding:10px 14px;font-size:.8rem;color:#ef9a9a;margin-bottom:14px;display:none}
+.modal-err.show{display:block}
+.tab-btns{display:flex;margin-bottom:20px;border-bottom:1px solid rgba(255,179,0,.1)}
+.tab-btn{flex:1;padding:12px;background:none;border:none;color:var(--tm);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:all .3s;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab-btn.active{color:var(--am);border-bottom-color:var(--am)}
+/* SPECIES CHIPS */
+.sp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:4px}
+.sp-chip{background:none;border:1px solid rgba(255,179,0,.15);color:var(--tm);padding:7px;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:all .3s;text-align:center}
+.sp-chip.active,.sp-chip:hover{border-color:var(--am);color:var(--am);background:var(--am10)}
+/* PROFILE CARD */
+.profile-card{background:var(--card);border:1px solid rgba(255,179,0,.15);padding:20px;margin-bottom:20px}
+.pc-av{width:56px;height:56px;border-radius:50%;background:var(--moss);border:2px solid var(--am);display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:1.3rem;color:var(--am);margin:0 auto 12px}
+.pc-nick{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--am);text-align:center;margin-bottom:4px}
+.pc-info{font-size:.75rem;color:var(--tm);text-align:center;margin-bottom:2px}
+.pc-logout{display:block;width:100%;margin-top:14px;padding:9px;background:none;border:1px solid rgba(255,179,0,.2);color:var(--tm);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:all .3s;text-align:center}
+.pc-logout:hover{border-color:var(--red);color:var(--red)}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .75s,transform .75s}
+.rv.v{opacity:1;transform:translateY(0)}
+.rv-l{opacity:0;transform:translateX(-32px);transition:opacity .75s,transform .75s}
+.rv-l.v{opacity:1;transform:translateX(0)}
+.rv-r{opacity:0;transform:translateX(32px);transition:opacity .75s,transform .75s}
+.rv-r.v{opacity:1;transform:translateX(0)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes linePulse{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes ambPulse{0%,100%{text-shadow:0 0 40px var(--am30)}50%{text-shadow:0 0 90px var(--am)}}
+
+/* TOAST */
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--card);border:1px solid rgba(255,179,0,.25);padding:12px 22px;font-size:.78rem;letter-spacing:.1em;color:var(--tp);z-index:900;opacity:0;transition:all .35s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:rgba(67,160,71,.4);color:#a5d6a7}
+.toast.err{border-color:rgba(229,57,53,.4);color:#ef9a9a}
+
+@media(max-width:1024px){.pillars-grid{grid-template-columns:repeat(2,1fr)}.masonry{column-count:3}.footer-inner{grid-template-columns:1fr 1fr}.what-grid{grid-template-columns:1fr;gap:40px}.what-visual{height:280px}.compass-inner{grid-template-columns:1fr}.pf-form{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){
+  nav{padding:12px 16px}
+  .nav-links{display:none;position:fixed;inset:0;background:rgba(10,10,10,.98);flex-direction:column;align-items:center;justify-content:center;gap:2.2rem;z-index:300}
+  .nav-links.open{display:flex}
+  .nav-links a{font-size:1rem}
+  .nav-ham{display:flex}.nav-cta{display:none}
+  section{padding:70px 18px}
+  .hero-cta{flex-direction:column;gap:.9rem}
+  .pillars-grid{grid-template-columns:1fr}.pillar{height:280px}
+  .pack-rules{grid-template-columns:1fr}
+  .masonry{column-count:2}
+  .footer-inner{grid-template-columns:1fr;gap:26px}
+  .footer-bottom{flex-direction:column;text-align:center}
+  .online-bar{right:10px;font-size:.6rem}
+  .compass-section{padding:60px 18px}
+  .pf-form{grid-template-columns:1fr}
+  .mfield-row{grid-template-columns:1fr}
+  .mood-bar{padding:8px 16px}
+  .essence-banner{padding:8px 16px}
+}
+@media(max-width:480px){.masonry{column-count:1}.hero h1{font-size:2.5rem}}
+</style>
+</head>
+<body>
+
+<div class="fog t"></div><div class="fog b"></div><div class="fog l"></div><div class="fog r"></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ONLINE BAR -->
+<div class="online-bar"><div class="online-dot"></div><span class="online-count" id="onlineCount">47</span>&nbsp;<span data-i18n="online_label">en la manada</span></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="index.html" class="nav-logo">True Therian<small>Social Link Life</small></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#que-es" onclick="closeNav()" data-i18n="nav_about">¿Qué somos?</a></li>
+    <li><a href="#feed" onclick="closeNav()" data-i18n="nav_feed">Manada</a></li>
+    <li><a href="#packfinder" onclick="closeNav()" data-i18n="nav_finder">Pack Finder</a></li>
+    <li><a href="#galeria" onclick="closeNav()" data-i18n="nav_gallery">Galería</a></li>
+    <li><a href="#memoria" onclick="closeNav()" data-i18n="nav_memory">Memoria</a></li>
+    <li><a href="newsletter.html" onclick="closeNav()" data-i18n="nav_newsletter">Newsletter</a></li>
+    <li><a href="privacidad.html" onclick="closeNav()" data-i18n="nav_privacy">Privacidad</a></li>
+  </ul>
+  <div class="nav-right">
+    <!-- LANGUAGE SELECTOR -->
+    <div style="position:relative">
+      <button class="lang-btn" id="langBtn" onclick="toggleLang()">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        <span id="langCurrent">ES</span>
+      </button>
+      <div class="lang-dropdown" id="langDropdown">
+        <button class="lang-opt active" onclick="setLang('es')">🇪🇸 Español</button>
+        <button class="lang-opt" onclick="setLang('en')">🇬🇧 English</button>
+        <button class="lang-opt" onclick="setLang('pt')">🇧🇷 Português</button>
+        <button class="lang-opt" onclick="setLang('fr')">🇫🇷 Français</button>
+        <button class="lang-opt" onclick="setLang('de')">🇩🇪 Deutsch</button>
+        <button class="lang-opt" onclick="setLang('ja')">🇯🇵 日本語</button>
+      </div>
+    </div>
+    <!-- USER -->
+    <button class="user-btn" id="userBtn" onclick="openUserModal()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+      <span id="userBtnLabel" data-i18n="nav_enter">Entrar</span>
+    </button>
+    <a href="newsletter.html" class="nav-cta" data-i18n="nav_join">Unirte</a>
+    <button class="nav-ham" id="navHam" onclick="toggleNav()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- DAILY ESSENCE BANNER -->
+<div class="essence-banner" id="essenceBanner">
+  <span class="essence-label" data-i18n="essence_label">✦ Esencia del Día</span>
+  <span class="essence-text" id="essenceText">Cargando...</span>
+  <span class="essence-reset" id="essenceReset"></span>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-bg">
+    <img src="img04.jpg" alt="" loading="lazy"><img src="img05.jpg" alt="" loading="lazy">
+    <img src="img12.jpg" alt="" loading="lazy"><img src="img13.jpg" alt="" loading="lazy">
+    <img src="img10.jpg" alt="" loading="lazy">
+  </div>
+  <div class="hero-vignette"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">ΘΔ — <span data-i18n="hero_eyebrow">Red Social de la Comunidad Therian</span></p>
+    <h1>True Therian</h1>
+    <div class="hero-divider" style="width:60px;height:1px;margin:1.4rem auto;background:linear-gradient(to right,transparent,var(--am),transparent);opacity:0;animation:fadeUp .7s .75s forwards"></div>
+    <p class="hero-tagline">Social Link Life</p>
+    <p class="hero-body"><span data-i18n="hero_body1">Tu piel miente. Tu instinto no.</span><br><span data-i18n="hero_body2">Hay un latido que no sigue el ritmo de la ciudad; una esencia antigua habitando un cuerpo que se te queda pequeño.</span> <em data-i18n="hero_body3">Social Link Life</em><span data-i18n="hero_body4"> — el punto donde tu identidad humana y tu verdad animal finalmente se conectan.</span></p>
+    <div class="hero-cta">
+      <a href="#feed" class="btn-am" data-i18n="hero_cta1">Entrar a la Manada</a>
+      <a href="newsletter.html" class="btn-ghost" data-i18n="hero_cta2">Únete al Newsletter</a>
+    </div>
+  </div>
+  <div class="scroll-hint"><div class="scroll-line"></div><span data-i18n="scroll_down">Descender</span></div>
+</section>
+
+<!-- SPECIES COMPASS -->
+<section class="compass-section" id="compass">
+  <div class="compass-inner container">
+    <div class="rv-l">
+      <p class="s-label" data-i18n="compass_label">Esencias Online</p>
+      <h2 class="s-h2"><span data-i18n="compass_h">El</span> <em data-i18n="compass_hb">Compass</em> <span data-i18n="compass_hc">de la Manada</span></h2>
+      <div class="divider-am"></div>
+      <p style="color:rgba(232,224,208,.7);line-height:1.85;font-size:.9rem" data-i18n="compass_desc">Distribución de especies conectadas ahora mismo. Cada punto es un alma. Cada color, una esencia.</p>
+      <div class="compass-legend" id="compassLegend" style="margin-top:1.5rem"></div>
+    </div>
+    <div class="compass-canvas-wrap rv-r">
+      <canvas id="compassCanvas" width="300" height="300"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- SHIFT MOOD BAR -->
+<div class="mood-bar" id="moodBar">
+  <span class="mood-label" data-i18n="mood_label">Tu Shift Hoy</span>
+  <div class="mood-opts">
+    <button class="mood-opt" data-mood="Mental" onclick="setMood(this)">🧠 Mental</button>
+    <button class="mood-opt" data-mood="Phantom" onclick="setMood(this)">👻 Phantom</button>
+    <button class="mood-opt" data-mood="Dream" onclick="setMood(this)">🌙 Dream</button>
+    <button class="mood-opt" data-mood="Méditation" onclick="setMood(this)">🌿 Méditation</button>
+    <button class="mood-opt" data-mood="Cameo" onclick="setMood(this)">✨ Cameo</button>
+    <button class="mood-opt" data-mood="Feral" onclick="setMood(this)">🐾 Feral</button>
+  </div>
+  <span class="mood-count" id="moodCount"></span>
+</div>
+
+<!-- FEED -->
+<section class="feed-section" id="feed">
+  <div class="container">
+    <div class="feed-header rv">
+      <p class="s-label" data-i18n="feed_label">El Muro de Esencia</p>
+      <h2 class="s-h2"><span data-i18n="feed_h">Feed de la</span> <em data-i18n="feed_hb">Manada</em></h2>
+      <p class="sub" data-i18n="feed_sub">Comparte texto, links de TikTok o Instagram. Vista previa instantánea. Cada post vive 24h.</p>
+      <p class="feed-timer" id="feedTimer"></p>
+    </div>
+
+    <!-- COMPOSER -->
+    <div class="composer rv" id="composer">
+      <div class="composer-top">
+        <div class="composer-avatar" id="cAvatar">ΘΔ</div>
+        <textarea id="postText" placeholder="¿Qué siente tu animal interior hoy?" rows="3" maxlength="500" oninput="updateCharCount()"></textarea>
+      </div>
+      <div class="char-count" id="charCount">0 / 500</div>
+      <div class="warn-gate" id="warnGate">
+        <span>⚠️ AVISO DE CONTENIDO</span>
+        <span id="warnMsg">Esta publicación puede contener contenido no permitido.</span>
+      </div>
+      <div class="url-row">
+        <input type="text" id="embedUrl" placeholder="🔗 Link TikTok o Instagram — vista previa automática" oninput="previewEmbed(this.value)">
+      </div>
+      <div class="embed-preview" id="embedPreview">
+        <div class="ep-label">
+          <span data-i18n="preview_label">Vista previa en vivo</span>
+          <button class="ep-clear" onclick="clearEmbed()">✕ <span data-i18n="preview_clear">Quitar</span></button>
+        </div>
+        <iframe id="previewFrame" src="" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-popups" title="preview"></iframe>
+      </div>
+      <div class="composer-footer">
+        <div class="composer-tags">
+          <button class="tag-pill active" data-tag="Shifts" onclick="selectTag(this)">#Shifts</button>
+          <button class="tag-pill" data-tag="Gear" onclick="selectTag(this)">#Gear</button>
+          <button class="tag-pill" data-tag="Quadrobics" onclick="selectTag(this)">#Quadrobics</button>
+          <button class="tag-pill" data-tag="Reflexión" onclick="selectTag(this)">#Reflexión</button>
+          <button class="tag-pill" data-tag="Pack" onclick="selectTag(this)">#Pack</button>
+        </div>
+        <button class="post-btn" id="postBtn" onclick="publishPost()" data-i18n="post_btn">Aullar ΘΔ</button>
+      </div>
+    </div>
+
+    <div class="ghost-zone" id="ghostZone"></div>
+    <div class="feed-wrap" id="feedPosts">
+      <div class="empty-feed" id="emptyFeed" style="display:none">
+        <span class="symbol">ΘΔ</span>
+        <p data-i18n="feed_empty">El bosque está en silencio. Sé el primero en aullar hoy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PACK FINDER -->
+<section class="packfinder" id="packfinder">
+  <div class="pf-inner">
+    <div class="rv">
+      <p class="s-label" data-i18n="pf_label">Manada Local</p>
+      <h2 class="s-h2"><em data-i18n="pf_h">Pack Finder</em></h2>
+      <p style="color:rgba(232,224,208,.7);line-height:1.85;font-size:.9rem;margin-top:.5rem" data-i18n="pf_desc">Encuentra therians registrados en tu ciudad o país. Conecta tu esencia local.</p>
+      <div class="pf-form">
+        <input type="text" class="pf-input" id="pfCountry" placeholder="País..." data-i18n-ph="pf_ph_country">
+        <input type="text" class="pf-input" id="pfCity" placeholder="Ciudad (opcional)..." data-i18n-ph="pf_ph_city">
+        <button class="pf-btn" onclick="runPackFinder()" data-i18n="pf_search">Buscar</button>
+      </div>
+      <div class="pf-results" id="pfResults"></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT -->
+<section class="what" id="que-es">
+  <div class="container">
+    <div class="what-grid">
+      <div class="what-text rv-l">
+        <p class="s-label" data-i18n="what_label">La Verdad</p>
+        <h2 class="s-h2"><span data-i18n="what_h">¿Qué significa ser</span> <em>True Therian</em>?</h2>
+        <div class="divider-am"></div>
+        <p data-i18n="what_p1">No es un juego de rol. Es el peso de una cola que no está, el frío de un cielo que nunca has volado y la euforia de un <em>shift</em> que te devuelve lo que la biología te negó.</p>
+        <p data-i18n="what_p2">Aquí no teorizamos; aquí respiramos nuestra naturaleza en comunidad. Cada especie, cada tipo de shift, cada vínculo con el animal interior tiene su espacio.</p>
+        <p data-i18n="what_p3">Una red construida sobre texto real, links reales y conexiones reales. Sin algoritmos. Sin ruido. Solo la manada.</p>
+        <a href="#feed" class="btn-am" style="margin-top:1.4rem;display:inline-block" data-i18n="what_cta">Ver el Feed</a>
+      </div>
+      <div class="what-visual rv-r">
+        <div class="img-stack">
+          <div class="amber-accent"></div>
+          <img src="img11.jpg" alt="" loading="lazy">
+          <img src="img15.jpg" alt="" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PILLARS -->
+<section class="pillars" id="especies">
+  <div class="container">
+    <div class="pillars-header rv">
+      <p class="s-label" data-i18n="pillars_label">Tu Especie</p>
+      <h2 class="s-h2"><span data-i18n="pillars_h">La</span> <em data-i18n="pillars_hb">Manada</em> <span data-i18n="pillars_hc">es diversa</span></h2>
+      <p data-i18n="pillars_sub">Lobos, zorros, équidos, aves — cada esencia tiene su historia. Aquí todas son sagradas.</p>
+    </div>
+    <div class="pillars-grid rv">
+      <div class="pillar"><img src="img07.jpg" alt="" loading="lazy"><div class="pillar-overlay"><p class="pillar-tag">#Lupine</p><p class="pillar-name" data-i18n="p1_name">Cánidos &amp; Lobos</p><p class="pillar-desc" data-i18n="p1_desc">La especie más numerosa de la manada. Instinto de pack, lealtad sin límites y el aullido que resuena antes de dormir.</p></div><div class="pillar-am-line"></div></div>
+      <div class="pillar"><img src="img08.jpg" alt="" loading="lazy"><div class="pillar-overlay"><p class="pillar-tag">#Vulpine</p><p class="pillar-name" data-i18n="p2_name">Zorros &amp; Vulpinos</p><p class="pillar-desc" data-i18n="p2_desc">Inteligencia aguda, adaptabilidad infinita. La cola siempre en movimiento, la mente siempre tres pasos adelante.</p></div><div class="pillar-am-line"></div></div>
+      <div class="pillar"><img src="img03.jpg" alt="" loading="lazy"><div class="pillar-overlay"><p class="pillar-tag">#Equine</p><p class="pillar-name" data-i18n="p3_name">Équidos &amp; Caballos</p><p class="pillar-desc" data-i18n="p3_desc">Libertad que no cabe en cuatro paredes. El galope es un estado mental antes que un movimiento físico.</p></div><div class="pillar-am-line"></div></div>
+      <div class="pillar"><img src="img10.jpg" alt="" loading="lazy"><div class="pillar-overlay"><p class="pillar-tag">#WildOther</p><p class="pillar-name" data-i18n="p4_name">Otras Esencias</p><p class="pillar-desc" data-i18n="p4_desc">Aves, osos, félidos, criaturas míticas. Si sientes un instinto que trasciende lo humano, perteneces aquí.</p></div><div class="pillar-am-line"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery-section" id="galeria">
+  <div class="container">
+    <div class="gallery-header rv"><p class="s-label" data-i18n="gallery_label">La Manada en Imágenes</p><h2 class="s-h2"><span data-i18n="gallery_h">Somos</span> <em data-i18n="gallery_hb">reales</em></h2></div>
+    <div class="masonry">
+      <div class="m-item" onclick="openLb('img01.jpg')"><img src="img01.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Gathering</span></div></div>
+      <div class="m-item" onclick="openLb('img02.jpg')"><img src="img02.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Gear</span></div></div>
+      <div class="m-item" onclick="openLb('img03.jpg')"><img src="img03.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Fursuit</span></div></div>
+      <div class="m-item" onclick="openLb('img04.jpg')"><img src="img04.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Urban</span></div></div>
+      <div class="m-item" onclick="openLb('img05.jpg')"><img src="img05.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Urban</span></div></div>
+      <div class="m-item" onclick="openLb('img06.jpg')"><img src="img06.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Gear</span></div></div>
+      <div class="m-item" onclick="openLb('img07.jpg')"><img src="img07.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Lupine</span></div></div>
+      <div class="m-item" onclick="openLb('img08.jpg')"><img src="img08.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Gathering</span></div></div>
+      <div class="m-item" onclick="openLb('img09.jpg')"><img src="img09.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Equine</span></div></div>
+      <div class="m-item" onclick="openLb('img10.jpg')"><img src="img10.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Ritual</span></div></div>
+      <div class="m-item" onclick="openLb('img11.jpg')"><img src="img11.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Shifts</span></div></div>
+      <div class="m-item" onclick="openLb('img12.jpg')"><img src="img12.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Fursuit</span></div></div>
+      <div class="m-item" onclick="openLb('img13.jpg')"><img src="img13.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Ursid</span></div></div>
+      <div class="m-item" onclick="openLb('img15.jpg')"><img src="img15.jpg" alt="" loading="lazy"><div class="m-item-ov"><span class="m-item-tag">#Community</span></div></div>
+    </div>
+  </div>
+</section>
+<div id="lb"><button id="lb-close" onclick="closeLb()">✕</button><img id="lb-img" src="" alt=""></div>
+
+<!-- PACK CODE -->
+<section class="pack" id="codigo">
+  <div class="pack-inner">
+    <div class="rv">
+      <span class="pack-symbol">ΘΔ</span>
+      <p class="s-label" style="justify-content:center" data-i18n="pack_label">El Código</p>
+      <h2 class="s-h2"><span data-i18n="pack_h">Respeto &amp;</span> <em data-i18n="pack_hb">Tribu</em></h2>
+      <div class="divider-am" style="margin:1.4rem auto"></div>
+      <p data-i18n="pack_p1">En Social Link Life, la manada se construye sobre el respeto. Tu especie es sagrada. Nos protegemos de miradas externas y construimos un vínculo real entre quienes entienden el lenguaje del instinto.</p>
+      <p data-i18n="pack_p2">Esta red no almacena imágenes en servidor. Solo texto y links. Tu privacidad es tan sagrada como tu esencia.</p>
+    </div>
+    <div class="pack-rules rv">
+      <div class="rule"><span class="rule-icon">🐺</span><div class="rule-title" data-i18n="rule1_t">Respeto Total</div><div class="rule-desc" data-i18n="rule1_d">Cada especie, cada tipo de shift, cada camino es válido. La manada no juzga la esencia ajena.</div></div>
+      <div class="rule"><span class="rule-icon">🔒</span><div class="rule-title" data-i18n="rule2_t">Privacidad Sagrada</div><div class="rule-desc" data-i18n="rule2_d">Zero imágenes en servidor. Solo links externos. Tus datos no son el producto.</div></div>
+      <div class="rule"><span class="rule-icon">🌿</span><div class="rule-title" data-i18n="rule3_t">Espacio Auténtico</div><div class="rule-desc" data-i18n="rule3_d">Sin algoritmos. Sin publicidad. Solo el flujo natural de la manada comunicándose.</div></div>
+    </div>
+    <div class="rv" style="margin-top:2rem"><a href="newsletter.html" class="btn-am" data-i18n="pack_cta">Unirte a la Manada</a></div>
+  </div>
+</section>
+
+<!-- MEMORIA DEL BOSQUE -->
+<section class="memoria" id="memoria">
+  <div class="memoria-inner">
+    <div class="rv">
+      <p class="s-label" data-i18n="mem_label">Posts Guardados</p>
+      <h2 class="s-h2"><em data-i18n="mem_h">Memoria del Bosque</em></h2>
+      <p style="color:rgba(232,224,208,.65);font-size:.88rem;line-height:1.8;margin-top:.5rem" data-i18n="mem_sub">Guarda posts que te resuenen. Esta memoria no se borra con el reset diario. Solo tú la ves.</p>
+      <div class="memoria-grid" id="memoriaGrid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nexus-logo">
+        <svg width="40" height="40" viewBox="0 0 44 44" fill="none">
+          <circle cx="22" cy="22" r="20" stroke="url(#ngf)" stroke-width="1.5"/>
+          <polygon points="22,4 38,14 38,30 22,40 6,30 6,14" fill="none" stroke="url(#ngf)" stroke-width=".8"/>
+          <circle cx="22" cy="22" r="5" fill="#ffb300" opacity=".9"/>
+          <line x1="22" y1="4" x2="22" y2="17" stroke="#ffb300" stroke-width=".8" opacity=".6"/>
+          <line x1="22" y1="27" x2="22" y2="40" stroke="#ffb300" stroke-width=".8" opacity=".6"/>
+          <line x1="38" y1="14" x2="27" y2="19" stroke="#ffb300" stroke-width=".8" opacity=".6"/>
+          <line x1="17" y1="25" x2="6" y2="30" stroke="#ffb300" stroke-width=".8" opacity=".6"/>
+          <line x1="6" y1="14" x2="17" y2="19" stroke="#ffb300" stroke-width=".8" opacity=".6"/>
+          <line x1="27" y1="25" x2="38" y2="30" stroke="#ffb300" stroke-width=".8" opacity=".6"/>
+          <defs><linearGradient id="ngf" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff" stop-opacity=".4"/><stop offset="50%" stop-color="#ffb300"/><stop offset="100%" stop-color="#ff6b00"/></linearGradient></defs>
+        </svg>
+        <span class="nexus-text">NEXUS</span>
+      </div>
+      <p data-i18n="footer_brand">El refugio digital donde tu identidad animal y tu verdad humana finalmente coexisten sin máscaras.</p>
+    </div>
+    <div class="footer-col"><h4 data-i18n="footer_nav">Navegar</h4><ul>
+      <li><a href="index.html" data-i18n="footer_home">Inicio</a></li>
+      <li><a href="#feed" data-i18n="footer_feed">Feed</a></li>
+      <li><a href="#galeria" data-i18n="footer_gallery">Galería</a></li>
+      <li><a href="#packfinder" data-i18n="footer_finder">Pack Finder</a></li>
+    </ul></div>
+    <div class="footer-col"><h4 data-i18n="footer_community">Comunidad</h4><ul>
+      <li><a href="newsletter.html" data-i18n="footer_newsletter">Newsletter</a></li>
+      <li><a href="#codigo" data-i18n="footer_code">Código Manada</a></li>
+      <li><a href="#memoria" data-i18n="footer_memory">Memoria</a></li>
+    </ul></div>
+    <div class="footer-col"><h4 data-i18n="footer_legal">Legal</h4><ul>
+      <li><a href="privacidad.html" data-i18n="footer_privacy">Política de Privacidad</a></li>
+      <li><a href="privacidad.html#cookies" data-i18n="footer_cookies">Cookies</a></li>
+      <li><a href="privacidad.html#terminos" data-i18n="footer_terms">Términos</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 True Therian · Social Link Life · <span data-i18n="footer_copy">Todos los instintos reservados</span></span>
+    <span style="font-family:'Cinzel',serif;font-size:1.1rem;color:rgba(255,179,0,.18)">ΘΔ</span>
+  </div>
+</footer>
+
+<!-- USER MODAL -->
+<div class="modal-overlay" id="userModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeUserModal()">✕</button>
+    <!-- LOGGED STATE -->
+    <div id="modalLogged" style="display:none;padding:28px">
+      <div class="profile-card">
+        <div class="pc-av" id="pcAv"></div>
+        <div class="pc-nick" id="pcNick"></div>
+        <div class="pc-info" id="pcSpecies"></div>
+        <div class="pc-info" id="pcLoc"></div>
+        <div class="pc-info" id="pcAge"></div>
+        <button class="pc-logout" onclick="logoutUser()" data-i18n="logout">Cerrar Sesión</button>
+      </div>
+    </div>
+    <!-- AUTH STATE -->
+    <div id="modalAuth">
+      <div class="tab-btns">
+        <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')" data-i18n="tab_login">Entrar</button>
+        <button class="tab-btn" id="tabReg" onclick="switchTab('register')" data-i18n="tab_register">Crear Cuenta</button>
+      </div>
+      <!-- LOGIN -->
+      <div id="loginPanel" class="modal-body">
+        <div class="modal-err" id="loginErr"></div>
+        <div class="mfield"><label data-i18n="field_nick">Nick</label><input type="text" id="loginNick" placeholder="Tu NickName..." maxlength="30"></div>
+        <div class="mfield"><label data-i18n="field_email">Email</label><input type="email" id="loginEmail" placeholder="tu@email.com"></div>
+        <button class="modal-btn" onclick="doLogin()" data-i18n="btn_login">Entrar a la Manada</button>
+        <p class="modal-switch" data-i18n="switch_register">¿Sin cuenta? <a onclick="switchTab('register')">Créala aquí</a></p>
+      </div>
+      <!-- REGISTER -->
+      <div id="registerPanel" class="modal-body" style="display:none">
+        <div class="modal-err" id="regErr"></div>
+        <div class="mfield">
+          <label data-i18n="field_nick">NickName de Comunidad *</label>
+          <input type="text" id="regNick" placeholder="Solo letras, números y _  (sin espacios)" maxlength="30" oninput="checkNick(this.value)">
+          <div class="mfield-hint" id="nickHint"></div>
+        </div>
+        <div class="mfield-row">
+          <div class="mfield"><label data-i18n="field_name">Nombre *</label><input type="text" id="regName" placeholder="Nombre real" maxlength="40"></div>
+          <div class="mfield"><label data-i18n="field_surname">Apellidos *</label><input type="text" id="regSurname" placeholder="Apellidos" maxlength="60"></div>
+        </div>
+        <div class="mfield">
+          <label data-i18n="field_birthyear">Año de Nacimiento *</label>
+          <input type="number" id="regYear" placeholder="Ej: 2000" min="1920" max="2015" oninput="checkAge(this.value)">
+          <div class="mfield-hint" id="ageHint"></div>
+        </div>
+        <div class="mfield-row">
+          <div class="mfield"><label data-i18n="field_country">País *</label><input type="text" id="regCountry" placeholder="España..." maxlength="50"></div>
+          <div class="mfield"><label data-i18n="field_city">Ciudad *</label><input type="text" id="regCity" placeholder="Madrid..." maxlength="60"></div>
+        </div>
+        <div class="mfield"><label data-i18n="field_email">Email *</label><input type="email" id="regEmail" placeholder="tu@email.com"></div>
+        <div class="mfield">
+          <label data-i18n="field_species">Tu Especie (opcional)</label>
+          <div class="sp-grid">
+            <button type="button" class="sp-chip" data-sp="Lupine" onclick="pickRegSp(this)">🐺 Lupine</button>
+            <button type="button" class="sp-chip" data-sp="Vulpine" onclick="pickRegSp(this)">🦊 Vulpine</button>
+            <button type="button" class="sp-chip" data-sp="Equine" onclick="pickRegSp(this)">🐴 Equine</button>
+            <button type="button" class="sp-chip" data-sp="Feline" onclick="pickRegSp(this)">🐱 Feline</button>
+            <button type="button" class="sp-chip" data-sp="Ursid" onclick="pickRegSp(this)">🐻 Ursid</button>
+            <button type="button" class="sp-chip" data-sp="Avian" onclick="pickRegSp(this)">🦅 Avian</button>
+            <button type="button" class="sp-chip" data-sp="Reptile" onclick="pickRegSp(this)">🦎 Reptile</button>
+            <button type="button" class="sp-chip" data-sp="Mythic" onclick="pickRegSp(this)">✨ Mythic</button>
+            <button type="button" class="sp-chip" data-sp="Other" onclick="pickRegSp(this)">❓ Other</button>
+          </div>
+        </div>
+        <button class="modal-btn" onclick="doRegister()" data-i18n="btn_register">Unirme a la Manada</button>
+        <p class="modal-switch" data-i18n="switch_login">¿Ya tienes cuenta? <a onclick="switchTab('login')">Entra aquí</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =============================================
+   TRUE THERIAN v2 — Full Engine
+   ============================================= */
+
+/* ── i18n ── */
+const LANGS={
+  es:{
+    nav_about:'¿Qué somos?',nav_feed:'Manada',nav_finder:'Pack Finder',nav_gallery:'Galería',nav_memory:'Memoria',nav_newsletter:'Newsletter',nav_privacy:'Privacidad',nav_enter:'Entrar',nav_join:'Unirte',
+    hero_eyebrow:'Red Social Therian Global',hero_body1:'Tu piel miente. Tu instinto no.',hero_body2:'Hay un latido que no sigue el ritmo de la ciudad; una esencia antigua habitando un cuerpo que se te queda pequeño.',hero_body3:'Social Link Life',hero_body4:' — el punto donde tu identidad humana y tu verdad animal finalmente se conectan.',hero_cta1:'Entrar a la Manada',hero_cta2:'Únete al Newsletter',scroll_down:'Descender',
+    essence_label:'✦ Esencia del Día',
+    online_label:'en la manada',
+    compass_label:'Esencias Online',compass_h:'El',compass_hb:'Compass',compass_hc:'de la Manada',compass_desc:'Distribución de especies conectadas ahora mismo. Cada punto es un alma. Cada color, una esencia.',
+    mood_label:'Tu Shift Hoy',
+    feed_label:'El Muro de Esencia',feed_h:'Feed de la',feed_hb:'Manada',feed_sub:'Comparte texto, links de TikTok o Instagram. Vista previa instantánea. Cada post vive 24h.',feed_empty:'El bosque está en silencio. Sé el primero en aullar hoy.',
+    preview_label:'Vista previa en vivo',preview_clear:'Quitar',post_btn:'Aullar ΘΔ',
+    pf_label:'Manada Local',pf_h:'Pack Finder',pf_desc:'Encuentra therians registrados en tu ciudad o país. Conecta tu esencia local.',pf_ph_country:'País...',pf_ph_city:'Ciudad (opcional)...',pf_search:'Buscar',pf_noresults:'Ningún therian encontrado en esa zona (aún).',
+    what_label:'La Verdad',what_h:'¿Qué significa ser',what_p1:'No es un juego de rol. Es el peso de una cola que no está, el frío de un cielo que nunca has volado.',what_p2:'Aquí respiramos nuestra naturaleza en comunidad. Cada especie, cada shift, cada vínculo tiene su espacio.',what_p3:'Sin algoritmos. Sin ruido. Solo la manada.',what_cta:'Ver el Feed',
+    pillars_label:'Tu Especie',pillars_h:'La',pillars_hb:'Manada',pillars_hc:'es diversa',pillars_sub:'Lobos, zorros, équidos, aves — cada esencia tiene su historia. Aquí todas son sagradas.',
+    p1_name:'Cánidos & Lobos',p1_desc:'La especie más numerosa. Instinto de pack, lealtad sin límites.',p2_name:'Zorros & Vulpinos',p2_desc:'Inteligencia aguda, adaptabilidad infinita.',p3_name:'Équidos & Caballos',p3_desc:'Libertad que no cabe en cuatro paredes.',p4_name:'Otras Esencias',p4_desc:'Aves, osos, félidos, criaturas míticas.',
+    gallery_label:'La Manada en Imágenes',gallery_h:'Somos',gallery_hb:'reales',
+    pack_label:'El Código',pack_h:'Respeto &',pack_hb:'Tribu',pack_p1:'La manada se construye sobre el respeto. Tu especie es sagrada.',pack_p2:'Zero imágenes en servidor. Solo texto y links. Tu privacidad es sagrada.',pack_cta:'Unirte a la Manada',
+    rule1_t:'Respeto Total',rule1_d:'Cada especie, cada tipo de shift, es válido.',rule2_t:'Privacidad Sagrada',rule2_d:'Zero imágenes. Tus datos no son el producto.',rule3_t:'Espacio Auténtico',rule3_d:'Sin algoritmos. Sin publicidad.',
+    mem_label:'Posts Guardados',mem_h:'Memoria del Bosque',mem_sub:'Guarda posts que te resuenen. Esta memoria no se borra con el reset diario.',
+    footer_brand:'El refugio digital donde tu identidad animal y tu verdad humana coexisten sin máscaras.',footer_nav:'Navegar',footer_home:'Inicio',footer_feed:'Feed',footer_gallery:'Galería',footer_finder:'Pack Finder',footer_community:'Comunidad',footer_newsletter:'Newsletter',footer_code:'Código Manada',footer_memory:'Memoria',footer_legal:'Legal',footer_privacy:'Política de Privacidad',footer_cookies:'Cookies',footer_terms:'Términos',footer_copy:'Todos los instintos reservados',
+    tab_login:'Entrar',tab_register:'Crear Cuenta',field_nick:'NickName',field_email:'Email',field_name:'Nombre',field_surname:'Apellidos',field_birthyear:'Año de Nacimiento',field_country:'País',field_city:'Ciudad',field_species:'Tu Especie',btn_login:'Entrar a la Manada',btn_register:'Unirme',switch_register:'¿Sin cuenta? ',switch_login:'¿Ya tienes cuenta? ',logout:'Cerrar Sesión',
+    toast_posted:'¡Aullido enviado a la manada!',toast_saved:'Guardado en Memoria del Bosque',toast_unsaved:'Eliminado de la Memoria',toast_nick_taken:'Ese NickName ya está en uso',toast_age_invalid:'Debes tener al menos 16 años',toast_reg_ok:'¡Bienvenido a la manada!',toast_login_ok:'¡De vuelta en la manada!',toast_mod:'Contenido no permitido detectado',toast_howled:'¡Aullido!',
+    reset_in:'Reset en',
+    mood_count_pre:'',mood_count_suf:' therians en este shift hoy',
+  },
+  en:{
+    nav_about:'About',nav_feed:'Pack',nav_finder:'Pack Finder',nav_gallery:'Gallery',nav_memory:'Memory',nav_newsletter:'Newsletter',nav_privacy:'Privacy',nav_enter:'Sign In',nav_join:'Join',
+    hero_eyebrow:'Global Therian Social Network',hero_body1:'Your skin lies. Your instinct does not.',hero_body2:'There is a heartbeat that does not follow the city rhythm; an ancient essence inhabiting a body that feels too small.',hero_body3:'Social Link Life',hero_body4:' — where your human identity and your animal truth finally connect.',hero_cta1:'Enter the Pack',hero_cta2:'Join Newsletter',scroll_down:'Scroll Down',
+    essence_label:'✦ Daily Essence',online_label:'in the pack',
+    compass_label:'Online Essences',compass_h:'The',compass_hb:'Compass',compass_hc:'of the Pack',compass_desc:'Species distribution connected right now. Every dot is a soul. Every color, an essence.',
+    mood_label:'Your Shift Today',
+    feed_label:'Essence Wall',feed_h:'Pack',feed_hb:'Feed',feed_sub:'Share text, TikTok or Instagram links. Instant preview. Each post lives 24h.',feed_empty:'The forest is silent. Be the first to howl today.',
+    preview_label:'Live preview',preview_clear:'Remove',post_btn:'Howl ΘΔ',
+    pf_label:'Local Pack',pf_h:'Pack Finder',pf_desc:'Find registered therians in your city or country. Connect your local essence.',pf_ph_country:'Country...',pf_ph_city:'City (optional)...',pf_search:'Search',pf_noresults:'No therians found in that area (yet).',
+    what_label:'The Truth',what_h:'What does it mean to be',what_p1:'It is not roleplay. It is the weight of a tail that is not there, the cold of a sky you have never flown.',what_p2:'Here we breathe our nature in community. Every species, every shift, every bond has its space.',what_p3:'No algorithms. No noise. Just the pack.',what_cta:'View Feed',
+    pillars_label:'Your Species',pillars_h:'The',pillars_hb:'Pack',pillars_hc:'is diverse',pillars_sub:'Wolves, foxes, equines, birds — every essence has its story. All are sacred here.',
+    p1_name:'Canines & Wolves',p1_desc:'The most numerous species. Pack instinct, boundless loyalty.',p2_name:'Foxes & Vulpines',p2_desc:'Sharp intelligence, infinite adaptability.',p3_name:'Equines & Horses',p3_desc:'Freedom that does not fit in four walls.',p4_name:'Other Essences',p4_desc:'Birds, bears, felines, mythic creatures.',
+    gallery_label:'The Pack in Images',gallery_h:'We are',gallery_hb:'real',
+    pack_label:'The Code',pack_h:'Respect &',pack_hb:'Tribe',pack_p1:'The pack is built on respect. Your species is sacred.',pack_p2:'Zero images on server. Only text and links. Your privacy is sacred.',pack_cta:'Join the Pack',
+    rule1_t:'Total Respect',rule1_d:'Every species, every shift type is valid.',rule2_t:'Sacred Privacy',rule2_d:'Zero images. Your data is not the product.',rule3_t:'Authentic Space',rule3_d:'No algorithms. No ads.',
+    mem_label:'Saved Posts',mem_h:'Forest Memory',mem_sub:'Save resonating posts. This memory survives the daily reset.',
+    footer_brand:'The digital refuge where your animal identity and human truth coexist without masks.',footer_nav:'Navigate',footer_home:'Home',footer_feed:'Feed',footer_gallery:'Gallery',footer_finder:'Pack Finder',footer_community:'Community',footer_newsletter:'Newsletter',footer_code:'Pack Code',footer_memory:'Memory',footer_legal:'Legal',footer_privacy:'Privacy Policy',footer_cookies:'Cookies',footer_terms:'Terms',footer_copy:'All instincts reserved',
+    tab_login:'Sign In',tab_register:'Create Account',field_nick:'NickName',field_email:'Email',field_name:'First Name',field_surname:'Last Name',field_birthyear:'Birth Year',field_country:'Country',field_city:'City',field_species:'Your Species',btn_login:'Enter the Pack',btn_register:'Join',switch_register:"No account? ",switch_login:'Already have one? ',logout:'Sign Out',
+    toast_posted:'Howl sent to the pack!',toast_saved:'Saved to Forest Memory',toast_unsaved:'Removed from Memory',toast_nick_taken:'NickName already taken',toast_age_invalid:'You must be at least 16 years old',toast_reg_ok:'Welcome to the pack!',toast_login_ok:'Back in the pack!',toast_mod:'Prohibited content detected',toast_howled:'Howl!',
+    reset_in:'Reset in',mood_count_pre:'',mood_count_suf:' therians in this shift today',
+  },
+  pt:{
+    nav_about:'Sobre',nav_feed:'Matilha',nav_finder:'Pack Finder',nav_gallery:'Galeria',nav_memory:'Memória',nav_newsletter:'Newsletter',nav_privacy:'Privacidade',nav_enter:'Entrar',nav_join:'Juntar',
+    hero_eyebrow:'Rede Social Therian Global',hero_body1:'Sua pele mente. Seu instinto não.',hero_body2:'Há uma batida que não segue o ritmo da cidade; uma essência antiga habitando um corpo que parece pequeno demais.',hero_body3:'Social Link Life',hero_body4:' — onde sua identidade humana e verdade animal finalmente se conectam.',hero_cta1:'Entrar na Matilha',hero_cta2:'Junte-se ao Newsletter',scroll_down:'Descer',
+    essence_label:'✦ Essência do Dia',online_label:'na matilha',
+    compass_label:'Essências Online',compass_h:'A',compass_hb:'Bússola',compass_hc:'da Matilha',compass_desc:'Distribuição de espécies conectadas agora. Cada ponto é uma alma.',
+    mood_label:'Seu Shift Hoje',
+    feed_label:'Muro de Essência',feed_h:'Feed da',feed_hb:'Matilha',feed_sub:'Compartilhe texto, links do TikTok ou Instagram. Cada post vive 24h.',feed_empty:'A floresta está em silêncio. Seja o primeiro a uivar hoje.',
+    preview_label:'Pré-visualização ao vivo',preview_clear:'Remover',post_btn:'Uivar ΘΔ',
+    pf_label:'Matilha Local',pf_h:'Pack Finder',pf_desc:'Encontre therians registrados na sua cidade ou país.',pf_ph_country:'País...',pf_ph_city:'Cidade (opcional)...',pf_search:'Buscar',pf_noresults:'Nenhum therian encontrado nessa área (ainda).',
+    what_label:'A Verdade',what_h:'O que significa ser',what_p1:'Não é roleplay. É o peso de uma cauda que não está lá.',what_p2:'Aqui respiramos nossa natureza em comunidade.',what_p3:'Sem algoritmos. Sem ruído. Só a matilha.',what_cta:'Ver Feed',
+    pillars_label:'Sua Espécie',pillars_h:'A',pillars_hb:'Matilha',pillars_hc:'é diversa',pillars_sub:'Lobos, raposas, equinos, aves — cada essência tem sua história.',
+    p1_name:'Caninos & Lobos',p1_desc:'O instinto de matilha, lealdade sem limites.',p2_name:'Raposas & Vulpinos',p2_desc:'Inteligência aguçada, adaptabilidade infinita.',p3_name:'Equinos & Cavalos',p3_desc:'Liberdade que não cabe em quatro paredes.',p4_name:'Outras Essências',p4_desc:'Aves, ursos, felinos, criaturas míticas.',
+    gallery_label:'A Matilha em Imagens',gallery_h:'Somos',gallery_hb:'reais',
+    pack_label:'O Código',pack_h:'Respeito &',pack_hb:'Tribo',pack_p1:'A matilha se constrói no respeito.',pack_p2:'Zero imagens no servidor. Sua privacidade é sagrada.',pack_cta:'Juntar à Matilha',
+    rule1_t:'Respeito Total',rule1_d:'Cada espécie, cada shift é válido.',rule2_t:'Privacidade Sagrada',rule2_d:'Zero imagens. Seus dados não são o produto.',rule3_t:'Espaço Autêntico',rule3_d:'Sem algoritmos. Sem publicidade.',
+    mem_label:'Posts Salvos',mem_h:'Memória da Floresta',mem_sub:'Salve posts que ressoem. Esta memória não é apagada.',
+    footer_brand:'O refúgio digital onde identidade animal e verdade humana coexistem.',footer_nav:'Navegar',footer_home:'Início',footer_feed:'Feed',footer_gallery:'Galeria',footer_finder:'Pack Finder',footer_community:'Comunidade',footer_newsletter:'Newsletter',footer_code:'Código Matilha',footer_memory:'Memória',footer_legal:'Legal',footer_privacy:'Política de Privacidade',footer_cookies:'Cookies',footer_terms:'Termos',footer_copy:'Todos os instintos reservados',
+    tab_login:'Entrar',tab_register:'Criar Conta',field_nick:'NickName',field_email:'Email',field_name:'Nome',field_surname:'Sobrenome',field_birthyear:'Ano de Nascimento',field_country:'País',field_city:'Cidade',field_species:'Sua Espécie',btn_login:'Entrar na Matilha',btn_register:'Juntar',switch_register:'Sem conta? ',switch_login:'Já tem conta? ',logout:'Sair',
+    toast_posted:'Uivo enviado à matilha!',toast_saved:'Salvo na Memória da Floresta',toast_unsaved:'Removido da Memória',toast_nick_taken:'NickName já em uso',toast_age_invalid:'Você deve ter pelo menos 16 anos',toast_reg_ok:'Bem-vindo à matilha!',toast_login_ok:'De volta à matilha!',toast_mod:'Conteúdo proibido detectado',toast_howled:'Uivo!',
+    reset_in:'Reset em',mood_count_pre:'',mood_count_suf:' therians neste shift hoje',
+  },
+  fr:{
+    nav_about:'À propos',nav_feed:'Meute',nav_finder:'Pack Finder',nav_gallery:'Galerie',nav_memory:'Mémoire',nav_newsletter:'Newsletter',nav_privacy:'Confidentialité',nav_enter:'Entrer',nav_join:'Rejoindre',
+    hero_eyebrow:'Réseau Social Therian Mondial',hero_body1:'Ta peau ment. Ton instinct non.',hero_body2:'Il y a un battement qui ne suit pas le rythme de la ville; une essence ancienne habitant un corps trop petit.',hero_body3:'Social Link Life',hero_body4:' — où ton identité humaine et ta vérité animale se connectent enfin.',hero_cta1:'Rejoindre la Meute',hero_cta2:'Newsletter',scroll_down:'Descendre',
+    essence_label:'✦ Essence du Jour',online_label:'dans la meute',
+    compass_label:'Essences en ligne',compass_h:'La',compass_hb:'Boussole',compass_hc:'de la Meute',compass_desc:'Distribution des espèces connectées maintenant.',
+    mood_label:'Ton Shift Aujourd\'hui',
+    feed_label:'Mur d\'Essence',feed_h:'Feed de la',feed_hb:'Meute',feed_sub:'Partage du texte, liens TikTok ou Instagram. Chaque post vit 24h.',feed_empty:'La forêt est silencieuse. Sois le premier à hurler.',
+    preview_label:'Aperçu en direct',preview_clear:'Supprimer',post_btn:'Hurler ΘΔ',
+    pf_label:'Meute Locale',pf_h:'Pack Finder',pf_desc:'Trouve des thérians dans ta ville ou ton pays.',pf_ph_country:'Pays...',pf_ph_city:'Ville (optionnel)...',pf_search:'Chercher',pf_noresults:'Aucun thérian trouvé dans cette zone (encore).',
+    what_label:'La Vérité',what_h:'Qu\'est-ce qu\'être',what_p1:'Ce n\'est pas un jeu de rôle.',what_p2:'Ici nous respirons notre nature en communauté.',what_p3:'Sans algorithmes. Sans bruit. Juste la meute.',what_cta:'Voir le Feed',
+    pillars_label:'Ton Espèce',pillars_h:'La',pillars_hb:'Meute',pillars_hc:'est diverse',pillars_sub:'Loups, renards, équidés, oiseaux — chaque essence a son histoire.',
+    p1_name:'Canidés & Loups',p1_desc:'L\'instinct de meute, loyauté sans limites.',p2_name:'Renards & Vulpins',p2_desc:'Intelligence vive, adaptabilité infinie.',p3_name:'Équidés & Chevaux',p3_desc:'Liberté qui ne tient pas en quatre murs.',p4_name:'Autres Essences',p4_desc:'Oiseaux, ours, félins, créatures mythiques.',
+    gallery_label:'La Meute en Images',gallery_h:'Nous sommes',gallery_hb:'réels',
+    pack_label:'Le Code',pack_h:'Respect &',pack_hb:'Tribu',pack_p1:'La meute se construit sur le respect.',pack_p2:'Zéro images sur le serveur.',pack_cta:'Rejoindre la Meute',
+    rule1_t:'Respect Total',rule1_d:'Chaque espèce, chaque shift est valide.',rule2_t:'Confidentialité Sacrée',rule2_d:'Zéro images. Tes données ne sont pas le produit.',rule3_t:'Espace Authentique',rule3_d:'Sans algorithmes. Sans publicité.',
+    mem_label:'Posts Sauvegardés',mem_h:'Mémoire de la Forêt',mem_sub:'Sauvegarde des posts qui résonnent.',
+    footer_brand:'Le refuge numérique où identité animale et vérité humaine coexistent.',footer_nav:'Navigation',footer_home:'Accueil',footer_feed:'Feed',footer_gallery:'Galerie',footer_finder:'Pack Finder',footer_community:'Communauté',footer_newsletter:'Newsletter',footer_code:'Code Meute',footer_memory:'Mémoire',footer_legal:'Légal',footer_privacy:'Politique de Confidentialité',footer_cookies:'Cookies',footer_terms:'Conditions',footer_copy:'Tous les instincts réservés',
+    tab_login:'Entrer',tab_register:'Créer un Compte',field_nick:'NickName',field_email:'Email',field_name:'Prénom',field_surname:'Nom',field_birthyear:'Année de Naissance',field_country:'Pays',field_city:'Ville',field_species:'Ton Espèce',btn_login:'Entrer dans la Meute',btn_register:'Rejoindre',switch_register:'Pas de compte? ',switch_login:'Déjà un compte? ',logout:'Déconnexion',
+    toast_posted:'Hurlement envoyé!',toast_saved:'Sauvegardé en Mémoire',toast_unsaved:'Supprimé de la Mémoire',toast_nick_taken:'NickName déjà utilisé',toast_age_invalid:'Tu dois avoir au moins 16 ans',toast_reg_ok:'Bienvenue dans la meute!',toast_login_ok:'De retour dans la meute!',toast_mod:'Contenu interdit détecté',toast_howled:'Hurlement!',
+    reset_in:'Reset dans',mood_count_pre:'',mood_count_suf:' thérians dans ce shift aujourd\'hui',
+  },
+  de:{
+    nav_about:'Über uns',nav_feed:'Rudel',nav_finder:'Pack Finder',nav_gallery:'Galerie',nav_memory:'Erinnerung',nav_newsletter:'Newsletter',nav_privacy:'Datenschutz',nav_enter:'Einloggen',nav_join:'Beitreten',
+    hero_eyebrow:'Globales Therian Soziales Netzwerk',hero_body1:'Deine Haut lügt. Dein Instinkt nicht.',hero_body2:'Es gibt einen Herzschlag, der nicht dem Stadtrhythmus folgt.',hero_body3:'Social Link Life',hero_body4:' — wo deine menschliche Identität und tierische Wahrheit sich endlich verbinden.',hero_cta1:'Ins Rudel',hero_cta2:'Newsletter',scroll_down:'Runterscrollen',
+    essence_label:'✦ Tagesessenz',online_label:'im Rudel',
+    compass_label:'Online Essenzen',compass_h:'Der',compass_hb:'Kompass',compass_hc:'des Rudels',compass_desc:'Artenverteilung gerade jetzt verbunden.',
+    mood_label:'Dein Shift Heute',
+    feed_label:'Essenzmauer',feed_h:'Rudel',feed_hb:'Feed',feed_sub:'Text, TikTok oder Instagram Links teilen. Jeder Post lebt 24h.',feed_empty:'Der Wald schweigt. Sei der Erste der heute heult.',
+    preview_label:'Live-Vorschau',preview_clear:'Entfernen',post_btn:'Heulen ΘΔ',
+    pf_label:'Lokales Rudel',pf_h:'Pack Finder',pf_desc:'Finde registrierte Therians in deiner Stadt oder deinem Land.',pf_ph_country:'Land...',pf_ph_city:'Stadt (optional)...',pf_search:'Suchen',pf_noresults:'Keine Therians in diesem Gebiet gefunden (noch).',
+    what_label:'Die Wahrheit',what_h:'Was bedeutet es,',what_p1:'Es ist kein Rollenspiel.',what_p2:'Hier atmen wir unsere Natur in der Gemeinschaft.',what_p3:'Keine Algorithmen. Kein Lärm. Nur das Rudel.',what_cta:'Feed ansehen',
+    pillars_label:'Deine Spezies',pillars_h:'Das',pillars_hb:'Rudel',pillars_hc:'ist vielfältig',pillars_sub:'Wölfe, Füchse, Equiden, Vögel — jede Essenz hat ihre Geschichte.',
+    p1_name:'Hunde & Wölfe',p1_desc:'Rudelinstinkt, grenzenlose Loyalität.',p2_name:'Füchse & Vulpine',p2_desc:'Scharfe Intelligenz, unendliche Anpassungsfähigkeit.',p3_name:'Equiden & Pferde',p3_desc:'Freiheit, die nicht in vier Wände passt.',p4_name:'Andere Essenzen',p4_desc:'Vögel, Bären, Katzenartige, mythische Wesen.',
+    gallery_label:'Das Rudel in Bildern',gallery_h:'Wir sind',gallery_hb:'real',
+    pack_label:'Der Kodex',pack_h:'Respekt &',pack_hb:'Stamm',pack_p1:'Das Rudel baut auf Respekt.',pack_p2:'Null Bilder auf dem Server.',pack_cta:'Dem Rudel beitreten',
+    rule1_t:'Totaler Respekt',rule1_d:'Jede Spezies, jeder Shift ist gültig.',rule2_t:'Heilige Privatsphäre',rule2_d:'Null Bilder. Deine Daten sind kein Produkt.',rule3_t:'Authentischer Raum',rule3_d:'Keine Algorithmen. Keine Werbung.',
+    mem_label:'Gespeicherte Posts',mem_h:'Walderinnerung',mem_sub:'Speichere Posts die resonieren.',
+    footer_brand:'Die digitale Zuflucht wo tierische Identität und menschliche Wahrheit koexistieren.',footer_nav:'Navigation',footer_home:'Start',footer_feed:'Feed',footer_gallery:'Galerie',footer_finder:'Pack Finder',footer_community:'Gemeinschaft',footer_newsletter:'Newsletter',footer_code:'Rudel Kodex',footer_memory:'Erinnerung',footer_legal:'Rechtliches',footer_privacy:'Datenschutzerklärung',footer_cookies:'Cookies',footer_terms:'Nutzungsbedingungen',footer_copy:'Alle Instinkte vorbehalten',
+    tab_login:'Einloggen',tab_register:'Konto erstellen',field_nick:'NickName',field_email:'Email',field_name:'Vorname',field_surname:'Nachname',field_birthyear:'Geburtsjahr',field_country:'Land',field_city:'Stadt',field_species:'Deine Spezies',btn_login:'Ins Rudel',btn_register:'Beitreten',switch_register:'Kein Konto? ',switch_login:'Schon ein Konto? ',logout:'Abmelden',
+    toast_posted:'Heulen ans Rudel gesendet!',toast_saved:'In Walderinnerung gespeichert',toast_unsaved:'Aus Erinnerung entfernt',toast_nick_taken:'NickName bereits vergeben',toast_age_invalid:'Du musst mindestens 16 Jahre alt sein',toast_reg_ok:'Willkommen im Rudel!',toast_login_ok:'Zurück im Rudel!',toast_mod:'Verbotener Inhalt erkannt',toast_howled:'Heulen!',
+    reset_in:'Reset in',mood_count_pre:'',mood_count_suf:' Therians in diesem Shift heute',
+  },
+  ja:{
+    nav_about:'について',nav_feed:'群れ',nav_finder:'パック検索',nav_gallery:'ギャラリー',nav_memory:'メモリー',nav_newsletter:'ニュースレター',nav_privacy:'プライバシー',nav_enter:'ログイン',nav_join:'参加',
+    hero_eyebrow:'グローバルシリアンソーシャルネットワーク',hero_body1:'肌は嘘をつく。本能は嘘をつかない。',hero_body2:'都市のリズムに従わない鼓動がある。',hero_body3:'Social Link Life',hero_body4:' — あなたの人間としてのアイデンティティと動物としての真実がついに繋がる場所。',hero_cta1:'群れに入る',hero_cta2:'ニュースレター',scroll_down:'スクロール',
+    essence_label:'✦ 今日の本質',online_label:'が群れにいる',
+    compass_label:'オンラインの本質',compass_h:'群れの',compass_hb:'コンパス',compass_hc:'',compass_desc:'今つながっている種の分布。',
+    mood_label:'今日のシフト',
+    feed_label:'本質の壁',feed_h:'群れの',feed_hb:'フィード',feed_sub:'テキスト、TikTokまたはInstagramのリンクを共有。各投稿は24時間生きる。',feed_empty:'森は静かだ。今日最初に吠えよう。',
+    preview_label:'ライブプレビュー',preview_clear:'削除',post_btn:'遠吠え ΘΔ',
+    pf_label:'地元の群れ',pf_h:'パック検索',pf_desc:'あなたの都市や国に登録されたシリアンを見つける。',pf_ph_country:'国...',pf_ph_city:'都市（任意）...',pf_search:'検索',pf_noresults:'そのエリアにシリアンが見つかりません（まだ）。',
+    what_label:'真実',what_h:'True Therianとは',what_p1:'ロールプレイではない。',what_p2:'ここでは自然を共同体として呼吸する。',what_p3:'アルゴリズムなし。雑音なし。群れだけ。',what_cta:'フィードを見る',
+    pillars_label:'あなたの種',pillars_h:'群れは',pillars_hb:'多様',pillars_hc:'だ',pillars_sub:'狼、キツネ、馬、鳥 — すべての本質に歴史がある。',
+    p1_name:'カニード & オオカミ',p1_desc:'群れの本能、限りない忠誠心。',p2_name:'キツネ & ヴァルピン',p2_desc:'鋭い知性、無限の適応力。',p3_name:'馬科 & 馬',p3_desc:'四つの壁に収まらない自由。',p4_name:'他の本質',p4_desc:'鳥、熊、ネコ科、神話の生き物。',
+    gallery_label:'群れの画像',gallery_h:'私たちは',gallery_hb:'リアル',
+    pack_label:'コード',pack_h:'尊重 &',pack_hb:'部族',pack_p1:'群れはリスペクトの上に成り立つ。',pack_p2:'サーバーに画像なし。プライバシーは神聖。',pack_cta:'群れに参加',
+    rule1_t:'完全な尊重',rule1_d:'すべての種、すべてのシフトは有効。',rule2_t:'神聖なプライバシー',rule2_d:'画像なし。データは商品ではない。',rule3_t:'本物のスペース',rule3_d:'アルゴリズムなし。広告なし。',
+    mem_label:'保存した投稿',mem_h:'森のメモリー',mem_sub:'共鳴する投稿を保存。このメモリーは削除されない。',
+    footer_brand:'動物のアイデンティティと人間の真実が共存するデジタルな隠れ家。',footer_nav:'ナビゲート',footer_home:'ホーム',footer_feed:'フィード',footer_gallery:'ギャラリー',footer_finder:'パック検索',footer_community:'コミュニティ',footer_newsletter:'ニュースレター',footer_code:'群れのコード',footer_memory:'メモリー',footer_legal:'法律',footer_privacy:'プライバシーポリシー',footer_cookies:'クッキー',footer_terms:'利用規約',footer_copy:'全本能予約済',
+    tab_login:'ログイン',tab_register:'アカウント作成',field_nick:'ニックネーム',field_email:'メール',field_name:'名',field_surname:'姓',field_birthyear:'生年',field_country:'国',field_city:'都市',field_species:'あなたの種',btn_login:'群れに入る',btn_register:'参加',switch_register:'アカウントなし? ',switch_login:'すでにアカウントあり? ',logout:'ログアウト',
+    toast_posted:'群れに遠吠えを送った！',toast_saved:'森のメモリーに保存',toast_unsaved:'メモリーから削除',toast_nick_taken:'そのニックネームは既に使用されています',toast_age_invalid:'16歳以上でなければなりません',toast_reg_ok:'群れへようこそ！',toast_login_ok:'群れに戻った！',toast_mod:'禁止コンテンツが検出されました',toast_howled:'遠吠え！',
+    reset_in:'リセット残り',mood_count_pre:'今日この',mood_count_suf:'シフトのシリアン',
+  }
+};
+
+let curLang=localStorage.getItem('tt_lang')||'es';
+function t(k){return(LANGS[curLang]&&LANGS[curLang][k])||LANGS.es[k]||k}
+function applyLang(){
+  document.documentElement.lang=curLang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(LANGS[curLang]&&LANGS[curLang][k])el.textContent=LANGS[curLang][k]});
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{const k=el.dataset.i18nPh;if(LANGS[curLang]&&LANGS[curLang][k])el.placeholder=LANGS[curLang][k]});
+  document.getElementById('langCurrent').textContent=curLang.toUpperCase();
+  document.querySelectorAll('.lang-opt').forEach(b=>{b.classList.toggle('active',b.textContent.toLowerCase().includes(curLang))});
+  renderFeed();renderMemoria();renderCompass();updateMoodCount();updateFeedTimer();
+}
+function setLang(l){curLang=l;localStorage.setItem('tt_lang',l);applyLang();closeLangDropdown();showToast(({es:'Idioma cambiado',en:'Language changed',pt:'Idioma alterado',fr:'Langue changée',de:'Sprache geändert',ja:'言語変更'})[l]||'OK')}
+function toggleLang(){document.getElementById('langDropdown').classList.toggle('open')}
+function closeLangDropdown(){document.getElementById('langDropdown').classList.remove('open')}
+document.addEventListener('click',e=>{if(!e.target.closest('#langBtn')&&!e.target.closest('#langDropdown'))closeLangDropdown()});
+
+/* ── NAV ── */
+const navEl=document.getElementById('nav');
+window.addEventListener('scroll',()=>navEl.classList.toggle('scrolled',window.scrollY>60));
+function toggleNav(){document.getElementById('navLinks').classList.toggle('open')}
+function closeNav(){document.getElementById('navLinks').classList.remove('open')}
+
+/* ── REVEAL ── */
+const revObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('v'),parseInt(e.target.dataset.delay||0));revObs.unobserve(e.target)}})},{threshold:.1});
+document.querySelectorAll('.rv,.rv-l,.rv-r').forEach(el=>revObs.observe(el));
+
+/* ── TOAST ── */
+let toastTimer;
+function showToast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast'+(type?' '+type:'');
+  clearTimeout(toastTimer);
+  requestAnimationFrame(()=>el.classList.add('show'));
+  toastTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+/* ── ONLINE COUNTER ── */
+let onlineN=47;
+(function tick(){onlineN=Math.max(28,Math.min(130,onlineN+Math.floor(Math.random()*6)-2));
+document.getElementById('onlineCount').textContent=onlineN;
+setTimeout(tick,Math.random()*12000+6000)})();
+
+/* ── DAILY ESSENCE ── */
+const ESSENCES={
+  es:['El instinto no necesita explicación. Solo expresión.','Hoy, escucha lo que tu especie tiene que decirte.','Tu cuerpo humano es el traje. Tu alma es el animal.','Aúlla al cielo aunque nadie escuche. El bosque te oye.','La manada no juzga la esencia. Te recibe.','Ser therian no es una fase. Es una frecuencia.','El shift no es un error. Es un despertar.','Hoy camina con las cuatro patas que lleva dentro.','Tu instinto es más antiguo que cualquier norma social.','La selva siempre fue tuya.'],
+  en:['Instinct needs no explanation. Only expression.','Today, listen to what your species has to tell you.','Your human body is the suit. Your soul is the animal.','Howl at the sky even if no one listens. The forest hears you.','The pack does not judge essence. It welcomes you.','Being therian is not a phase. It is a frequency.','The shift is not an error. It is an awakening.','Walk today on the four paws you carry inside.','Your instinct is older than any social norm.','The wild was always yours.'],
+  pt:['O instinto não precisa de explicação. Apenas expressão.','Hoje, ouça o que sua espécie tem a dizer.','Seu corpo humano é o traje. Sua alma é o animal.','Uive ao céu mesmo que ninguém ouça.','A matilha não julga a essência. Ela te recebe.','Ser therian não é uma fase. É uma frequência.','O shift não é um erro. É um despertar.','A floresta sempre foi sua.','Caminhe hoje nas quatro patas que você carrega dentro.','Seu instinto é mais antigo que qualquer norma social.'],
+  fr:['L\'instinct n\'a pas besoin d\'explication. Seulement d\'expression.','Aujourd\'hui, écoute ce que ton espèce a à te dire.','Ton corps humain est le costume. Ton âme est l\'animal.','Hurle au ciel même si personne n\'écoute.','La meute ne juge pas l\'essence. Elle t\'accueille.','Être thérian n\'est pas une phase. C\'est une fréquence.','Le shift n\'est pas une erreur. C\'est un éveil.','La forêt t\'a toujours appartenu.','Marche aujourd\'hui sur les quatre pattes que tu portes en toi.','Ton instinct est plus ancien que toute norme sociale.'],
+  de:['Der Instinkt braucht keine Erklärung. Nur Ausdruck.','Höre heute auf das, was deine Spezies dir zu sagen hat.','Dein menschlicher Körper ist der Anzug. Deine Seele ist das Tier.','Heule den Himmel an, auch wenn niemand zuhört.','Das Rudel beurteilt keine Essenz. Es empfängt dich.','Therian zu sein ist keine Phase. Es ist eine Frequenz.','Der Shift ist kein Fehler. Er ist ein Erwachen.','Der Wald gehörte dir immer.','Gehe heute auf den vier Pfoten, die du in dir trägst.','Dein Instinkt ist älter als jede soziale Norm.'],
+  ja:['本能は説明を必要としない。表現だけが必要だ。','今日、あなたの種が何を伝えようとしているか聞こう。','人間の体は衣装だ。魂は動物だ。','誰も聞いていなくても、空に向かって吠えよ。森が聞いている。','群れは本質を判断しない。受け入れる。','シリアンであることは段階ではない。それは周波数だ。','シフトは間違いではない。目覚めだ。','森はいつもあなたのものだった。','中に宿る四本の足で今日を歩もう。','あなたの本能はどんな社会規範よりも古い。']
+};
+function getDailyEssence(){
+  // Determina el día por hora Barcelona (UTC+1/+2)
+  const now=new Date();
+  const bcn=new Date(now.toLocaleString('en-US',{timeZone:'Europe/Madrid'}));
+  const dayIdx=Math.floor((bcn.getFullYear()*1000+bcn.getMonth()*31+bcn.getDate()))%10;
+  const list=ESSENCES[curLang]||ESSENCES.es;
+  return list[dayIdx%list.length];
+}
+function updateFeedTimer(){
+  const now=new Date();
+  const bcn=new Date(now.toLocaleString('en-US',{timeZone:'Europe/Madrid'}));
+  let next5=new Date(bcn);
+  next5.setHours(5,0,0,0);
+  if(bcn.getHours()>=5)next5.setDate(next5.getDate()+1);
+  const diff=next5-bcn;
+  const h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+  const el=document.getElementById('feedTimer');
+  if(el)el.innerHTML=`${t('reset_in')}: <em>${h}h ${m}m ${s}s</em>`;
+}
+function checkFeedReset(){
+  const now=new Date();
+  const bcn=new Date(now.toLocaleString('en-US',{timeZone:'Europe/Madrid'}));
+  const today=`${bcn.getFullYear()}-${bcn.getMonth()}-${bcn.getDate()}`;
+  const lastDay=localStorage.getItem('tt_feed_day');
+  const bcnH=bcn.getHours();
+  if(lastDay!==today&&bcnH>=5){
+    localStorage.setItem('tt_feed_day',today);
+    const posts=JSON.parse(localStorage.getItem('tt_posts')||'[]');
+    // Mantener 3 días de posts (72h) para más contenido
+    const cutoff=Date.now()-72*3600*1000;
+    const kept=posts.filter(p=>p.ts>cutoff);
+    localStorage.setItem('tt_posts',JSON.stringify(kept));
+  }
+}
+setInterval(updateFeedTimer,1000);
+
+/* ── MODERATION ── */
+const BAD_WORDS=[
+  // ES
+  'puta','puto','coño','joder','mierda','hostia','gilipollas','imbécil','idiota','estúpido','maricón','negrata','nazi','porno','sexo','follar','correrse','coger','culero','pendejo','chinga','cabron','hdp','verga','pene','vagina','tetas','culo','nudes','nude',
+  // EN
+  'fuck','shit','asshole','bitch','cunt','nigger','faggot','retard','pussy','dick','cock','porn','sex','nude','kill','rape','slut','whore','bastard',
+  // PT
+  'merda','porra','caralho','viado','buceta','putain',
+  // FR
+  'merde','putain','connard','salope','nique','enculer',
+  // DE
+  'scheiße','wichser','hurensohn','fotze','arschloch','dummkopf',
+  // JA - common slurs
+  'バカ','死ね','クソ','ファック'
+];
+const BAD_DOMAINS=['onlyfans','pornhub','xvideos','xnxx','redtube','xhamster','youporn','brazzers','sex.com','porn.com','adult','xxx'];
+function containsBad(text){
+  const low=text.toLowerCase();
+  return BAD_WORDS.some(w=>low.includes(w))||BAD_DOMAINS.some(d=>low.includes(d));
+}
+
+/* ── EMBED ── */
+function buildSrc(url){
+  url=(url||'').trim();
+  if(BAD_DOMAINS.some(d=>url.toLowerCase().includes(d)))return'BLOCKED';
+  if(url.includes('tiktok.com')){const m=url.match(/video\/(\d+)/);return m?`https://www.tiktok.com/embed/v2/${m[1]}`:''}
+  if(url.includes('instagram.com')){const m=url.match(/\/(p|reel|tv)\/([A-Za-z0-9_-]+)/);return m?`https://www.instagram.com/${m[1]}/${m[2]}/embed/`:''}
+  return'';
+}
+function previewEmbed(val){
+  const src=buildSrc(val);
+  const wrap=document.getElementById('embedPreview');
+  if(src==='BLOCKED'){showToast(t('toast_mod'),'err');wrap.style.display='none';document.getElementById('embedUrl').value='';return}
+  if(src){document.getElementById('previewFrame').src=src;wrap.style.display='block'}
+  else{wrap.style.display='none';if(document.getElementById('previewFrame'))document.getElementById('previewFrame').src=''}
+}
+function clearEmbed(){
+  document.getElementById('embedUrl').value='';
+  document.getElementById('embedPreview').style.display='none';
+  document.getElementById('previewFrame').src='';
+}
+
+/* ── CHAR COUNT ── */
+function updateCharCount(){
+  const n=document.getElementById('postText').value.length;
+  const el=document.getElementById('charCount');
+  if(el){el.textContent=`${n} / 500`;el.className='char-count'+(n>450?' warn':'')+(n>=500?' over':'')}
+}
+
+/* ── TAG ── */
+let activeTag='Shifts';
+function selectTag(btn){document.querySelectorAll('.tag-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');activeTag=btn.dataset.tag}
+
+/* ── MOOD ── */
+let currentMood='';
+function setMood(btn){
+  document.querySelectorAll('.mood-opt').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentMood=btn.dataset.mood;
+  const stored=JSON.parse(localStorage.getItem('tt_moods')||'{}');
+  const today=new Date().toDateString();
+  if(!stored[today])stored[today]={};
+  stored[today][currentMood]=(stored[today][currentMood]||0)+1;
+  // Keep only today
+  Object.keys(stored).filter(k=>k!==today).forEach(k=>delete stored[k]);
+  localStorage.setItem('tt_moods',JSON.stringify(stored));
+  updateMoodCount();
+  if(window.currentUser)window.currentUser.mood=currentMood;
+}
+function updateMoodCount(){
+  const stored=JSON.parse(localStorage.getItem('tt_moods')||'{}');
+  const today=new Date().toDateString();
+  const el=document.getElementById('moodCount');
+  if(!el)return;
+  if(stored[today]&&currentMood){
+    const c=stored[today][currentMood]||0;
+    el.textContent=`${t('mood_count_pre')}${c}${t('mood_count_suf')}`;
+  } else el.textContent='';
+}
+
+/* ── USERS (localStorage) ── */
+function getUsers(){return JSON.parse(localStorage.getItem('tt_users')||'[]')}
+function saveUsers(u){localStorage.setItem('tt_users',JSON.stringify(u))}
+function getSession(){return JSON.parse(localStorage.getItem('tt_session')||'null')}
+function saveSession(u){localStorage.setItem('tt_session',JSON.stringify(u));window.currentUser=u}
+function clearSession(){localStorage.removeItem('tt_session');window.currentUser=null}
+
+window.currentUser=getSession();
+
+function updateUserBtn(){
+  const u=window.currentUser;
+  const btn=document.getElementById('userBtn');
+  const lbl=document.getElementById('userBtnLabel');
+  if(u){btn.classList.add('logged');lbl.textContent=u.nick;document.getElementById('cAvatar').textContent=u.nick[0].toUpperCase()}
+  else{btn.classList.remove('logged');lbl.setAttribute('data-i18n','nav_enter');lbl.textContent=t('nav_enter');document.getElementById('cAvatar').textContent='ΘΔ'}
+}
+
+function openUserModal(){
+  document.getElementById('userModal').classList.add('open');
+  const u=window.currentUser;
+  if(u){
+    document.getElementById('modalLogged').style.display='block';
+    document.getElementById('modalAuth').style.display='none';
+    document.getElementById('pcAv').textContent=u.nick[0].toUpperCase();
+    document.getElementById('pcNick').textContent=u.nick;
+    document.getElementById('pcSpecies').textContent=u.species?`${getSpeciesEmoji(u.species)} ${u.species}`:'';
+    document.getElementById('pcLoc').textContent=`📍 ${u.city}, ${u.country}`;
+    document.getElementById('pcAge').textContent=`${new Date().getFullYear()-u.year} años`;
+  } else {
+    document.getElementById('modalLogged').style.display='none';
+    document.getElementById('modalAuth').style.display='block';
+  }
+}
+function closeUserModal(){document.getElementById('userModal').classList.remove('open')}
+document.getElementById('userModal').addEventListener('click',function(e){if(e.target===this)closeUserModal()});
+
+function switchTab(t){
+  document.getElementById('loginPanel').style.display=t==='login'?'block':'none';
+  document.getElementById('registerPanel').style.display=t==='register'?'block':'none';
+  document.getElementById('tabLogin').classList.toggle('active',t==='login');
+  document.getElementById('tabReg').classList.toggle('active',t==='register');
+}
+
+function checkNick(v){
+  const hint=document.getElementById('nickHint');
+  if(!v){hint.textContent='';hint.className='mfield-hint';return}
+  if(!/^[a-zA-Z0-9_]{3,30}$/.test(v)){hint.textContent='Solo letras, números y _ (3-30 chars)';hint.className='mfield-hint error';return}
+  if(containsBad(v)){hint.textContent='NickName no permitido';hint.className='mfield-hint error';return}
+  const taken=getUsers().some(u=>u.nick.toLowerCase()===v.toLowerCase());
+  if(taken){hint.textContent=t('toast_nick_taken');hint.className='mfield-hint error'}
+  else{hint.textContent='✓ Disponible';hint.className='mfield-hint ok'}
+}
+function checkAge(yr){
+  const hint=document.getElementById('ageHint');
+  if(!yr){hint.textContent='';return}
+  const age=new Date().getFullYear()-parseInt(yr);
+  if(age<16){hint.textContent=t('toast_age_invalid');hint.className='mfield-hint error'}
+  else if(age>120){hint.textContent='Año no válido';hint.className='mfield-hint error'}
+  else{hint.textContent=`✓ ${age} años`;hint.className='mfield-hint ok'}
+}
+
+let regSpecies='';
+function pickRegSp(btn){document.querySelectorAll('.sp-chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');regSpecies=btn.dataset.sp}
+
+function doRegister(){
+  const nick=document.getElementById('regNick').value.trim();
+  const name=document.getElementById('regName').value.trim();
+  const surname=document.getElementById('regSurname').value.trim();
+  const yr=parseInt(document.getElementById('regYear').value);
+  const country=document.getElementById('regCountry').value.trim();
+  const city=document.getElementById('regCity').value.trim();
+  const email=document.getElementById('regEmail').value.trim();
+  const err=document.getElementById('regErr');
+  const showErr=(m)=>{err.textContent=m;err.classList.add('show')};
+  err.classList.remove('show');
+  if(!nick||!name||!surname||!yr||!country||!city||!email){showErr('Completa todos los campos obligatorios');return}
+  if(!/^[a-zA-Z0-9_]{3,30}$/.test(nick)){showErr('Nick inválido: solo letras, números y _');return}
+  if(containsBad(nick)){showErr('NickName no permitido');return}
+  const age=new Date().getFullYear()-yr;
+  if(age<16){showErr(t('toast_age_invalid'));return}
+  if(age>120){showErr('Año de nacimiento inválido');return}
+  const users=getUsers();
+  if(users.some(u=>u.nick.toLowerCase()===nick.toLowerCase())){showErr(t('toast_nick_taken'));return}
+  const user={nick,name,surname,year:yr,country,city,email,species:regSpecies,joined:Date.now()};
+  users.push(user);saveUsers(users);
+  saveSession(user);window.currentUser=user;
+  updateUserBtn();closeUserModal();showToast(t('toast_reg_ok'),'ok');
+  renderCompass();
+}
+function doLogin(){
+  const nick=document.getElementById('loginNick').value.trim();
+  const email=document.getElementById('loginEmail').value.trim();
+  const err=document.getElementById('loginErr');
+  err.classList.remove('show');
+  const users=getUsers();
+  const user=users.find(u=>u.nick.toLowerCase()===nick.toLowerCase()&&u.email.toLowerCase()===email.toLowerCase());
+  if(!user){err.textContent='Nick o email incorrectos';err.classList.add('show');return}
+  saveSession(user);window.currentUser=user;
+  updateUserBtn();closeUserModal();showToast(t('toast_login_ok'),'ok');
+}
+function logoutUser(){clearSession();updateUserBtn();closeUserModal();showToast('Hasta pronto')}
+
+function getSpeciesEmoji(sp){return{Lupine:'🐺',Vulpine:'🦊',Equine:'🐴',Feline:'🐱',Ursid:'🐻',Avian:'🦅',Reptile:'🦎',Mythic:'✨',Other:'❓'}[sp]||'🐾'}
+
+/* ── COMPASS ── */
+const SPECIES_COLORS={Lupine:'#7986cb',Vulpine:'#ff8a65',Equine:'#a5d6a7',Feline:'#ce93d8',Ursid:'#80cbc4',Avian:'#fff176',Reptile:'#80cbc4',Mythic:'#ffb300',Other:'#90a4ae'};
+function renderCompass(){
+  const users=getUsers();
+  const counts={};
+  users.forEach(u=>{if(u.species)counts[u.species]=(counts[u.species]||0)+1});
+  // Add simulated base counts
+  const base={Lupine:18,Vulpine:12,Equine:7,Feline:9,Ursid:4,Avian:5,Mythic:6};
+  Object.keys(base).forEach(k=>counts[k]=(counts[k]||0)+base[k]);
+  const canvas=document.getElementById('compassCanvas');if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const cx=150,cy=150,r=120;
+  ctx.clearRect(0,0,300,300);
+  const total=Object.values(counts).reduce((a,b)=>a+b,0);
+  let angle=-Math.PI/2;
+  const legend=document.getElementById('compassLegend');
+  if(legend)legend.innerHTML='';
+  Object.entries(counts).forEach(([sp,n])=>{
+    const slice=2*Math.PI*(n/total);
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,angle,angle+slice);ctx.closePath();
+    ctx.fillStyle=SPECIES_COLORS[sp]||'#666';ctx.fill();
+    ctx.strokeStyle='#0a0a0a';ctx.lineWidth=2;ctx.stroke();
+    angle+=slice;
+    if(legend){
+      const item=document.createElement('div');item.className='cl-item';
+      item.innerHTML=`<div class="cl-dot" style="background:${SPECIES_COLORS[sp]||'#666'}"></div><span class="cl-name">${getSpeciesEmoji(sp)} ${sp}</span><span class="cl-count">${n}</span>`;
+      legend.appendChild(item);
+    }
+  });
+  // Inner circle
+  ctx.beginPath();ctx.arc(cx,cy,50,0,2*Math.PI);
+  ctx.fillStyle='#0a0a0a';ctx.fill();
+  ctx.font='bold 18px Cinzel,serif';ctx.fillStyle='#ffb300';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('ΘΔ',cx,cy);
+}
+
+/* ── PACK FINDER ── */
+function runPackFinder(){
+  const country=document.getElementById('pfCountry').value.trim().toLowerCase();
+  const city=document.getElementById('pfCity').value.trim().toLowerCase();
+  const users=getUsers().filter(u=>{
+    const mc=u.country&&u.country.toLowerCase().includes(country);
+    const mci=!city||( u.city&&u.city.toLowerCase().includes(city));
+    return mc&&mci;
+  });
+  const wrap=document.getElementById('pfResults');
+  if(!users.length){wrap.innerHTML=`<div class="no-results">${t('pf_noresults')}</div>`;return}
+  wrap.innerHTML=users.slice(0,20).map(u=>`
+    <div class="pf-result">
+      <div class="pf-av">${u.nick[0].toUpperCase()}</div>
+      <div class="pf-info">
+        <div class="pf-nick">${u.nick} ${u.species?getSpeciesEmoji(u.species):''}</div>
+        <div class="pf-loc">📍 ${u.city}, ${u.country}</div>
+        <div class="pf-sp">${u.species||''}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ── FEED (localStorage) ── */
+function getPosts(){
+  const all=JSON.parse(localStorage.getItem('tt_posts')||'[]');
+  // Mostrar hasta 3 días (72h)
+  const cutoff=Date.now()-72*3600*1000;
+  return all.filter(p=>p.ts>cutoff).sort((a,b)=>b.ts-a.ts);
+}
+function savePosts(posts){
+  // Max 300 posts
+  const trimmed=posts.slice(0,300);
+  localStorage.setItem('tt_posts',JSON.stringify(trimmed));
+}
+function timeAgo(ts){
+  const d=Date.now()-ts,m=Math.floor(d/60000),h=Math.floor(d/3600000);
+  if(d<60000)return{es:'ahora mismo',en:'just now',pt:'agora mesmo',fr:'maintenant',de:'gerade eben',ja:'たった今'}[curLang]||'just now';
+  if(h<1)return`${m} min`;
+  if(h<24)return`${h}h`;
+  return`${Math.floor(h/24)}d`;
+}
+const SVG_H='<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+const SVG_M='<svg viewBox="0 0 24 24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18z"/></svg>';
+const SVG_BM='<svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>';
+
+function buildPostHTML(p,idx){
+  const saved=isMemSaved(p.id);
+  const isRes=p.howls>=5;
+  return`<article class="post${isRes?' resonance':''}" data-id="${p.id}" style="position:relative">
+    <button class="save-btn ${saved?'saved':''}" onclick="toggleMem('${p.id}')" title="Guardar">${SVG_BM}</button>
+    <div class="post-header">
+      <div class="post-av">${p.av}</div>
+      <div class="post-meta">
+        <div class="post-user">${p.nick}<div class="post-badges">${p.species?`<span class="badge sp">${getSpeciesEmoji(p.species)} ${p.species}</span>`:''} ${p.mood?`<span class="badge mood">${p.mood}</span>`:''}</div></div>
+        <div class="post-time">${timeAgo(p.ts)}</div>
+      </div>
+    </div>
+    ${p.body?`<div class="post-body">${p.body.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>`:''}
+    <span class="post-tag">#${p.tag}</span>
+    ${p.embedSrc?`<div class="post-embed-wrap"><iframe class="post-embed" src="${p.embedSrc}" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-popups" loading="lazy" title="embed"></iframe></div>`:''}
+    <div class="post-actions">
+      <button class="post-action ${p.howled?'howled':''}" id="howl-${p.id}" onclick="howlPost('${p.id}',this)">
+        🐺 <span>${p.howls||0}</span>
+      </button>
+      <button class="post-action">${SVG_M}<span>${p.replies||0}</span></button>
+      <button class="post-action" onclick="sharePost('${p.id}')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+        <span>{t_share}</span>
+      </button>
+    </div>
+  </article>`.replace('{t_share}',{es:'Compartir',en:'Share',pt:'Compartilhar',fr:'Partager',de:'Teilen',ja:'共有'}[curLang]||'Share');
+}
+
+function renderFeed(){
+  const posts=getPosts();
+  const wrap=document.getElementById('feedPosts');
+  const empty=document.getElementById('emptyFeed');
+  if(!posts.length){wrap.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  wrap.innerHTML=posts.map(buildPostHTML).join('');
+}
+
+function publishPost(){
+  const text=document.getElementById('postText').value.trim();
+  const url=document.getElementById('embedUrl').value.trim();
+  if(!text&&!url){showToast('Escribe algo primero','err');return}
+  if(text.length>500){showToast('Máximo 500 caracteres','err');return}
+  if(containsBad(text)||containsBad(url)){
+    const gate=document.getElementById('warnGate');
+    document.getElementById('warnMsg').textContent={es:'Contenido no permitido detectado. Por favor revisa tu publicación.',en:'Prohibited content detected. Please review your post.',pt:'Conteúdo proibido detectado.',fr:'Contenu interdit détecté.',de:'Verbotener Inhalt erkannt.',ja:'禁止コンテンツが検出されました。'}[curLang]||'Prohibited content detected.';
+    gate.style.display='block';
+    showToast(t('toast_mod'),'err');return;
+  }
+  document.getElementById('warnGate').style.display='none';
+  const src=url?buildSrc(url):'';
+  if(src==='BLOCKED'){showToast(t('toast_mod'),'err');return}
+  const u=window.currentUser;
+  const post={
+    id:'p'+Date.now()+Math.random().toString(36).slice(2,7),
+    ts:Date.now(),
+    nick:u?u.nick:'Anónimo',
+    av:u?u.nick[0].toUpperCase():'?',
+    species:u?u.species:'',
+    mood:currentMood,
+    body:text,
+    tag:activeTag,
+    embedSrc:src||'',
+    howls:0,
+    howled:false,
+    replies:0
+  };
+  const posts=getPosts();
+  posts.unshift(post);
+  savePosts(posts);
+  renderFeed();
+  document.getElementById('postText').value='';
+  clearEmbed();
+  updateCharCount();
+  showToast(t('toast_posted'),'ok');
+}
+
+function howlPost(id,btn){
+  const posts=JSON.parse(localStorage.getItem('tt_posts')||'[]');
+  const p=posts.find(x=>x.id===id);
+  if(!p)return;
+  p.howls=(p.howls||0)+1;
+  p.howled=true;
+  savePosts(posts);
+  // Burst animation
+  const rect=btn.getBoundingClientRect();
+  const burst=document.createElement('span');
+  burst.className='howl-burst';
+  burst.textContent='🐺';
+  burst.style.cssText=`left:${rect.left+window.scrollX}px;top:${rect.top+window.scrollY}px`;
+  document.body.appendChild(burst);
+  setTimeout(()=>burst.remove(),700);
+  if(p.howls>=5)renderFeed();
+  else{const sp=btn.querySelector('span');if(sp)sp.textContent=p.howls;btn.classList.add('howled')}
+  showToast(t('toast_howled'));
+}
+
+function sharePost(id){
+  const posts=getPosts();const p=posts.find(x=>x.id===id);if(!p)return;
+  const text=`${p.nick} en True Therian: "${p.body?p.body.slice(0,80):'...'}" — truetherian.com`;
+  if(navigator.share)navigator.share({title:'True Therian',text,url:window.location.href});
+  else if(navigator.clipboard)navigator.clipboard.writeText(text).then(()=>showToast('Copiado al portapapeles','ok'));
+}
+
+/* ── MEMORIA DEL BOSQUE ── */
+function getMem(){return JSON.parse(localStorage.getItem('tt_memoria')||'[]')}
+function isMemSaved(id){return getMem().includes(id)}
+function toggleMem(id){
+  let mem=getMem();
+  const posts=getPosts();
+  const p=posts.find(x=>x.id===id);
+  if(mem.includes(id)){mem=mem.filter(x=>x!==id);localStorage.setItem('tt_memoria',JSON.stringify(mem));showToast(t('toast_unsaved'))}
+  else{
+    if(p){
+      mem.unshift(id);
+      // Save post data separately so it survives feed reset
+      const saved=JSON.parse(localStorage.getItem('tt_saved_data')||'{}');
+      saved[id]=p;
+      localStorage.setItem('tt_saved_data',JSON.stringify(saved));
+    }
+    localStorage.setItem('tt_memoria',JSON.stringify(mem));showToast(t('toast_saved'),'ok');
+  }
+  renderFeed();renderMemoria();
+}
+function renderMemoria(){
+  const mem=getMem();
+  const savedData=JSON.parse(localStorage.getItem('tt_saved_data')||'{}');
+  const grid=document.getElementById('memoriaGrid');if(!grid)return;
+  if(!mem.length){grid.innerHTML=`<div class="mem-empty">${t('mem_sub')}</div>`;return}
+  grid.innerHTML=mem.map(id=>{
+    const p=savedData[id];if(!p)return'';
+    return`<div class="mem-post">
+      <button class="mem-unsave" onclick="toggleMem('${id}')">✕</button>
+      <div class="mem-nick">${getSpeciesEmoji(p.species)} ${p.nick} · <em>#${p.tag}</em></div>
+      <div class="mem-body">${(p.body||'').replace(/</g,'&lt;').slice(0,200)}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── DAILY ESSENCE ── */
+function initEssence(){
+  document.getElementById('essenceText').textContent=getDailyEssence();
+  updateFeedTimer();
+  document.getElementById('essenceReset').textContent='';
+}
+
+/* ── GHOST TYPERS ── */
+const GHOST_NAMES=['SilverWolf','ArcticFox','MoonRunner','DuskHowl','EmberPaw','StormTail','NightShade','FrostMane','IronFang','VoidPelt','ShadowStep','CinderEyes'];
+const GHOST_SP=['#Lupine','#Vulpine','#Equine','#Ursid','#Avian','#Feline'];
+const GHOST_ACTS={es:['está escribiendo algo...','está compartiendo un shift...','acaba de llegar a la manada','está respondiendo a un post...','está explorando el feed...','está guardando un recuerdo...'],en:['is writing something...','is sharing a shift...','just joined the pack','is replying to a post...','is exploring the feed...'],pt:['está escrevendo algo...','está compartilhando um shift...','acabou de chegar à matilha'],fr:['est en train d\'écrire...','partage un shift...','vient de rejoindre la meute'],de:['schreibt gerade...','teilt einen Shift...','ist gerade beigetreten'],ja:['何かを書いています...','シフトを共有しています...','群れに参加しました']};
+function spawnGhost(){
+  const gz=document.getElementById('ghostZone');if(!gz)return;
+  const n=GHOST_NAMES[Math.floor(Math.random()*GHOST_NAMES.length)];
+  const sp=GHOST_SP[Math.floor(Math.random()*GHOST_SP.length)];
+  const acts=GHOST_ACTS[curLang]||GHOST_ACTS.en;
+  const ac=acts[Math.floor(Math.random()*acts.length)];
+  const el=document.createElement('div');el.className='ghost-post';
+  el.innerHTML=`<div class="ghost-av">${n[0]}</div><div class="ghost-info"><strong>${n}</strong> <span style="color:var(--am);font-size:.6rem">${sp}</span><div style="margin-top:2px">${ac}<span class="tdots"><span></span><span></span><span></span></span></div></div>`;
+  el.style.opacity='0';gz.appendChild(el);
+  requestAnimationFrame(()=>{el.style.transition='opacity .4s';el.style.opacity='1'});
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>{if(el.parentNode)el.parentNode.removeChild(el)},500)},Math.random()*4000+3000);
+}
+setTimeout(()=>{spawnGhost();setInterval(()=>{if(Math.random()>.3)spawnGhost()},Math.random()*8000+5000)},2000);
+
+/* ── LIGHTBOX ── */
+function openLb(src){document.getElementById('lb-img').src=src;document.getElementById('lb').classList.add('open');document.body.style.overflow='hidden'}
+function closeLb(){document.getElementById('lb').classList.remove('open');document.body.style.overflow=''}
+document.getElementById('lb').addEventListener('click',function(e){if(e.target===this)closeLb()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLb();closeUserModal()}});
+
+/* ── SMOOTH SCROLL ── */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'})}})});
+
+/* ── SEED POSTS (primera vez) ── */
+function seedPosts(){
+  const existing=JSON.parse(localStorage.getItem('tt_posts')||'[]');
+  if(existing.length>0)return;
+  const now=Date.now();
+  const seeds=[
+    {id:'seed1',ts:now-3*3600000,nick:'WinterWolf',av:'W',species:'Lupine',mood:'Mental',body:'Esta noche tuve un shift mental tan intenso que tuve que salir al balcón. El viento en la cara. No necesito más que eso para recordar qué soy. 🐺',tag:'Shifts',embedSrc:'',howls:8,howled:false,replies:3},
+    {id:'seed2',ts:now-6*3600000,nick:'FoxInParis',av:'F',species:'Vulpine',mood:'Cameo',body:'Pasear por la ciudad con las orejas puestas. La gente me mira, pero yo siento que finalmente soy visible. Hay algo liberador en caminar siendo quien eres.',tag:'Gear',embedSrc:'',howls:4,howled:false,replies:7},
+    {id:'seed3',ts:now-28*3600000,nick:'EquidRunner',av:'E',species:'Equine',mood:'Feral',body:'Quadrobics en el campo esta mañana. Primera vez que mi cuerpo y mi mente estuvieron completamente alineados. Nadie que me juzgue, solo el pasto y el viento. 🐴',tag:'Quadrobics',embedSrc:'',howls:12,howled:false,replies:5},
+    {id:'seed4',ts:now-48*3600000,nick:'MythicOwl',av:'M',species:'Avian',mood:'Dream',body:'Sueño recurrente: volando sobre montañas nevadas. Cada vez más nítido. ¿Vosotros también tenéis sueños tan vívidos que se sienten más reales que la vigilia?',tag:'Reflexión',embedSrc:'',howls:6,howled:false,replies:9}
+  ];
+  localStorage.setItem('tt_posts',JSON.stringify(seeds));
+}
+
+/* ── INIT ── */
+checkFeedReset();
+seedPosts();
+initEssence();
+applyLang();
+updateUserBtn();
+renderFeed();
+renderMemoria();
+renderCompass();
+updateMoodCount();
+
+// Check reset every minute
+setInterval(()=>{checkFeedReset();updateFeedTimer()},60000);
+</script>
+</body>
+</html>

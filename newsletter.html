@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="True Therian · Únete a la Manada — Newsletter y comunidad therian.">
+<title>Únete · True Therian Newsletter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ob:#0a0a0a;--moss:#1a2421;--am:#ffb300;--am10:rgba(255,179,0,.10);--am30:rgba(255,179,0,.30);--am50:rgba(255,179,0,.50);--tp:#e8e0d0;--tm:#7a7060;--card:#111410}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--ob);color:var(--tp);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden;min-height:100vh}
+body::before{content:'ΘΔ';position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:55vw;color:rgba(26,36,33,.2);font-family:'Cinzel',serif;pointer-events:none;z-index:0;user-select:none;line-height:1}
+.fog{position:fixed;pointer-events:none;z-index:50}
+.fog.t{top:0;left:0;right:0;height:100px;background:linear-gradient(to bottom,rgba(10,10,10,.95),transparent)}
+.fog.b{bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,rgba(10,10,10,.95),transparent)}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,8,8,.97);border-bottom:1px solid rgba(255,179,0,.12);gap:12px}
+.nav-logo{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:900;letter-spacing:.1em;color:var(--am);text-decoration:none;line-height:1.2;display:inline-block;animation:heartbeat 3s ease-in-out infinite}
+.nav-logo small{display:block;font-size:.46rem;font-family:'Inter',sans-serif;font-weight:300;letter-spacing:.4em;color:var(--tm);text-transform:uppercase}
+@keyframes heartbeat{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(255,179,0,.3))}40%{transform:scale(1.05);filter:drop-shadow(0 0 22px rgba(255,179,0,.7))}55%{transform:scale(1)}70%{transform:scale(1.02);filter:drop-shadow(0 0 14px rgba(255,179,0,.5))}}
+.nav-links{display:flex;gap:1.8rem;list-style:none;align-items:center}
+.nav-links a{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tm);text-decoration:none;transition:color .3s}
+.nav-links a:hover,.nav-links a.active{color:var(--am)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.lang-btn{position:relative;background:none;border:1px solid rgba(255,179,0,.2);color:var(--tm);padding:6px 10px;cursor:pointer;font-family:'Inter',sans-serif;font-size:.68rem;display:flex;align-items:center;gap:6px;transition:all .3s}
+.lang-btn:hover{border-color:var(--am);color:var(--am)}
+.lang-btn svg{width:13px;height:13px;fill:currentColor}
+.lang-dropdown{position:absolute;top:calc(100%+6px);right:0;background:#0e110e;border:1px solid rgba(255,179,0,.2);min-width:155px;z-index:500;display:none}
+.lang-dropdown.open{display:block}
+.lang-opt{display:block;padding:9px 14px;font-size:.72rem;color:var(--tm);cursor:pointer;width:100%;background:none;border:none;font-family:'Inter',sans-serif;text-align:left;transition:all .2s}
+.lang-opt:hover,.lang-opt.active{background:var(--am10);color:var(--am)}
+.nav-ham{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;z-index:400}
+.nav-ham span{display:block;width:22px;height:1px;background:var(--am)}
+.page-wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:120px 24px 80px;position:relative;z-index:1}
+.nl-hero{text-align:center;max-width:660px;margin:0 auto 50px}
+.nl-eyebrow{font-size:.6rem;letter-spacing:.5em;text-transform:uppercase;color:var(--am);margin-bottom:1.2rem;text-shadow:0 0 15px var(--am30)}
+.nl-h1{font-family:'Cinzel',serif;font-size:clamp(2rem,6vw,4rem);font-weight:900;line-height:1.1;background:linear-gradient(145deg,#fff 20%,#f0c060 55%,var(--am) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1rem}
+.nl-sub{font-size:.76rem;letter-spacing:.32em;text-transform:uppercase;color:var(--tm);margin-bottom:1.8rem}
+.nl-p{line-height:1.9;color:rgba(232,224,208,.7);font-size:.93rem;font-style:italic}
+.nl-p em{color:var(--am);font-style:normal}
+.nl-card{background:var(--card);border:1px solid rgba(255,179,0,.15);padding:44px;max-width:600px;margin:0 auto;width:100%;position:relative}
+.nl-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(to right,transparent,var(--am),transparent)}
+.field{margin-bottom:20px}
+.field label{display:block;font-size:.62rem;letter-spacing:.35em;text-transform:uppercase;color:var(--am);margin-bottom:7px}
+.field input,.field select{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:var(--tp);padding:11px 14px;font-size:.88rem;font-family:'Inter',sans-serif;font-weight:300;outline:none;transition:border-color .3s;-webkit-appearance:none}
+.field input::placeholder{color:var(--tm)}
+.field input:focus,.field select:focus{border-color:rgba(255,179,0,.4);background:rgba(255,179,0,.02)}
+.field select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23ffb300' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.field select option{background:#111410}
+.fields-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.sp-btn{background:none;border:1px solid rgba(255,179,0,.18);color:var(--tm);padding:7px;font-size:.66rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:all .3s;text-align:center}
+.sp-btn.active,.sp-btn:hover{border-color:var(--am);color:var(--am);background:var(--am10)}
+.consent{display:flex;gap:11px;align-items:flex-start;margin-top:8px}
+.consent input[type=checkbox]{width:15px;height:15px;accent-color:var(--am);flex-shrink:0;margin-top:3px;cursor:pointer}
+.consent label{font-size:.77rem;color:var(--tm);line-height:1.6;cursor:pointer}
+.consent label a{color:var(--am);text-decoration:none}
+.consent label a:hover{text-decoration:underline}
+.submit-btn{width:100%;padding:15px;background:var(--am);color:var(--ob);font-size:.8rem;letter-spacing:.24em;text-transform:uppercase;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:all .3s;margin-top:22px;position:relative;overflow:hidden}
+.submit-btn:hover{box-shadow:0 0 40px var(--am50)}
+.submit-btn:disabled{opacity:.5;cursor:not-allowed}
+.success-msg{display:none;text-align:center;padding:40px 20px}
+.success-msg .sym{font-family:'Cinzel',serif;font-size:4rem;color:var(--am);display:block;margin-bottom:1rem;animation:pulse 3s infinite}
+.success-msg h2{font-family:'Cinzel',serif;font-size:1.7rem;margin-bottom:1rem}
+.success-msg h2 em{color:var(--am);font-style:normal}
+.success-msg p{color:rgba(232,224,208,.7);line-height:1.8;font-size:.93rem}
+@keyframes pulse{0%,100%{text-shadow:0 0 30px rgba(255,179,0,.3)}50%{text-shadow:0 0 80px var(--am)}}
+.social-proof{max-width:600px;margin:36px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sp-stat{background:var(--card);border:1px solid rgba(255,179,0,.08);padding:18px;text-align:center}
+.sp-num{font-family:'Cinzel',serif;font-size:1.7rem;font-weight:700;color:var(--am);display:block}
+.sp-lbl{font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--tm);margin-top:3px;display:block}
+footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:36px 40px;position:relative;z-index:1}
+.footer-bottom{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.nexus-logo-sm{display:flex;align-items:center;gap:9px}
+.nexus-text-sm{font-family:'Cinzel',serif;font-size:.95rem;font-weight:900;letter-spacing:.2em;background:linear-gradient(135deg,#fff 0%,var(--am) 50%,#ff6b00 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.footer-links{display:flex;gap:1.8rem;list-style:none;flex-wrap:wrap}
+.footer-links a{font-size:.7rem;letter-spacing:.14em;color:var(--tm);text-decoration:none;transition:color .3s}
+.footer-links a:hover{color:var(--am)}
+.footer-copy{font-size:.66rem;color:rgba(122,112,96,.45)}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.rv.v{opacity:1;transform:translateY(0)}
+@media(max-width:768px){
+  nav{padding:12px 16px}
+  .nav-links{display:none;position:fixed;inset:0;background:rgba(10,10,10,.98);flex-direction:column;align-items:center;justify-content:center;gap:2rem;z-index:300}
+  .nav-links.open{display:flex}
+  .nav-ham{display:flex}
+  .nl-card{padding:24px 18px}
+  .fields-row{grid-template-columns:1fr}
+  .sp-grid{grid-template-columns:repeat(2,1fr)}
+  .social-proof{grid-template-columns:1fr}
+  footer{padding:26px 18px}
+  .footer-bottom{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+<div class="fog t"></div><div class="fog b"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo">True Therian<small>Social Link Life</small></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html" id="nl_home">Inicio</a></li>
+    <li><a href="index.html#feed" id="nl_feed">Manada</a></li>
+    <li><a href="index.html#packfinder" id="nl_finder">Pack Finder</a></li>
+    <li><a href="newsletter.html" class="active" id="nl_newsletter">Newsletter</a></li>
+    <li><a href="privacidad.html" id="nl_privacy">Privacidad</a></li>
+  </ul>
+  <div class="nav-right">
+    <div style="position:relative">
+      <button class="lang-btn" id="langBtn" onclick="toggleLangDD()">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        <span id="langCur">ES</span>
+      </button>
+      <div class="lang-dropdown" id="langDD">
+        <button class="lang-opt active" onclick="setL('es')">🇪🇸 Español</button>
+        <button class="lang-opt" onclick="setL('en')">🇬🇧 English</button>
+        <button class="lang-opt" onclick="setL('pt')">🇧🇷 Português</button>
+        <button class="lang-opt" onclick="setL('fr')">🇫🇷 Français</button>
+        <button class="lang-opt" onclick="setL('de')">🇩🇪 Deutsch</button>
+        <button class="lang-opt" onclick="setL('ja')">🇯🇵 日本語</button>
+      </div>
+    </div>
+    <button class="nav-ham" onclick="document.getElementById('navLinks').classList.toggle('open')"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <div class="nl-hero rv">
+    <p class="nl-eyebrow" id="t_eyebrow">ΘΔ — Únete a la Manada</p>
+    <h1 class="nl-h1" id="t_h1">Newsletter<br>True Therian</h1>
+    <p class="nl-sub">Social Link Life · Comunidad Global</p>
+    <p class="nl-p" id="t_intro">El primer paso para encontrar a los tuyos es <em>decir tu nombre</em>.<br>Dinos cómo te llamas en la manada, tu especie, dónde vives y cómo contactarte.</p>
+  </div>
+
+  <div class="nl-card rv" id="formCard">
+    <!--
+      FORMSPREE: Ve a formspree.io, crea una cuenta gratuita,
+      crea un formulario y copia el ID (ej: xpwzbjkn).
+      El formulario envía a u8787606143@gmail.com.
+      PASOS: 1) Crear cuenta en formspree.io
+              2) "+ New Form" -> poner email u8787606143@gmail.com
+              3) Copiar el ID y reemplazar YOUR_FORMSPREE_ID
+    -->
+    <form id="nlForm" action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST" onsubmit="handleSubmit(event)">
+      <input type="hidden" name="_subject" value="🐾 True Therian — Nueva suscripción Newsletter">
+      <input type="hidden" name="_to" value="u8787606143@gmail.com">
+      <input type="hidden" name="especie" id="hiddenSp" value="">
+
+      <div class="field">
+        <label id="lbl_nick">Nombre en la Manada *</label>
+        <input type="text" name="nombre_manada" id="f_nick" placeholder="Tu nombre therian o apodo de comunidad" required maxlength="60">
+      </div>
+      <div class="fields-row">
+        <div class="field">
+          <label id="lbl_country">País *</label>
+          <select name="pais" required>
+            <option value="" disabled selected id="opt_country">Selecciona tu país</option>
+            <option>España</option><option>México</option><option>Argentina</option><option>Colombia</option>
+            <option>Chile</option><option>Perú</option><option>Venezuela</option><option>Ecuador</option>
+            <option>Bolivia</option><option>Uruguay</option><option>Paraguay</option><option>Costa Rica</option>
+            <option>Guatemala</option><option>Honduras</option><option>El Salvador</option><option>Nicaragua</option>
+            <option>Panamá</option><option>Cuba</option><option>República Dominicana</option><option>Puerto Rico</option>
+            <option>Estados Unidos</option><option>Canadá</option><option>Brasil</option><option>Portugal</option>
+            <option>Francia</option><option>Alemania</option><option>Italia</option><option>Reino Unido</option>
+            <option>Japón</option><option>Australia</option><option>Otros / Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="lbl_city">Ciudad</label>
+          <input type="text" name="ciudad" id="f_city" placeholder="Tu ciudad" maxlength="80">
+        </div>
+      </div>
+      <div class="field">
+        <label id="lbl_email">Email *</label>
+        <input type="email" name="email" id="f_email" placeholder="tu@email.com" required oninput="document.getElementById('replyTo').value=this.value">
+        <input type="hidden" name="_replyto" id="replyTo">
+      </div>
+      <div class="field">
+        <label id="lbl_species">Tu Especie Therian</label>
+        <div class="sp-grid">
+          <button type="button" class="sp-btn" data-sp="Lupine" onclick="pickSp(this)">🐺 Lupine</button>
+          <button type="button" class="sp-btn" data-sp="Vulpine" onclick="pickSp(this)">🦊 Vulpine</button>
+          <button type="button" class="sp-btn" data-sp="Equine" onclick="pickSp(this)">🐴 Equine</button>
+          <button type="button" class="sp-btn" data-sp="Feline" onclick="pickSp(this)">🐱 Feline</button>
+          <button type="button" class="sp-btn" data-sp="Ursid" onclick="pickSp(this)">🐻 Ursid</button>
+          <button type="button" class="sp-btn" data-sp="Avian" onclick="pickSp(this)">🦅 Avian</button>
+          <button type="button" class="sp-btn" data-sp="Reptile" onclick="pickSp(this)">🦎 Reptile</button>
+          <button type="button" class="sp-btn" data-sp="Mythic" onclick="pickSp(this)">✨ Mythic</button>
+          <button type="button" class="sp-btn" data-sp="Otra" onclick="pickSp(this)" id="sp_other">❓ Otra</button>
+        </div>
+      </div>
+      <div class="field">
+        <label id="lbl_msg">Mensaje opcional</label>
+        <input type="text" name="mensaje" id="f_msg" placeholder="Un saludo, tu primer shift, lo que quieras..." maxlength="200">
+      </div>
+      <div class="consent">
+        <input type="checkbox" id="rgpd" name="consentimiento_rgpd" value="Sí" required>
+        <label for="rgpd" id="lbl_consent">Acepto la <a href="privacidad.html" target="_blank">Política de Privacidad</a> y consiento el tratamiento de mis datos para comunicaciones de True Therian. *</label>
+      </div>
+      <button type="submit" class="submit-btn" id="submitBtn" id="t_submit">Unirme a la Manada ΘΔ</button>
+    </form>
+    <div class="success-msg" id="successMsg">
+      <span class="sym">ΘΔ</span>
+      <h2 id="t_success_h">Bienvenido a la <em>Manada</em></h2>
+      <p id="t_success_p">Tu esencia ha sido registrada. En breve recibirás noticias de la comunidad True Therian en tu email. El instinto ya sabía que pertenecías aquí.</p>
+      <a href="index.html" style="display:inline-block;margin-top:2rem;padding:12px 36px;background:var(--am);color:var(--ob);font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;font-family:'Inter',sans-serif;font-weight:500;text-decoration:none" id="t_back_btn">Volver al Feed</a>
+    </div>
+  </div>
+
+  <div class="social-proof rv">
+    <div class="sp-stat"><span class="sp-num" id="memCount">2.847</span><span class="sp-lbl" id="t_sp1">Miembros</span></div>
+    <div class="sp-stat"><span class="sp-num">34</span><span class="sp-lbl" id="t_sp2">Países</span></div>
+    <div class="sp-stat"><span class="sp-num">6</span><span class="sp-lbl" id="t_sp3">Especies</span></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <div class="nexus-logo-sm">
+      <svg width="30" height="30" viewBox="0 0 44 44" fill="none">
+        <circle cx="22" cy="22" r="20" stroke="url(#ng_nl)" stroke-width="1.5"/>
+        <polygon points="22,4 38,14 38,30 22,40 6,30 6,14" fill="none" stroke="url(#ng_nl)" stroke-width=".8"/>
+        <circle cx="22" cy="22" r="5" fill="#ffb300" opacity=".9"/>
+        <line x1="22" y1="4" x2="22" y2="17" stroke="#ffb300" stroke-width=".8" opacity=".5"/>
+        <line x1="22" y1="27" x2="22" y2="40" stroke="#ffb300" stroke-width=".8" opacity=".5"/>
+        <line x1="38" y1="14" x2="27" y2="19" stroke="#ffb300" stroke-width=".8" opacity=".5"/>
+        <line x1="17" y1="25" x2="6" y2="30" stroke="#ffb300" stroke-width=".8" opacity=".5"/>
+        <line x1="6" y1="14" x2="17" y2="19" stroke="#ffb300" stroke-width=".8" opacity=".5"/>
+        <line x1="27" y1="25" x2="38" y2="30" stroke="#ffb300" stroke-width=".8" opacity=".5"/>
+        <defs><linearGradient id="ng_nl" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff" stop-opacity=".4"/><stop offset="50%" stop-color="#ffb300"/><stop offset="100%" stop-color="#ff6b00"/></linearGradient></defs>
+      </svg>
+      <span class="nexus-text-sm">NEXUS</span>
+    </div>
+    <ul class="footer-links">
+      <li><a href="index.html" id="f_home">Inicio</a></li>
+      <li><a href="index.html#feed" id="f_feed">Feed</a></li>
+      <li><a href="newsletter.html" id="f_nl">Newsletter</a></li>
+      <li><a href="privacidad.html" id="f_priv">Privacidad</a></li>
+    </ul>
+    <span class="footer-copy">© 2025 True Therian · Social Link Life</span>
+  </div>
+</footer>
+
+<script>
+// Lang
+const L={
+  es:{home:'Inicio',feed:'Manada',finder:'Pack Finder',newsletter:'Newsletter',privacy:'Privacidad',eyebrow:'ΘΔ — Únete a la Manada',h1:'Newsletter<br>True Therian',intro:'El primer paso para encontrar a los tuyos es <em>decir tu nombre</em>.<br>Dinos cómo te llamas en la manada, tu especie, dónde vives.',lbl_nick:'Nombre en la Manada *',lbl_country:'País *',opt_country:'Selecciona tu país',lbl_city:'Ciudad',lbl_email:'Email *',lbl_species:'Tu Especie Therian',sp_other:'❓ Otra',lbl_msg:'Mensaje opcional',lbl_consent:'Acepto la <a href="privacidad.html" target="_blank">Política de Privacidad</a> y consiento el tratamiento de mis datos. *',submit:'Unirme a la Manada ΘΔ',s_h:'Bienvenido a la <em>Manada</em>',s_p:'Tu esencia ha sido registrada. En breve recibirás noticias en tu email.',s_btn:'Volver al Feed',sp1:'Miembros',sp2:'Países',sp3:'Especies',f_home:'Inicio',f_feed:'Feed',f_nl:'Newsletter',f_priv:'Privacidad'},
+  en:{home:'Home',feed:'Pack',finder:'Pack Finder',newsletter:'Newsletter',privacy:'Privacy',eyebrow:'ΘΔ — Join the Pack',h1:'Newsletter<br>True Therian',intro:'The first step to finding your kind is <em>saying your name</em>.<br>Tell us your pack name, species, where you live.',lbl_nick:'Pack Name *',lbl_country:'Country *',opt_country:'Select your country',lbl_city:'City',lbl_email:'Email *',lbl_species:'Your Therian Species',sp_other:'❓ Other',lbl_msg:'Optional message',lbl_consent:'I accept the <a href="privacidad.html" target="_blank">Privacy Policy</a> and consent to data processing. *',submit:'Join the Pack ΘΔ',s_h:'Welcome to the <em>Pack</em>',s_p:'Your essence has been registered. You will receive news from True Therian soon.',s_btn:'Back to Feed',sp1:'Members',sp2:'Countries',sp3:'Species',f_home:'Home',f_feed:'Feed',f_nl:'Newsletter',f_priv:'Privacy'},
+  pt:{home:'Início',feed:'Matilha',finder:'Pack Finder',newsletter:'Newsletter',privacy:'Privacidade',eyebrow:'ΘΔ — Junte-se à Matilha',h1:'Newsletter<br>True Therian',intro:'O primeiro passo para encontrar os seus é <em>dizer o seu nome</em>.',lbl_nick:'Nome na Matilha *',lbl_country:'País *',opt_country:'Selecione o país',lbl_city:'Cidade',lbl_email:'Email *',lbl_species:'Sua Espécie Therian',sp_other:'❓ Outra',lbl_msg:'Mensagem opcional',lbl_consent:'Aceito a <a href="privacidad.html" target="_blank">Política de Privacidade</a> e consinto o tratamento de dados. *',submit:'Juntar à Matilha ΘΔ',s_h:'Bem-vindo à <em>Matilha</em>',s_p:'Sua essência foi registrada. Em breve receberá notícias.',s_btn:'Voltar ao Feed',sp1:'Membros',sp2:'Países',sp3:'Espécies',f_home:'Início',f_feed:'Feed',f_nl:'Newsletter',f_priv:'Privacidade'},
+  fr:{home:'Accueil',feed:'Meute',finder:'Pack Finder',newsletter:'Newsletter',privacy:'Confidentialité',eyebrow:'ΘΔ — Rejoindre la Meute',h1:'Newsletter<br>True Therian',intro:'Le premier pas pour trouver les tiens est <em>dire ton nom</em>.',lbl_nick:'Nom dans la Meute *',lbl_country:'Pays *',opt_country:'Sélectionner le pays',lbl_city:'Ville',lbl_email:'Email *',lbl_species:'Ton Espèce Thérian',sp_other:'❓ Autre',lbl_msg:'Message optionnel',lbl_consent:'J\'accepte la <a href="privacidad.html" target="_blank">Politique de Confidentialité</a>. *',submit:'Rejoindre la Meute ΘΔ',s_h:'Bienvenue dans la <em>Meute</em>',s_p:'Ton essence est enregistrée. Tu recevras bientôt des nouvelles.',s_btn:'Retour au Feed',sp1:'Membres',sp2:'Pays',sp3:'Espèces',f_home:'Accueil',f_feed:'Feed',f_nl:'Newsletter',f_priv:'Confidentialité'},
+  de:{home:'Start',feed:'Rudel',finder:'Pack Finder',newsletter:'Newsletter',privacy:'Datenschutz',eyebrow:'ΘΔ — Dem Rudel beitreten',h1:'Newsletter<br>True Therian',intro:'Der erste Schritt, deinesgleichen zu finden, ist <em>deinen Namen zu sagen</em>.',lbl_nick:'Name im Rudel *',lbl_country:'Land *',opt_country:'Land auswählen',lbl_city:'Stadt',lbl_email:'Email *',lbl_species:'Deine Therian Spezies',sp_other:'❓ Andere',lbl_msg:'Optionale Nachricht',lbl_consent:'Ich akzeptiere die <a href="privacidad.html" target="_blank">Datenschutzerklärung</a>. *',submit:'Dem Rudel beitreten ΘΔ',s_h:'Willkommen im <em>Rudel</em>',s_p:'Deine Essenz wurde registriert. Du erhältst bald Neuigkeiten.',s_btn:'Zurück zum Feed',sp1:'Mitglieder',sp2:'Länder',sp3:'Spezies',f_home:'Start',f_feed:'Feed',f_nl:'Newsletter',f_priv:'Datenschutz'},
+  ja:{home:'ホーム',feed:'群れ',finder:'パック検索',newsletter:'ニュースレター',privacy:'プライバシー',eyebrow:'ΘΔ — 群れに参加',h1:'ニュースレター<br>True Therian',intro:'仲間を見つける最初のステップは<em>名前を言うこと</em>。',lbl_nick:'群れの名前 *',lbl_country:'国 *',opt_country:'国を選択',lbl_city:'都市',lbl_email:'メール *',lbl_species:'あなたのシリアン種',sp_other:'❓ その他',lbl_msg:'任意メッセージ',lbl_consent:'<a href="privacidad.html" target="_blank">プライバシーポリシー</a>に同意します。 *',submit:'群れに参加 ΘΔ',s_h:'群れへ<em>ようこそ</em>',s_p:'あなたの本質が登録されました。',s_btn:'フィードに戻る',sp1:'メンバー',sp2:'国',sp3:'種',f_home:'ホーム',f_feed:'フィード',f_nl:'ニュースレター',f_priv:'プライバシー'}
+};
+let curL=localStorage.getItem('tt_lang')||'es';
+function setL(l){curL=l;localStorage.setItem('tt_lang',l);applyL();document.getElementById('langDD').classList.remove('open')}
+function toggleLangDD(){document.getElementById('langDD').classList.toggle('open')}
+document.addEventListener('click',e=>{if(!e.target.closest('#langBtn')&&!e.target.closest('#langDD'))document.getElementById('langDD').classList.remove('open')});
+function applyL(){
+  const d=L[curL]||L.es;
+  document.getElementById('langCur').textContent=curL.toUpperCase();
+  document.querySelectorAll('.lang-opt').forEach(b=>{b.classList.toggle('active',b.textContent.toLowerCase().includes(curL))});
+  document.getElementById('t_eyebrow').textContent=d.eyebrow;
+  document.getElementById('t_h1').innerHTML=d.h1;
+  document.getElementById('t_intro').innerHTML=d.intro;
+  document.getElementById('lbl_nick').textContent=d.lbl_nick;
+  document.getElementById('lbl_country').textContent=d.lbl_country;
+  document.getElementById('opt_country').textContent=d.opt_country;
+  document.getElementById('lbl_city').textContent=d.lbl_city;
+  document.getElementById('lbl_email').textContent=d.lbl_email;
+  document.getElementById('lbl_species').textContent=d.lbl_species;
+  document.getElementById('sp_other').textContent=d.sp_other;
+  document.getElementById('lbl_msg').textContent='';
+  document.getElementById('lbl_consent').innerHTML=d.lbl_consent;
+  document.getElementById('submitBtn').textContent=d.submit;
+  document.getElementById('t_success_h').innerHTML=d.s_h;
+  document.getElementById('t_success_p').textContent=d.s_p;
+  document.getElementById('t_back_btn').textContent=d.s_btn;
+  document.getElementById('t_sp1').textContent=d.sp1;
+  document.getElementById('t_sp2').textContent=d.sp2;
+  document.getElementById('t_sp3').textContent=d.sp3;
+  document.getElementById('nl_home').textContent=d.home;
+  document.getElementById('nl_feed').textContent=d.feed;
+  document.getElementById('nl_finder').textContent=d.finder;
+  document.getElementById('nl_newsletter').textContent=d.newsletter;
+  document.getElementById('nl_privacy').textContent=d.privacy;
+  document.getElementById('f_home').textContent=d.f_home;
+  document.getElementById('f_feed').textContent=d.f_feed;
+  document.getElementById('f_nl').textContent=d.f_nl;
+  document.getElementById('f_priv').textContent=d.f_priv;
+}
+applyL();
+
+// REVEAL
+new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('v')}})},{threshold:.1}).observe=function(){};
+const rvObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('v')})},{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>rvObs.observe(el));
+
+// SPECIES
+function pickSp(btn){document.querySelectorAll('.sp-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('hiddenSp').value=btn.dataset.sp}
+
+// SUBMIT — envía a Formspree (que reenvía a u8787606143@gmail.com)
+function handleSubmit(e){
+  e.preventDefault();
+  const btn=document.getElementById('submitBtn');
+  btn.textContent='...';btn.disabled=true;
+  const form=document.getElementById('nlForm');
+  fetch(form.action,{method:'POST',body:new FormData(form),headers:{'Accept':'application/json'}})
+    .then(r=>{
+      if(r.ok){
+        document.getElementById('nlForm').style.display='none';
+        document.getElementById('successMsg').style.display='block';
+        const el=document.getElementById('memCount');
+        if(el){const n=parseInt(el.textContent.replace(/\./g,'').replace(/,/g,''))+1;el.textContent=n.toLocaleString();}
+      } else {btn.textContent=(L[curL]||L.es).submit;btn.disabled=false;alert('Error al enviar. Inténtalo de nuevo.');}
+    })
+    .catch(()=>{btn.textContent=(L[curL]||L.es).submit;btn.disabled=false;alert('Error de conexión.');});
+}
+</script>
+</body>
+</html>
