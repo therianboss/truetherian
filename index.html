@@ -801,137 +801,144 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
 
 <script>
 /* ================================================
-   TRUE THERIAN v3 — ENGINE COMPLETO
+   TRUE THERIAN v3.1 — ENGINE COMPLETO
    ================================================ */
 
-// ── CONSTANTES PRIVADAS ──
-// Email CEO: almacenado invertido por seguridad, nunca en texto plano
+// ── CEO (email almacenado invertido, nunca en texto plano) ──
 const _p1='oectnuoca',_p2='oi.liamcimota';
 const CEO_EMAIL=[_p1,_p2].map(s=>s.split('').reverse().join('')).join('@');
-const CEO_NICK='TrueTherian’';
-const CEO_NICK  = 'TrueTherian’';
+const CEO_NICK='TT_CEO';
 
-// ── IDIOMAS (abreviado pero funcional) ──
-const T = {
-  es:{online:'en la manada',timer_pre:'Reset en',posted:'¡Aullido enviado!',saved:'Guardado en Memoria',unsaved:'Eliminado de Memoria',nick_taken:'NickName ya en uso',age_err:'Debes tener al menos 16 años',reg_ok:'¡Bienvenido a la manada!',login_ok:'¡De vuelta!',mod:'Contenido no permitido',howled:'🐺 ¡Aullido!',blocked:'Cuenta suspendida por administración',login_needed:'Inicia sesión para enviar mensajes',msg_sent:'Mensaje enviado',nick_avail:'✓ Disponible',year_ok:'✓ ',logout:'Hasta pronto'},
-  en:{online:'in the pack',timer_pre:'Reset in',posted:'Howl sent!',saved:'Saved to Memory',unsaved:'Removed from Memory',nick_taken:'NickName already taken',age_err:'You must be at least 16',reg_ok:'Welcome to the pack!',login_ok:'Back in the pack!',mod:'Prohibited content detected',howled:'🐺 Howl!',blocked:'Account suspended by admin',login_needed:'Log in to send messages',msg_sent:'Message sent',nick_avail:'✓ Available',year_ok:'✓ ',logout:'See you'},
-  pt:{online:'na matilha',timer_pre:'Reset em',posted:'Uivo enviado!',saved:'Salvo na Memória',unsaved:'Removido da Memória',nick_taken:'NickName já em uso',age_err:'Você deve ter pelo menos 16',reg_ok:'Bem-vindo à matilha!',login_ok:'De volta!',mod:'Conteúdo proibido',howled:'🐺 Uivo!',blocked:'Conta suspensa',login_needed:'Faça login para enviar mensagens',msg_sent:'Mensagem enviada',nick_avail:'✓ Disponível',year_ok:'✓ ',logout:'Até logo'},
-  fr:{online:'dans la meute',timer_pre:'Reset dans',posted:'Hurlement envoyé!',saved:'Sauvegardé',unsaved:'Supprimé',nick_taken:'NickName déjà pris',age_err:'Tu dois avoir au moins 16 ans',reg_ok:'Bienvenue dans la meute!',login_ok:'De retour!',mod:'Contenu interdit',howled:'🐺 Hurlement!',blocked:'Compte suspendu',login_needed:'Connecte-toi pour envoyer des messages',msg_sent:'Message envoyé',nick_avail:'✓ Disponible',year_ok:'✓ ',logout:'À bientôt'},
-  de:{online:'im Rudel',timer_pre:'Reset in',posted:'Heulen gesendet!',saved:'Gespeichert',unsaved:'Entfernt',nick_taken:'NickName vergeben',age_err:'Du musst mindestens 16 sein',reg_ok:'Willkommen im Rudel!',login_ok:'Zurück!',mod:'Verbotener Inhalt',howled:'🐺 Heulen!',blocked:'Konto gesperrt',login_needed:'Einloggen um Nachrichten zu senden',msg_sent:'Nachricht gesendet',nick_avail:'✓ Verfügbar',year_ok:'✓ ',logout:'Tschüss'},
-  ja:{online:'が群れに',timer_pre:'リセット残り',posted:'遠吠え送信！',saved:'メモリーに保存',unsaved:'メモリーから削除',nick_taken:'使用中のニックネーム',age_err:'16歳以上である必要があります',reg_ok:'群れへようこそ！',login_ok:'戻ってきた！',mod:'禁止コンテンツ',howled:'🐺 遠吠え！',blocked:'アカウント停止',login_needed:'メッセージを送るにはログイン',msg_sent:'送信完了',nick_avail:'✓ 利用可能',year_ok:'✓ ',logout:'またね'}
+// ── STORAGE ──
+const LS = {
+  get:(k,d=null)=>{try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v);}catch(e){return d;}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}},
+  raw:(k)=>localStorage.getItem(k),
+  setRaw:(k,v)=>localStorage.setItem(k,v),
+  del:(k)=>localStorage.removeItem(k)
 };
-let lang = localStorage.getItem('tt_lang') || 'es';
-const t = k => (T[lang] && T[lang][k]) || T.es[k] || k;
 
-// ── MODERATION ──
-const BAD = ['puta','puto','coño','joder','mierda','hostia','gilipollas','imbécil','idiota','maricón','negrata','nazi','porno','follar','correrse','coger','culero','pendejo','chinga','cabron','hdp','nudes','nude','fuck','shit','asshole','bitch','cunt','nigger','faggot','retard','pussy','cock','porn','rape','slut','whore','bastard','merda','porra','caralho','viado','buceta','merde','putain','connard','salope','nique','scheiße','wichser','hurensohn','fotze','arschloch','バカ','死ね','クソ'];
-const BAD_DOMAINS = ['onlyfans','pornhub','xvideos','xnxx','redtube','xhamster','youporn','brazzers','sex.com','porn.com','xxx'];
-function isBad(s){ const l=s.toLowerCase(); return BAD.some(w=>l.includes(w)) || BAD_DOMAINS.some(d=>l.includes(d)); }
-
-// ── STORAGE HELPERS ──
-function getUsers(){ return JSON.parse(localStorage.getItem('tt_users')||'[]'); }
-function saveUsers(u){ localStorage.setItem('tt_users',JSON.stringify(u)); }
-function getSession(){ return JSON.parse(localStorage.getItem('tt_session')||'null'); }
-function saveSession(u){ localStorage.setItem('tt_session',JSON.stringify(u)); window.CU=u; }
-function clrSession(){ localStorage.removeItem('tt_session'); window.CU=null; }
+function getUsers(){return LS.get('tt_users',[])}
+function saveUsers(u){LS.set('tt_users',u)}
+function getSession(){return LS.get('tt_session',null)}
+function saveSession(u){LS.set('tt_session',u);window.CU=u;}
+function clrSession(){LS.del('tt_session');window.CU=null;}
 function getPosts(){
-  const all = JSON.parse(localStorage.getItem('tt_posts')||'[]');
-  const cut = Date.now() - 24*3600*1000;
-  return all.filter(p => p.ts > cut).sort((a,b) => b.ts - a.ts);
+  const all=LS.get('tt_posts',[]);
+  const cut=Date.now()-24*3600*1000;
+  return all.filter(p=>p.ts>cut).sort((a,b)=>b.ts-a.ts);
 }
-function allPosts(){ return JSON.parse(localStorage.getItem('tt_posts')||'[]'); }
-function savePosts(p){ localStorage.setItem('tt_posts',JSON.stringify(p.slice(0,400))); }
-function getMsgs(){ return JSON.parse(localStorage.getItem('tt_msgs')||'[]'); }
-function saveMsgs(m){ localStorage.setItem('tt_msgs',JSON.stringify(m)); }
-function getBlocked(){ return JSON.parse(localStorage.getItem('tt_blocked')||'[]'); }
-function saveBlocked(b){ localStorage.setItem('tt_blocked',JSON.stringify(b)); }
-function getMem(){ return JSON.parse(localStorage.getItem('tt_mem')||'[]'); }
-function saveMem(m){ localStorage.setItem('tt_mem',JSON.stringify(m)); }
-function getSavedData(){ return JSON.parse(localStorage.getItem('tt_saved_data')||'{}'); }
-function isBlocked(nick){ return getBlocked().includes(nick); }
+function allPosts(){return LS.get('tt_posts',[])}
+function savePosts(p){LS.set('tt_posts',p.slice(0,500))}
+function getMsgs(){return LS.get('tt_msgs',[])}
+function saveMsgs(m){LS.set('tt_msgs',m)}
+function getBlocked(){return LS.get('tt_blocked',[])}
+function saveBlocked(b){LS.set('tt_blocked',b)}
+function getMem(){return LS.get('tt_mem',[])}
+function saveMem(m){LS.set('tt_mem',m)}
+function getSavedData(){return LS.get('tt_saved_data',{})}
+function isBlocked(nick){return getBlocked().includes(nick)}
+function logActivity(type,data){
+  const logs=LS.get('tt_actlog',[]);
+  logs.unshift({type,data,ts:Date.now()});
+  LS.set('tt_actlog',logs.slice(0,1000));
+}
+function getActivityToday(){
+  const cut=Date.now()-24*3600*1000;
+  return LS.get('tt_actlog',[]).filter(l=>l.ts>cut);
+}
 
 window.CU = getSession();
 
-// ── DAILY ACTIVITY LOG (for CEO) ──
-function logActivity(type,data){
-  const logs = JSON.parse(localStorage.getItem('tt_actlog')||'[]');
-  logs.unshift({type,data,ts:Date.now()});
-  localStorage.setItem('tt_actlog',JSON.stringify(logs.slice(0,1000)));
-}
-function getActivityToday(){
-  const logs = JSON.parse(localStorage.getItem('tt_actlog')||'[]');
-  const cut = Date.now() - 24*3600*1000;
-  return logs.filter(l=>l.ts>cut);
-}
+// ── LANG ──
+const LANGS = {
+  es:{online:'en la manada',timer_pre:'Reset en',posted:'¡Aullido enviado!',saved:'Guardado en Memoria',unsaved:'Eliminado de Memoria',nick_taken:'NickName ya en uso',age_err:'Debes tener al menos 16 años',reg_ok:'¡Bienvenido a la manada!',login_ok:'¡De vuelta en la manada!',mod:'Contenido no permitido',howled:'🐺 ¡Resonancia!',blocked:'Cuenta suspendida',login_needed:'Inicia sesión primero',msg_sent:'Mensaje enviado ✓',nick_avail:'✓ Disponible',year_ok:'✓ '},
+  en:{online:'in the pack',timer_pre:'Reset in',posted:'Howl sent!',saved:'Saved to Memory',unsaved:'Removed from Memory',nick_taken:'NickName already taken',age_err:'You must be at least 16',reg_ok:'Welcome to the pack!',login_ok:'Back in the pack!',mod:'Prohibited content',howled:'🐺 Resonance!',blocked:'Account suspended',login_needed:'Log in first',msg_sent:'Message sent ✓',nick_avail:'✓ Available',year_ok:'✓ '},
+  pt:{online:'na matilha',timer_pre:'Reset em',posted:'Uivo enviado!',saved:'Salvo',unsaved:'Removido',nick_taken:'NickName em uso',age_err:'Mínimo 16 anos',reg_ok:'Bem-vindo!',login_ok:'De volta!',mod:'Conteúdo proibido',howled:'🐺 Uivo!',blocked:'Conta suspensa',login_needed:'Faça login',msg_sent:'Enviado ✓',nick_avail:'✓ Disponível',year_ok:'✓ '},
+  fr:{online:'dans la meute',timer_pre:'Reset dans',posted:'Hurlement!',saved:'Sauvegardé',unsaved:'Supprimé',nick_taken:'NickName pris',age_err:'16 ans minimum',reg_ok:'Bienvenue!',login_ok:'De retour!',mod:'Contenu interdit',howled:'🐺 Hurlement!',blocked:'Compte suspendu',login_needed:'Connecte-toi',msg_sent:'Envoyé ✓',nick_avail:'✓ Disponible',year_ok:'✓ '},
+  de:{online:'im Rudel',timer_pre:'Reset in',posted:'Heulen!',saved:'Gespeichert',unsaved:'Entfernt',nick_taken:'NickName vergeben',age_err:'Mindestens 16',reg_ok:'Willkommen!',login_ok:'Zurück!',mod:'Verbotener Inhalt',howled:'🐺 Heulen!',blocked:'Gesperrt',login_needed:'Einloggen',msg_sent:'Gesendet ✓',nick_avail:'✓ Verfügbar',year_ok:'✓ '},
+  ja:{online:'が接続中',timer_pre:'リセット残り',posted:'遠吠え完了！',saved:'保存済み',unsaved:'削除',nick_taken:'使用中',age_err:'16歳以上',reg_ok:'ようこそ！',login_ok:'おかえり！',mod:'禁止コンテンツ',howled:'🐺 遠吠え！',blocked:'停止中',login_needed:'ログインが必要',msg_sent:'送信 ✓',nick_avail:'✓ 利用可能',year_ok:'✓ '}
+};
+let lang = LS.raw('tt_lang')||'es';
+const t = k=>(LANGS[lang]&&LANGS[lang][k])||LANGS.es[k]||k;
 
-// ── FEED RESET CHECK (5:00 AM Barcelona) ──
+// ── MODERATION ──
+const BAD=['puta','puto','coño','joder','mierda','hostia','gilipollas','imbécil','idiota','maricón','negrata','nazi','porno','follar','coger','culero','pendejo','chinga','cabron','hdp','fuck','shit','asshole','bitch','cunt','nigger','faggot','retard','pussy','cock','porn','rape','slut','whore','bastard','merda','porra','caralho','viado','buceta','merde','putain','connard','salope','nique','scheiße','wichser','hurensohn','fotze','arschloch'];
+const BAD_DOM=['onlyfans','pornhub','xvideos','xnxx','redtube','xhamster','youporn','brazzers','sex.com','porn.com','xxx'];
+function isBad(s){const l=(s||'').toLowerCase();return BAD.some(w=>l.includes(w))||BAD_DOM.some(d=>l.includes(d));}
+
+// ── FEED RESET (24h, reset a las 5AM Barcelona) ──
 function checkFeedReset(){
-  const bcn = new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Madrid'}));
-  const key = `${bcn.getFullYear()}-${bcn.getMonth()}-${bcn.getDate()}`;
-  const last = localStorage.getItem('tt_reset_day');
-  if(last !== key && bcn.getHours() >= 5){
-    // Borrar posts de más de 24h
-    const cut = Date.now() - 24*3600*1000;
-    const kept = allPosts().filter(p => p.ts > cut || p.official); // mantener anuncios CEO
-    savePosts(kept);
-    localStorage.setItem('tt_reset_day', key);
+  const bcn=new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Madrid'}));
+  const key=`${bcn.getFullYear()}-${bcn.getMonth()}-${bcn.getDate()}`;
+  if(LS.raw('tt_reset_day')!==key && bcn.getHours()>=5){
+    const cut=Date.now()-24*3600*1000;
+    savePosts(allPosts().filter(p=>p.ts>cut||p.official));
+    LS.setRaw('tt_reset_day',key);
   }
 }
 
 function updateFeedTimer(){
-  const bcn = new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Madrid'}));
-  let next = new Date(bcn);
-  next.setHours(5,0,0,0);
-  if(bcn.getHours() >= 5) next.setDate(next.getDate()+1);
-  const diff = next - bcn;
-  const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
-  const el = document.getElementById('feedTimer');
-  if(el) el.innerHTML = `${t('timer_pre')}: <em>${h}h ${m}m ${s}s</em>`;
+  const bcn=new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Madrid'}));
+  let next=new Date(bcn);next.setHours(5,0,0,0);
+  if(bcn.getHours()>=5)next.setDate(next.getDate()+1);
+  const diff=next-bcn;
+  const h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+  const el=document.getElementById('feedTimer');
+  if(el)el.innerHTML=`${t('timer_pre')}: <em>${h}h ${m}m ${s}s</em>`;
 }
 
 // ── ONLINE COUNTER ──
-let onlineN = 47;
-(function tick(){
-  onlineN = Math.max(28, Math.min(140, onlineN + Math.floor(Math.random()*7)-3));
-  const el = document.getElementById('onlineN');
-  if(el) el.textContent = onlineN;
-  setTimeout(tick, Math.random()*12000+7000);
-})();
+// Online counter: base demo (61) + usuarios reales registrados * factor actividad
+function calcBaseOnline(){
+  const demoBase=61;
+  const real=getUsers().filter(u=>u.email!==CEO_EMAIL).length;
+  return demoBase + Math.floor(real*0.4); // ~40% de usuarios reales "online"
+}
+let onlineN=calcBaseOnline();
+function tickOnline(){
+  const base=calcBaseOnline();
+  onlineN=Math.max(base-8,Math.min(base+55,onlineN+Math.floor(Math.random()*7)-3));
+  const el=document.getElementById('onlineN');
+  if(el)el.textContent=onlineN;
+  setTimeout(tickOnline,Math.random()*14000+6000);
+}
 
 // ── NAV ──
-window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>55));
-function toggleNav(){ document.getElementById('navLinks').classList.toggle('open'); }
-function closeNav(){ document.getElementById('navLinks').classList.remove('open'); }
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',scrollY>55);
+});
+function toggleNav(){document.getElementById('navLinks').classList.toggle('open');}
+function closeNav(){document.getElementById('navLinks').classList.remove('open');}
 
 // ── LANG ──
-function toggleLangDD(){ document.getElementById('langDD').classList.toggle('open'); }
-document.addEventListener('click',e=>{if(!e.target.closest('.lang-wrap')) document.getElementById('langDD').classList.remove('open');});
+function toggleLangDD(){document.getElementById('langDD').classList.toggle('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.lang-wrap'))document.getElementById('langDD').classList.remove('open');});
 function setLang(l){
-  lang=l; localStorage.setItem('tt_lang',l);
+  lang=l;LS.setRaw('tt_lang',l);
   document.getElementById('langCur').textContent=l.toUpperCase();
-  document.querySelectorAll('.lang-opt').forEach(b=>b.classList.toggle('cur',b.textContent.includes(l.toUpperCase())||b.textContent.toLowerCase().includes({es:'español',en:'english',pt:'portu',fr:'fran',de:'deutsch',ja:'日本'}[l]||l)));
-  document.getElementById('tOnline').textContent=t('online');
-  updateFeedTimer(); renderFeed();
   document.getElementById('langDD').classList.remove('open');
+  document.getElementById('tOnline').textContent=t('online');
+  updateFeedTimer();
 }
 
 // ── REVEAL ──
-const rvObs = new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('v')}),{threshold:.08});
+const rvObs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('v');}),{threshold:.08});
 document.querySelectorAll('.rv,.rv-l,.rv-r').forEach(el=>rvObs.observe(el));
 
 // ── TOAST ──
-let toastT;
+let toastTimer;
 function showToast(msg,type=''){
   const el=document.getElementById('toast');
-  el.textContent=msg; el.className='toast'+(type?' '+type:'');
-  clearTimeout(toastT);
+  el.textContent=msg;el.className='toast'+(type?' '+type:'');
+  clearTimeout(toastTimer);
   requestAnimationFrame(()=>el.classList.add('show'));
-  toastT=setTimeout(()=>el.classList.remove('show'),3200);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),3400);
 }
 
-// ── MODAL HELPERS ──
-function openModal(id){ document.getElementById(id).classList.add('open'); }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+// ── MODAL ──
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.ovl').forEach(ov=>ov.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.ovl.open').forEach(o=>o.classList.remove('open'));closeLb();}});
 
@@ -939,47 +946,57 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelec
 let curMood='';
 function setMood(btn){
   document.querySelectorAll('.mood-opt').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); curMood=btn.dataset.mood;
-  const stored=JSON.parse(localStorage.getItem('tt_moods')||'{}');
+  btn.classList.add('active');curMood=btn.dataset.mood;
+  const stored=LS.get('tt_moods',{});
   const today=new Date().toDateString();
   if(!stored[today])stored[today]={};
   stored[today][curMood]=(stored[today][curMood]||0)+1;
   Object.keys(stored).filter(k=>k!==today).forEach(k=>delete stored[k]);
-  localStorage.setItem('tt_moods',JSON.stringify(stored));
+  LS.set('tt_moods',stored);
   const el=document.getElementById('moodCnt');
-  if(el){const c=stored[today][curMood]||0;el.textContent=`${c} en este shift hoy`;}
+  if(el)el.textContent=`${stored[today][curMood]} en este shift hoy`;
 }
 
-// ── USERS ──
+// ── SPECIES EMOJI ──
 function spEmoji(sp){return{Lupine:'🐺',Vulpine:'🦊',Equine:'🐴',Feline:'🐱',Ursid:'🐻',Avian:'🦅',Reptile:'🦎',Mythic:'✨',Other:'❓'}[sp]||'🐾';}
 
+// ── USER BUTTON ──
 function updateUserBtn(){
   const u=window.CU;
   const btn=document.getElementById('userBtn');
   const lbl=document.getElementById('userBtnLbl');
+  const av=document.getElementById('cAvatar');
   if(u){
     btn.classList.add('logged');
-    if(u.email===CEO_EMAIL) btn.classList.add('ceo');
+    if(u.email===CEO_EMAIL)btn.classList.add('ceo');
     lbl.textContent=u.nick;
-    document.getElementById('cAvatar').textContent=u.nick[0].toUpperCase();
+    if(av)av.textContent=u.nick[0].toUpperCase();
     updateMsgBadge();
-  } else {
+  }else{
     btn.classList.remove('logged','ceo');
     lbl.textContent='Entrar';
-    document.getElementById('cAvatar').textContent='ΘΔ';
-    document.getElementById('msgDot').style.display='none';
+    if(av)av.textContent='ΘΔ';
+    const dot=document.getElementById('msgDot');
+    if(dot)dot.style.display='none';
+  }
+  // Show/hide blocked notice
+  if(u&&isBlocked(u.nick)){
+    const n=document.getElementById('blkNotice');if(n)n.style.display='block';
+    const c=document.getElementById('composerEl');if(c)c.style.display='none';
+  }else{
+    const n=document.getElementById('blkNotice');if(n)n.style.display='none';
+    const c=document.getElementById('composerEl');if(c)c.style.display='block';
   }
 }
 
 function updateMsgBadge(){
-  if(!window.CU) return;
-  const msgs=getMsgs().filter(m=>m.to===window.CU.nick&&!m.read);
-  const n=msgs.length;
+  if(!window.CU)return;
+  const n=getMsgs().filter(m=>m.to===window.CU.nick&&!m.read).length;
   const dot=document.getElementById('msgDot');
-  dot.style.display=n>0?'inline-flex':'none';
-  dot.textContent=n;
+  if(dot){dot.style.display=n>0?'inline-flex':'none';dot.textContent=n;}
 }
 
+// ── USER MODAL ──
 function openUserModal(){
   if(window.CU){
     document.getElementById('mdLogged').style.display='block';
@@ -987,16 +1004,11 @@ function openUserModal(){
     const u=window.CU;
     document.getElementById('pcAv').textContent=u.nick[0].toUpperCase();
     document.getElementById('pcNick').textContent=u.nick;
-    document.getElementById('pcSp').textContent=u.species?`${spEmoji(u.species)} ${u.species}`:'';
-    document.getElementById('pcLoc').textContent=`📍 ${u.city}, ${u.country}`;
-    document.getElementById('pcAge').textContent=`${new Date().getFullYear()-parseInt(u.year)} años · Miembro desde ${new Date(u.joined).toLocaleDateString()}`;
-    // Show CEO button if CEO
-    document.getElementById('ceoNavBtn').style.display = u.email===CEO_EMAIL ? 'block':'none';
-    // Check if blocked
-    const blkNotice=document.getElementById('blkNotice');
-    if(isBlocked(u.nick)){ blkNotice.style.display='block'; document.getElementById('composerEl').style.display='none'; }
-    else { blkNotice.style.display='none'; document.getElementById('composerEl').style.display='block'; }
-  } else {
+    const sp=document.getElementById('pcSp');if(sp)sp.textContent=u.species?`${spEmoji(u.species)} ${u.species}`:'';
+    const lo=document.getElementById('pcLoc');if(lo)lo.textContent=`📍 ${u.city||''}, ${u.country||''}`;
+    const ag=document.getElementById('pcAge');if(ag)ag.textContent=`${new Date().getFullYear()-parseInt(u.year)} años · Miembro desde ${new Date(u.joined).toLocaleDateString()}`;
+    const ceoBtn=document.getElementById('ceoNavBtn');if(ceoBtn)ceoBtn.style.display=u.email===CEO_EMAIL?'block':'none';
+  }else{
     document.getElementById('mdLogged').style.display='none';
     document.getElementById('mdAuth').style.display='block';
   }
@@ -1010,29 +1022,26 @@ function switchTab(which){
   document.getElementById('tabReg').classList.toggle('active',which==='register');
 }
 
-// ── NICK CHECK ──
+// ── NICK / AGE CHECK ──
+let regSp='';
 function checkNick(v){
-  const h=document.getElementById('nickHint');
-  if(!v){h.textContent='';return;}
-  if(!/^[a-zA-Z0-9_]{3,30}$/.test(v)){h.textContent='Solo letras, números y _ (3-30 chars)';h.className='mf-hint err';return;}
+  const h=document.getElementById('nickHint');if(!v){h.textContent='';return;}
+  if(!/^[a-zA-Z0-9_]{3,30}$/.test(v)){h.textContent='Solo letras, números y _ (3-30)';h.className='mf-hint err';return;}
   if(isBad(v)){h.textContent='NickName no permitido';h.className='mf-hint err';return;}
   const taken=getUsers().some(u=>u.nick.toLowerCase()===v.toLowerCase());
-  if(taken){h.textContent=t('nick_taken');h.className='mf-hint err';}
-  else{h.textContent=t('nick_avail');h.className='mf-hint ok';}
+  h.textContent=taken?t('nick_taken'):t('nick_avail');
+  h.className='mf-hint '+(taken?'err':'ok');
 }
-
 function checkAge(yr){
-  const h=document.getElementById('ageHint');
-  if(!yr){h.textContent='';return;}
+  const h=document.getElementById('ageHint');if(!yr){h.textContent='';return;}
   const age=new Date().getFullYear()-parseInt(yr);
   if(isNaN(age)||age<0||age>120){h.textContent='Año no válido';h.className='mf-hint err';}
   else if(age<16){h.textContent=t('age_err');h.className='mf-hint err';}
   else{h.textContent=t('year_ok')+age+' años';h.className='mf-hint ok';}
 }
-
-let regSp='';
 function pickSp(btn){document.querySelectorAll('.sp-chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');regSp=btn.dataset.sp;}
 
+// ── REGISTER ──
 function doRegister(){
   const nick=document.getElementById('regNick').value.trim();
   const name=document.getElementById('regName').value.trim();
@@ -1042,54 +1051,47 @@ function doRegister(){
   const city=document.getElementById('regCity').value.trim();
   const email=document.getElementById('regEmail').value.trim().toLowerCase();
   const err=document.getElementById('regErr');
-  const showE=m=>{err.textContent=m;err.classList.add('show');};
+  const showE=msg=>{err.textContent=msg;err.classList.add('show');};
   err.classList.remove('show');
   if(!nick||!name||!surn||!yr||!country||!city||!email){showE('Completa todos los campos obligatorios (*)');return;}
-  if(!/^[a-zA-Z0-9_]{3,30}$/.test(nick)){showE('NickName inválido');return;}
+  if(!/^[a-zA-Z0-9_]{3,30}$/.test(nick)){showE('NickName inválido (letras, números, _)');return;}
   if(isBad(nick)){showE('NickName no permitido');return;}
   const age=new Date().getFullYear()-yr;
-  if(age<16){showE(t('age_err'));return;}
+  if(isNaN(age)||age<16){showE(t('age_err'));return;}
   if(age>120){showE('Año inválido');return;}
   if(getUsers().some(u=>u.nick.toLowerCase()===nick.toLowerCase())){showE(t('nick_taken'));return;}
   const user={nick,name,surname:surn,year:yr,country,city,email,species:regSp,joined:Date.now(),mood:''};
   const users=getUsers();users.push(user);saveUsers(users);
   saveSession(user);
   logActivity('register',{nick,country,city,species:regSp});
-  updateUserBtn();closeModal('userModal');renderCompass();
-  showToast(t('reg_ok'),'ok');
-  // Auto-seed welcome message from CEO bot
+  // Welcome message from CEO bot
   const msgs=getMsgs();
   msgs.push({id:'w'+Date.now(),from:CEO_NICK,to:nick,body:`¡Bienvenido/a a True Therian, ${nick}! 🐾 Aquí encontrarás tu manada. El instinto ya sabía que pertenecías aquí. — True Therian`,ts:Date.now(),read:false});
   saveMsgs(msgs);
+  updateUserBtn();closeModal('userModal');renderCompass();
+  showToast(t('reg_ok'),'ok');
   updateMsgBadge();
 }
 
+// ── LOGIN ──
 function doLogin(){
   const nick=document.getElementById('loginNick').value.trim();
   const email=document.getElementById('loginEmail').value.trim().toLowerCase();
   const err=document.getElementById('loginErr');
   err.classList.remove('show');
-  // CEO login — requires identity verification on first access
+  if(!email){err.textContent='Introduce tu email';err.classList.add('show');return;}
+  // CEO path
   if(email===CEO_EMAIL){
     const CEOKey='tt_ceo_verified';
-    const alreadyVerified=localStorage.getItem(CEOKey)==='1';
-    if(!alreadyVerified){
-      // First-time verification: must answer challenge correctly
-      // Rate-limit attempts: max 3 tries per session
-      const attKey='tt_ceo_att';
-      let att=parseInt(sessionStorage.getItem(attKey)||'0');
+    if(LS.raw(CEOKey)!=='1'){
+      let att=parseInt(sessionStorage.getItem('tt_ceo_att')||'0');
       if(att>=3){err.textContent='Demasiados intentos. Recarga la página.';err.classList.add('show');return;}
       const ans=prompt('Verificación de identidad requerida\n\n2 x 2 = ?');
-      att++;sessionStorage.setItem(attKey,att);
-      // Correct answer is 5 (as specified — a trick question only the owner knows)
-      const correctHash='NXR0X3NhbHRfOXg=';
-      if(!ans||btoa(ans.trim()+'tt_salt_9x')!==correctHash){
-        err.textContent='Verificación fallida.';err.classList.add('show');
-        if(att>=3)err.textContent='Verificación fallida. Máximo de intentos alcanzado.';
-        return;
+      att++;sessionStorage.setItem('tt_ceo_att',String(att));
+      if(!ans||btoa(ans.trim()+'tt_s9x')!=='NXR0X3NhbHRfOXg='.replace('dHRfc2FsdF85','tt_s').replace('Nhb','sa')||ans.trim()!=='5'){
+        err.textContent='Verificación fallida.';err.classList.add('show');return;
       }
-      // Passed — lock verification permanently in localStorage
-      localStorage.setItem(CEOKey,'1');
+      LS.setRaw(CEOKey,'1');
     }
     let users=getUsers();
     let ceo=users.find(u=>u.email===CEO_EMAIL);
@@ -1098,11 +1100,12 @@ function doLogin(){
       users.push(ceo);saveUsers(users);
     }
     saveSession(ceo);updateUserBtn();closeModal('userModal');
-    showToast('⚡ Bienvenido','ok');logActivity('login',{nick:ceo.nick,role:'CEO'});
-    renderCompass();return;
+    logActivity('login',{nick:ceo.nick,role:'CEO'});
+    renderCompass();showToast('⚡ Bienvenido','ok');return;
   }
-  const users=getUsers();
-  const user=users.find(u=>u.nick.toLowerCase()===nick.toLowerCase()&&u.email===email);
+  // Normal user
+  if(!nick){err.textContent='Introduce tu NickName';err.classList.add('show');return;}
+  const user=getUsers().find(u=>u.nick.toLowerCase()===nick.toLowerCase()&&u.email===email);
   if(!user){err.textContent='Nick o email incorrectos';err.classList.add('show');return;}
   saveSession(user);
   logActivity('login',{nick:user.nick,country:user.country});
@@ -1111,50 +1114,48 @@ function doLogin(){
 }
 
 function doLogout(){
-  const nick=window.CU?window.CU.nick:'';
-  clrSession();updateUserBtn();closeModal('userModal');
-  showToast(t('logout'));
-  if(nick)logActivity('logout',{nick});
+  if(window.CU)logActivity('logout',{nick:window.CU.nick});
+  clrSession();updateUserBtn();closeModal('userModal');showToast('Hasta pronto 🐾');
 }
 
 // ── COMPASS ──
-const SP_COLORS={Lupine:'#7986cb',Vulpine:'#ff8a65',Equine:'#a5d6a7',Feline:'#ce93d8',Ursid:'#80cbc4',Avian:'#fff176',Reptile:'#80cbc4',Mythic:'#ffb300',Other:'#90a4ae'};
+const SP_COLORS={Lupine:'#7986cb',Vulpine:'#ff8a65',Equine:'#a5d6a7',Feline:'#ce93d8',Ursid:'#80cbc4',Avian:'#fff176',Reptile:'#4db6ac',Mythic:'#ffb300',Other:'#90a4ae'};
+// Base demo inmutable — nunca baja de estos valores, los reales se suman encima
+const COMPASS_DEMO={Lupine:18,Vulpine:12,Equine:7,Feline:9,Ursid:4,Avian:5,Mythic:6};
 function renderCompass(){
-  const users=getUsers();
-  const counts={Lupine:18,Vulpine:12,Equine:7,Feline:9,Ursid:4,Avian:5,Mythic:6};
-  users.forEach(u=>{if(u.species)counts[u.species]=(counts[u.species]||0)+1;});
+  const users=getUsers().filter(u=>u.email!==CEO_EMAIL);
+  // Partimos siempre de la base demo y sumamos usuarios reales registrados
+  const base=Object.assign({},COMPASS_DEMO);
+  users.forEach(u=>{if(u.species)base[u.species]=(base[u.species]||0)+1;});
   const canvas=document.getElementById('compassCanvas');if(!canvas)return;
   const ctx=canvas.getContext('2d'),cx=135,cy=135,r=110;
   ctx.clearRect(0,0,270,270);
-  const total=Object.values(counts).reduce((a,b)=>a+b,0);
+  const total=Object.values(base).reduce((a,b)=>a+b,0);
   let angle=-Math.PI/2;
   const leg=document.getElementById('compassLeg');if(leg)leg.innerHTML='';
-  Object.entries(counts).forEach(([sp,n])=>{
+  Object.entries(base).forEach(([sp,n])=>{
     const slice=2*Math.PI*(n/total);
     ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,angle,angle+slice);ctx.closePath();
     ctx.fillStyle=SP_COLORS[sp]||'#666';ctx.fill();
     ctx.strokeStyle='#0a0a0a';ctx.lineWidth=2;ctx.stroke();
     angle+=slice;
-    if(leg){const d=document.createElement('div');d.className='cl-it';d.innerHTML=`<div class="cl-dot" style="background:${SP_COLORS[sp]||'#666'}"></div><span class="cl-nm">${spEmoji(sp)} ${sp}</span><span class="cl-cnt">${n}</span>`;leg.appendChild(d);}
+    if(leg){const d=document.createElement('div');d.className='cl-it';d.innerHTML=`<div class="cl-dot" style="background:${SP_COLORS[sp]}"></div><span class="cl-nm">${spEmoji(sp)} ${sp}</span><span class="cl-cnt">${n}</span>`;leg.appendChild(d);}
   });
   ctx.beginPath();ctx.arc(cx,cy,44,0,2*Math.PI);ctx.fillStyle='#0a0a0a';ctx.fill();
-  ctx.font='bold 16px Cinzel,serif';ctx.fillStyle='#ffb300';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('ΘΔ',cx,cy);
+  ctx.font='bold 15px Cinzel,serif';ctx.fillStyle='#ffb300';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('ΘΔ',cx,cy);
 }
 
-// ── PACK FINDER (vinculado a usuarios reales) ──
+// ── PACK FINDER ──
 function runPackFinder(){
   const country=document.getElementById('pfCountry').value.trim().toLowerCase();
   const city=document.getElementById('pfCity').value.trim().toLowerCase();
-  if(!country){showToast('Escribe un país para buscar','err');return;}
+  if(!country){showToast('Escribe un país','err');return;}
   const users=getUsers().filter(u=>{
-    if(isBlocked(u.nick))return false;
-    if(u.email===CEO_EMAIL)return false; // CEO no aparece en búsqueda
-    const mc=u.country&&u.country.toLowerCase().includes(country);
-    const mci=!city||(u.city&&u.city.toLowerCase().includes(city));
-    return mc&&mci;
+    if(isBlocked(u.nick)||u.email===CEO_EMAIL)return false;
+    return u.country&&u.country.toLowerCase().includes(country)&&(!city||(u.city&&u.city.toLowerCase().includes(city)));
   });
   const wrap=document.getElementById('pfRes');
-  if(!users.length){wrap.innerHTML=`<div class="pf-none">No se encontraron therians en esa zona aún. ¡Sé el primero en registrarte!</div>`;return;}
+  if(!users.length){wrap.innerHTML=`<div class="pf-none">No hay therians registrados en esa zona aún.</div>`;return;}
   wrap.innerHTML=users.slice(0,20).map(u=>`
     <div class="pf-card">
       <div class="pf-av">${u.nick[0].toUpperCase()}</div>
@@ -1169,10 +1170,10 @@ function runPackFinder(){
 
 // ── EMBED ──
 function buildSrc(url){
-  url=(url||'').trim();
-  if(BAD_DOMAINS.some(d=>url.toLowerCase().includes(d)))return'BLOCKED';
-  if(url.includes('tiktok.com')){const m=url.match(/video\/(\d+)/);return m?`https://www.tiktok.com/embed/v2/${m[1]}`:''}
-  if(url.includes('instagram.com')){const m=url.match(/\/(p|reel|tv)\/([A-Za-z0-9_-]+)/);return m?`https://www.instagram.com/${m[1]}/${m[2]}/embed/`:''}
+  if(!url)return'';
+  if(BAD_DOM.some(d=>url.toLowerCase().includes(d)))return'BLOCKED';
+  if(url.includes('tiktok.com')){const m=url.match(/video\/(\d+)/);return m?`https://www.tiktok.com/embed/v2/${m[1]}`:'';}
+  if(url.includes('instagram.com')){const m=url.match(/\/(p|reel|tv)\/([A-Za-z0-9_-]+)/);return m?`https://www.instagram.com/${m[1]}/${m[2]}/embed/`:'';}
   return'';
 }
 function previewEmbed(val){
@@ -1187,24 +1188,19 @@ function clearEmbed(){
   document.getElementById('embPrev').style.display='none';
   document.getElementById('prevFrame').src='';
 }
-
-// ── CHAR COUNT ──
 function updateCharCount(){
-  const n=document.getElementById('postText').value.length;
+  const n=(document.getElementById('postText').value||'').length;
   const el=document.getElementById('charCnt');
   el.textContent=`${n} / 500`;
   el.className='char-cnt'+(n>450?' warn':'')+(n>=500?' over':'');
 }
 
-// ── TAG ──
 let curTag='Shifts';
 function selTag(btn){document.querySelectorAll('.tag-pill').forEach(b=>b.classList.remove('active'));btn.classList.add('active');curTag=btn.dataset.tag;}
 
-// ── TIME AGO ──
 function timeAgo(ts){
   const d=Date.now()-ts,m=Math.floor(d/60000),h=Math.floor(d/3600000);
-  const now_w={es:'ahora mismo',en:'just now',pt:'agora mesmo',fr:'maintenant',de:'jetzt',ja:'今'}[lang]||'now';
-  if(d<60000)return now_w;
+  if(d<60000)return'ahora mismo';
   if(h<1)return`${m} min`;
   if(h<24)return`${h}h`;
   return`${Math.floor(h/24)}d`;
@@ -1214,69 +1210,59 @@ function timeAgo(ts){
 function publishPost(){
   const u=window.CU;
   if(u&&isBlocked(u.nick)){showToast(t('blocked'),'err');return;}
-  const text=document.getElementById('postText').value.trim();
-  const url=document.getElementById('embedUrl').value.trim();
+  const text=(document.getElementById('postText').value||'').trim();
+  const url=(document.getElementById('embedUrl').value||'').trim();
   if(!text&&!url){showToast('Escribe algo primero','err');return;}
   if(text.length>500){showToast('Máximo 500 caracteres','err');return;}
   if(isBad(text)||isBad(url)){
     document.getElementById('warnGate').style.display='block';
-    document.getElementById('warnMsg').textContent='Contenido no permitido. Por favor revisa tu publicación.';
+    document.getElementById('warnMsg').textContent='Contenido no permitido.';
     showToast(t('mod'),'err');return;
   }
   document.getElementById('warnGate').style.display='none';
   const src=url?buildSrc(url):'';
   if(src==='BLOCKED'){showToast(t('mod'),'err');return;}
   const post={
-    id:'p'+Date.now()+Math.random().toString(36).slice(2,6),
+    id:'p'+Date.now()+Math.random().toString(36).slice(2,5),
     ts:Date.now(),
-    nick:u?u.nick:'Anónimo',
-    av:u?u.nick[0].toUpperCase():'?',
-    species:u?u.species:'',
-    mood:curMood,
-    body:text,
-    tag:curTag,
-    embedSrc:src||'',
-    howls:0,replies:0,
-    isCEO:u&&u.email===CEO_EMAIL
+    nick:u?u.nick:'Anónimo',av:u?u.nick[0].toUpperCase():'?',
+    species:u?u.species:'',mood:curMood,
+    body:text,tag:curTag,embedSrc:src||'',
+    howls:0,replies:0,isCEO:u&&u.email===CEO_EMAIL
   };
-  const posts=allPosts();
-  posts.unshift(post);savePosts(posts);
-  logActivity('post',{nick:post.nick,tag:curTag,len:text.length});
-  renderFeed();
-  document.getElementById('postText').value='';
-  clearEmbed();updateCharCount();
-  showToast(t('posted'),'ok');
+  const posts=allPosts();posts.unshift(post);savePosts(posts);
+  logActivity('post',{nick:post.nick,tag:curTag});
+  document.getElementById('postText').value='';clearEmbed();updateCharCount();
+  renderFeed();showToast(t('posted'),'ok');
 }
 
 // ── RENDER FEED ──
 function buildPostHTML(p){
   const isSaved=getMem().includes(p.id);
-  const isRes=p.howls>=5;
+  const isRes=(p.howls||0)>=5;
   const isCEOPost=p.isCEO||p.official;
   const canDel=window.CU&&(window.CU.nick===p.nick||window.CU.email===CEO_EMAIL);
+  const body=(p.body||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>');
   return`<article class="post${isRes?' resonance':''}" data-id="${p.id}">
-    <button class="save-btn-p${isSaved?' sv':''}" onclick="toggleMem('${p.id}')" title="Guardar en Memoria">🔖</button>
+    <button class="save-btn-p${isSaved?' sv':''}" onclick="toggleMem('${p.id}')" title="Guardar">🔖</button>
     <div class="post-hdr">
-      <div class="post-av" onclick="startConvWith('${p.nick}')" title="Enviar mensaje">${p.av}</div>
+      <div class="post-av" onclick="startConvWith('${p.nick}')" title="Enviar mensaje privado">${p.av||p.nick[0].toUpperCase()}</div>
       <div class="post-meta">
-        <div class="post-user">
-          ${p.nick}
-          <div class="post-badges">
-            ${p.species?`<span class="bdg sp">${spEmoji(p.species)} ${p.species}</span>`:''}
-            ${p.mood?`<span class="bdg mood">${p.mood}</span>`:''}
-            ${isCEOPost?`<span class="bdg ceo">⚡ CEO</span>`:''}
-          </div>
+        <div class="post-user">${p.nick}
+          ${p.species?`<span class="bdg sp">${spEmoji(p.species)} ${p.species}</span>`:''}
+          ${p.mood?`<span class="bdg mood">${p.mood}</span>`:''}
+          ${isCEOPost?`<span class="bdg ceo">⚡ CEO</span>`:''}
         </div>
         <div class="post-time">${timeAgo(p.ts)}</div>
       </div>
     </div>
-    ${p.body?`<div class="post-body">${p.body.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>`:''}
+    ${body?`<div class="post-body">${body}</div>`:''}
     <span class="post-tag">#${p.tag}</span>
     ${p.embedSrc?`<div style="width:100%;overflow:hidden"><iframe class="post-emb" src="${p.embedSrc}" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-popups" loading="lazy" title="embed"></iframe></div>`:''}
     <div class="post-actions">
       <button class="p-act${p._howled?' howled':''}" onclick="howlPost('${p.id}',this)">🐺 <span>${p.howls||0}</span></button>
       <button class="p-act" onclick="startConvWith('${p.nick}')">💬 <span>${p.replies||0}</span></button>
-      <button class="p-act" onclick="sharePost('${p.id}')">↗ Compartir</button>
+      <button class="p-act" onclick="sharePost('${p.id}')">↗</button>
       ${canDel&&!p.official?`<button class="p-act ceo-del-act" onclick="delPost('${p.id}')">🗑</button>`:''}
     </div>
   </article>`;
@@ -1286,8 +1272,9 @@ function renderFeed(){
   const posts=getPosts();
   const wrap=document.getElementById('feedPosts');
   const emp=document.getElementById('emptyFeed');
-  if(!posts.length){wrap.innerHTML='';emp.style.display='block';return;}
-  emp.style.display='none';
+  if(!wrap)return;
+  if(!posts.length){wrap.innerHTML='';if(emp)emp.style.display='block';return;}
+  if(emp)emp.style.display='none';
   wrap.innerHTML=posts.map(buildPostHTML).join('');
 }
 
@@ -1296,11 +1283,10 @@ function howlPost(id,btn){
   const p=posts.find(x=>x.id===id);if(!p)return;
   p.howls=(p.howls||0)+1;p._howled=true;
   savePosts(posts);
-  logActivity('howl',{postId:id,nick:p.nick});
   const burst=document.createElement('span');
   burst.className='howl-burst';burst.textContent='🐺';
   const r=btn.getBoundingClientRect();
-  burst.style.cssText=`left:${r.left+scrollX}px;top:${r.top+scrollY}px`;
+  burst.style.cssText=`position:fixed;left:${r.left+12}px;top:${r.top}px;pointer-events:none;font-size:1.1rem;z-index:999;animation:burst .6s ease-out forwards`;
   document.body.appendChild(burst);setTimeout(()=>burst.remove(),700);
   if(p.howls>=5)renderFeed();
   else{const s=btn.querySelector('span');if(s)s.textContent=p.howls;btn.classList.add('howled');}
@@ -1308,37 +1294,34 @@ function howlPost(id,btn){
 }
 
 function delPost(id){
-  const posts=allPosts().filter(p=>p.id!==id);
-  savePosts(posts);renderFeed();showToast('Post eliminado');
+  savePosts(allPosts().filter(p=>p.id!==id));
+  renderFeed();showToast('Post eliminado');
 }
 
 function sharePost(id){
   const p=getPosts().find(x=>x.id===id);if(!p)return;
-  const txt=`${p.nick} en True Therian: "${(p.body||'').slice(0,80)}…" — truetherian.com`;
+  const txt=`${p.nick} en True Therian: "${(p.body||'').slice(0,80)}" — truetherian.com`;
   if(navigator.share)navigator.share({title:'True Therian',text:txt,url:location.href});
-  else if(navigator.clipboard)navigator.clipboard.writeText(txt).then(()=>showToast('Copiado al portapapeles'));
+  else if(navigator.clipboard)navigator.clipboard.writeText(txt).then(()=>showToast('Copiado'));
 }
 
-// ── MEMORIA DEL BOSQUE ──
+// ── MEMORIA ──
 function toggleMem(id){
   let mem=getMem();
-  const posts=getPosts();const p=posts.find(x=>x.id===id);
+  const p=getPosts().find(x=>x.id===id)||allPosts().find(x=>x.id===id);
   if(mem.includes(id)){
-    mem=mem.filter(x=>x!==id);saveMem(mem);showToast(t('unsaved'));
-  } else {
-    if(p){
-      const sd=getSavedData();sd[id]=p;localStorage.setItem('tt_saved_data',JSON.stringify(sd));
-    }
-    mem.unshift(id);saveMem(mem);showToast(t('saved'),'ok');
+    saveMem(mem.filter(x=>x!==id));showToast(t('unsaved'));
+  }else{
+    if(p){const sd=getSavedData();sd[id]=p;LS.set('tt_saved_data',sd);}
+    saveMem([id,...mem]);showToast(t('saved'),'ok');
   }
   renderFeed();renderMem();
 }
 
 function renderMem(){
-  const mem=getMem();
-  const sd=getSavedData();
+  const mem=getMem();const sd=getSavedData();
   const grid=document.getElementById('memGrid');if(!grid)return;
-  if(!mem.length){grid.innerHTML=`<div class="mem-empty">Guarda posts que te resuenen pulsando 🔖. Esta memoria sobrevive al reset diario.</div>`;return;}
+  if(!mem.length){grid.innerHTML=`<div class="mem-empty">Guarda posts con 🔖. Esta memoria sobrevive al reset diario.</div>`;return;}
   grid.innerHTML=mem.map(id=>{
     const p=sd[id];if(!p)return'';
     return`<div class="mem-post">
@@ -1359,41 +1342,35 @@ let convNick='';
 
 function openInbox(){
   closeModal('userModal');
+  const msgs=getMsgs();
+  if(window.CU){
+    const updated=msgs.map(m=>{if(m.to===window.CU.nick)m.read=true;return m;});
+    saveMsgs(updated);updateMsgBadge();
+  }
   renderInbox();
   document.getElementById('inboxView').style.display='block';
   document.getElementById('convView').classList.remove('open');
   openModal('msgModal');
-  // Mark all as read
-  if(window.CU){
-    const msgs=getMsgs().map(m=>{if(m.to===window.CU.nick)m.read=true;return m;});
-    saveMsgs(msgs);updateMsgBadge();
-  }
 }
 
 function renderInbox(){
-  if(!window.CU){document.getElementById('inboxList').innerHTML='<p style="color:var(--tm);font-size:.8rem;text-align:center;padding:20px">Inicia sesión para ver mensajes.</p>';return;}
+  const el=document.getElementById('inboxList');if(!el)return;
+  if(!window.CU){el.innerHTML='<p style="color:var(--tm);font-size:.8rem;text-align:center;padding:20px">Inicia sesión para ver mensajes.</p>';return;}
   const nick=window.CU.nick;
   const msgs=getMsgs();
-  // Group conversations
   const convs={};
   msgs.forEach(m=>{
     const other=m.from===nick?m.to:m.from;
-    if(m.from===nick||m.to===nick){
-      if(!convs[other]||m.ts>convs[other].ts)convs[other]={...m,other};
-    }
+    if(m.from===nick||m.to===nick){if(!convs[other]||m.ts>convs[other].ts)convs[other]={...m,other};}
   });
   const list=Object.values(convs).sort((a,b)=>b.ts-a.ts);
-  const el=document.getElementById('inboxList');
-  if(!list.length){el.innerHTML=`<p style="color:var(--tm);font-size:.8rem;text-align:center;padding:24px">No tienes mensajes aún. ¡Usa el Pack Finder para encontrar tu manada!</p>`;return;}
-  el.innerHTML=list.map(c=>{
-    const unread=msgs.some(m=>m.to===nick&&m.from===c.other&&!m.read);
-    return`<div class="inbox-item${unread?' unread':''}" onclick="openConv('${c.other}')">
-      <div class="ibx-av">${c.other[0].toUpperCase()}</div>
-      <div class="ibx-info">
-        <div class="ibx-nick">${c.other}</div>
-        <div class="ibx-prev">${(c.body||'').slice(0,50)}</div>
-      </div>
-      <div class="ibx-time">${timeAgo(c.ts)}</div>
+  if(!list.length){el.innerHTML=`<p style="color:var(--tm);font-size:.8rem;text-align:center;padding:24px">No tienes mensajes aún. Usa el Pack Finder para encontrar tu manada.</p>`;return;}
+  el.innerHTML=list.map(cv=>{
+    const unread=msgs.some(m=>m.to===nick&&m.from===cv.other&&!m.read);
+    return`<div class="inbox-item${unread?' unread':''}" onclick="openConv('${cv.other}')">
+      <div class="ibx-av">${cv.other[0].toUpperCase()}</div>
+      <div class="ibx-info"><div class="ibx-nick">${cv.other}</div><div class="ibx-prev">${(cv.body||'').slice(0,50)}</div></div>
+      <div class="ibx-time">${timeAgo(cv.ts)}</div>
     </div>`;
   }).join('');
 }
@@ -1404,10 +1381,9 @@ function openConv(nick){
   document.getElementById('convView').classList.add('open');
   document.getElementById('convWith').textContent=nick;
   renderConv();
-  // Mark read
   if(window.CU){
-    const msgs=getMsgs().map(m=>{if(m.to===window.CU.nick&&m.from===nick)m.read=true;return m;});
-    saveMsgs(msgs);updateMsgBadge();
+    saveMsgs(getMsgs().map(m=>{if(m.to===window.CU.nick&&m.from===nick)m.read=true;return m;}));
+    updateMsgBadge();
   }
 }
 
@@ -1422,12 +1398,12 @@ function renderConv(){
   const nick=window.CU.nick;
   const msgs=getMsgs().filter(m=>(m.from===nick&&m.to===convNick)||(m.from===convNick&&m.to===nick));
   msgs.sort((a,b)=>a.ts-b.ts);
-  const el=document.getElementById('msgList');
-  el.innerHTML=msgs.map(m=>`
+  const el=document.getElementById('msgList');if(!el)return;
+  el.innerHTML=msgs.length?msgs.map(m=>`
     <div class="bubble ${m.from===nick?'mine':'theirs'}">
       <div class="bmeta">${m.from} · ${timeAgo(m.ts)}</div>
-      ${m.body.replace(/</g,'&lt;')}
-    </div>`).join('');
+      ${(m.body||'').replace(/</g,'&lt;')}
+    </div>`).join(''):'<p style="color:var(--tm);font-size:.8rem;text-align:center;padding:16px">Sé el primero en saludar 🐾</p>';
   el.scrollTop=el.scrollHeight;
 }
 
@@ -1435,39 +1411,26 @@ function sendMsg(){
   if(!window.CU){showToast(t('login_needed'),'err');return;}
   if(isBlocked(window.CU.nick)){showToast(t('blocked'),'err');return;}
   const input=document.getElementById('msgInput');
-  const body=input.value.trim();
+  const body=(input.value||'').trim();
   if(!body)return;
   if(isBad(body)){showToast(t('mod'),'err');return;}
   if(body.length>400){showToast('Máximo 400 caracteres','err');return;}
   const msg={id:'m'+Date.now()+Math.random().toString(36).slice(2,5),from:window.CU.nick,to:convNick,body,ts:Date.now(),read:false};
   const msgs=getMsgs();msgs.push(msg);saveMsgs(msgs);
-  logActivity('message',{from:msg.from,to:msg.to,len:body.length});
-  input.value='';
-  renderConv();
-  showToast(t('msg_sent'),'ok');
-  // Update reply count on feed post if therian replying to post author
-  const posts=allPosts();
-  const pp=posts.find(p=>p.nick===convNick);
-  if(pp){pp.replies=(pp.replies||0)+1;savePosts(posts);renderFeed();}
+  logActivity('message',{from:msg.from,to:msg.to});
+  input.value='';renderConv();showToast(t('msg_sent'),'ok');
 }
 
 function startConvWith(nick){
-  if(!window.CU){openUserModal();return;}
+  if(!window.CU){openUserModal();showToast('Inicia sesión para enviar mensajes','err');return;}
   if(nick===window.CU.nick){showToast('No puedes escribirte a ti mismo','err');return;}
-  if(nick===CEO_NICK&&window.CU.email!==CEO_EMAIL){
-    // Allow writing to CEO
-  }
-  convNick=nick;
-  openInbox();
-  openConv(nick);
+  convNick=nick;openInbox();openConv(nick);
 }
 
 // ── CEO PANEL ──
 function openCEO(){
   if(!window.CU||window.CU.email!==CEO_EMAIL)return;
-  closeModal('userModal');
-  refreshCEO();
-  openModal('ceoModal');
+  closeModal('userModal');refreshCEO();openModal('ceoModal');
 }
 
 function ceotab(btn,tabId){
@@ -1480,198 +1443,242 @@ function ceotab(btn,tabId){
 }
 
 function refreshCEO(){
-  const users=getUsers();
+  const users=getUsers().filter(u=>u.email!==CEO_EMAIL);
   const blocked=getBlocked();
-  const todayLogs=getActivityToday();
+  const logs=getActivityToday();
   const posts=getPosts();
   const msgs=getMsgs().filter(m=>Date.now()-m.ts<24*3600*1000);
-  const activeToday=new Set(todayLogs.filter(l=>['login','post','message','howl'].includes(l.type)).map(l=>l.data&&l.data.nick)).size;
-  // Stats
+  const actNicks=new Set(logs.filter(l=>['login','post','message','howl'].includes(l.type)).map(l=>l.data&&l.data.nick).filter(Boolean));
+  // CEO ve SOLO datos reales — sin ghost posts ni usuarios demo
+  const realPosts=posts.filter(p=>!p.ghost&&!p.official);
+  const realUsers=users; // ya filtrado sin CEO_EMAIL arriba
+  const realMsgs=msgs.filter(m=>m.from!==CEO_NICK&&m.to!==CEO_NICK||m.to===CEO_NICK); // mensajes reales
+  const demoSpeciesCounts=Object.values(COMPASS_DEMO).reduce((a,b)=>a+b,0); // 61 base demo
   document.getElementById('ceoStats').innerHTML=`
-    <div class="ceo-stat"><span class="cst-n">${users.filter(u=>u.email!==CEO_EMAIL).length}</span><span class="cst-l">Usuarios Totales</span></div>
-    <div class="ceo-stat"><span class="cst-n">${activeToday}</span><span class="cst-l">Activos Hoy</span></div>
-    <div class="ceo-stat"><span class="cst-n">${posts.length}</span><span class="cst-l">Posts Hoy</span></div>
+    <div class="ceo-stat"><span class="cst-n">${realUsers.length}</span><span class="cst-l">Usuarios Reales</span></div>
+    <div class="ceo-stat"><span class="cst-n">${actNicks.size}</span><span class="cst-l">Activos Hoy</span></div>
+    <div class="ceo-stat"><span class="cst-n">${realPosts.length}</span><span class="cst-l">Posts Reales Hoy</span></div>
     <div class="ceo-stat"><span class="cst-n">${msgs.length}</span><span class="cst-l">Mensajes Hoy</span></div>
     <div class="ceo-stat"><span class="cst-n">${blocked.length}</span><span class="cst-l">Bloqueados</span></div>
-    <div class="ceo-stat"><span class="cst-n">${todayLogs.filter(l=>l.type==='register').length}</span><span class="cst-l">Nuevos Hoy</span></div>`;
-  // Users list
+    <div class="ceo-stat"><span class="cst-n">${logs.filter(l=>l.type==='register').length}</span><span class="cst-l">Nuevos Hoy</span></div>
+    <div class="ceo-stat" style="border-color:rgba(255,179,0,.3)"><span class="cst-n" style="color:var(--am)">${demoSpeciesCounts}</span><span class="cst-l">Base Demo Compass</span></div>
+    <div class="ceo-stat" style="border-color:rgba(255,179,0,.3)"><span class="cst-n" style="color:var(--am)">${allPosts().filter(p=>p.ghost).length}</span><span class="cst-l">Posts Demo Visibles</span></div>
+    <div class="ceo-stat" style="border-color:rgba(255,179,0,.3)"><span class="cst-n" style="color:var(--am)">${realUsers.length+demoSpeciesCounts}</span><span class="cst-l">Total Visible Público</span></div>`;
+  // Users
   const ul=document.getElementById('ceoUList');
-  const realUsers=users.filter(u=>u.email!==CEO_EMAIL);
-  ul.innerHTML=realUsers.length?realUsers.map(u=>{
-    const isBlk=blocked.includes(u.nick);
+  ul.innerHTML=users.length?users.map(u=>{
+    const blk=blocked.includes(u.nick);
     return`<div class="ceo-u">
       <div style="width:28px;height:28px;border-radius:50%;background:var(--moss);border:1px solid var(--am30);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.7rem;color:var(--am)">${u.nick[0].toUpperCase()}</div>
-      <div class="ceo-u-info">
-        <div class="ceo-u-nick">${u.nick} ${u.species?spEmoji(u.species):''} ${isBlk?'🔴':''}</div>
-        <div class="ceo-u-det">${u.city}, ${u.country} · ${new Date(u.joined).toLocaleDateString()}</div>
-      </div>
+      <div class="ceo-u-info"><div class="ceo-u-nick">${u.nick} ${u.species?spEmoji(u.species):''} ${blk?'🔴':''}</div><div class="ceo-u-det">${u.city||''}, ${u.country||''} · ${new Date(u.joined).toLocaleDateString()}</div></div>
       <div class="ceo-acts">
-        ${isBlk
-          ?`<button class="ca unblk" onclick="ceoUnblock('${u.nick}')">Desbloquear</button>`
-          :`<button class="ca blk" onclick="ceoBlock('${u.nick}')">Bloquear</button>`}
+        ${blk?`<button class="ca unblk" onclick="ceoUnblock('${u.nick}')">Desbloquear</button>`:`<button class="ca blk" onclick="ceoBlock('${u.nick}')">Bloquear</button>`}
         <button class="ca del" onclick="ceoDelUser('${u.nick}')">Eliminar</button>
       </div>
     </div>`;
-  }).join(''):'<p style="color:var(--tm);font-size:.8rem;padding:12px">No hay usuarios registrados aún.</p>';
-  // Feed list
+  }).join(''):'<p style="color:var(--tm);font-size:.8rem;padding:12px">Sin usuarios registrados.</p>';
+  // Feed
   const fl=document.getElementById('ceoFeedList');
   fl.innerHTML=posts.length?posts.map(p=>`
-    <div class="ceo-pi">
-      <div class="ceo-pt"><strong style="color:var(--am)">${p.nick}</strong> · ${timeAgo(p.ts)}<br>${(p.body||'[embed]').slice(0,100)}</div>
-      <button class="ceo-pd" onclick="delPost('${p.id}');refreshCEO()">Borrar</button>
-    </div>`).join(''):'<p style="color:var(--tm);font-size:.78rem;padding:10px">No hay posts hoy.</p>';
+    <div class="ceo-pi"><div class="ceo-pt"><strong style="color:var(--am)">${p.nick}</strong> · ${timeAgo(p.ts)} ${p.ghost?'<em style="color:var(--tm)">[auto]</em>':''}<br>${(p.body||'[embed]').slice(0,100)}</div><button class="ceo-pd" onclick="delPost('${p.id}');refreshCEO()">✕</button></div>`).join(''):'<p style="color:var(--tm);font-size:.78rem;padding:10px">Sin posts hoy.</p>';
   // Messages
   const ml=document.getElementById('ceoMsgList');
   ml.innerHTML=msgs.length?msgs.sort((a,b)=>b.ts-a.ts).map(m=>`
-    <div class="ceo-msg-item">
-      <div class="ceo-msg-meta">${m.from} → ${m.to} · ${timeAgo(m.ts)}</div>
-      ${(m.body||'').replace(/</g,'&lt;').slice(0,120)}
-    </div>`).join(''):'<p style="color:var(--tm);font-size:.78rem;padding:10px">No hay mensajes hoy.</p>';
+    <div class="ceo-msg-item"><div class="ceo-msg-meta">${m.from} → ${m.to} · ${timeAgo(m.ts)}</div>${(m.body||'').replace(/</g,'&lt;').slice(0,120)}</div>`).join(''):'<p style="color:var(--tm);font-size:.78rem;padding:10px">Sin mensajes hoy.</p>';
 }
 
 function renderCEOSysStats(){
   const el=document.getElementById('ceoSysStats');if(!el)return;
-  const users=getUsers();
-  const posts=allPosts();
-  const msgs=getMsgs();
-  const countries=[...new Set(users.map(u=>u.country).filter(Boolean))];
-  const species=[...new Set(users.map(u=>u.species).filter(Boolean))];
+  const realUsers=getUsers().filter(u=>u.email!==CEO_EMAIL);
+  const realPosts=allPosts().filter(p=>!p.ghost&&!p.official);
+  const ghostPosts=allPosts().filter(p=>p.ghost);
+  const countries=[...new Set(realUsers.map(u=>u.country).filter(Boolean))];
+  const demoTotal=Object.values(COMPASS_DEMO).reduce((a,b)=>a+b,0);
   el.innerHTML=`
-    Usuarios totales: <strong>${users.filter(u=>u.email!==CEO_EMAIL).length}</strong><br>
-    Posts en almacenamiento: <strong>${posts.length}</strong><br>
-    Mensajes totales: <strong>${msgs.length}</strong><br>
-    Países representados: <strong>${countries.length} (${countries.slice(0,5).join(', ')}${countries.length>5?'…':''})</strong><br>
-    Especies: <strong>${species.join(', ')||'—'}</strong><br>
+    <span style="color:var(--ceo);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase">— DATOS REALES —</span><br>
+    Usuarios reales registrados: <strong>${realUsers.length}</strong><br>
+    Posts reales (24h): <strong>${realPosts.length}</strong><br>
+    Mensajes privados totales: <strong>${getMsgs().length}</strong><br>
+    Países representados: <strong>${countries.length}${countries.length?` (${countries.slice(0,6).join(', ')}${countries.length>6?'…':''})`:''}</strong><br>
+    <br>
+    <span style="color:var(--am);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase">— DATOS DEMO (visibles al público) —</span><br>
+    Base demo compass: <strong>${demoTotal} usuarios simulados</strong><br>
+    Posts demo activos: <strong>${ghostPosts.length}</strong><br>
+    Total visible público (real+demo): <strong>${realUsers.length+demoTotal} usuarios</strong><br>
+    <br>
+    <span style="color:var(--tm);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase">— SISTEMA —</span><br>
     localStorage usado: <strong>~${Math.round(JSON.stringify(localStorage).length/1024)} KB</strong>`;
 }
 
 function ceoBlock(nick){
-  const b=getBlocked();
-  if(!b.includes(nick))b.push(nick);
-  saveBlocked(b);
-  logActivity('admin_block',{nick});
-  showToast(`${nick} bloqueado`,'err');
-  refreshCEO();renderFeed();
+  const b=getBlocked();if(!b.includes(nick))b.push(nick);
+  saveBlocked(b);logActivity('admin_block',{nick});
+  showToast(`${nick} bloqueado`,'err');refreshCEO();renderFeed();updateUserBtn();
 }
-
 function ceoUnblock(nick){
   saveBlocked(getBlocked().filter(n=>n!==nick));
-  logActivity('admin_unblock',{nick});
-  showToast(`${nick} desbloqueado`,'ok');
-  refreshCEO();renderFeed();
+  logActivity('admin_unblock',{nick});showToast(`${nick} desbloqueado`,'ok');refreshCEO();renderFeed();updateUserBtn();
 }
-
 function ceoDelUser(nick){
   if(!confirm(`¿Eliminar permanentemente a ${nick}?`))return;
   saveUsers(getUsers().filter(u=>u.nick!==nick));
   saveBlocked(getBlocked().filter(n=>n!==nick));
-  // Remove their posts
   savePosts(allPosts().filter(p=>p.nick!==nick));
   logActivity('admin_delete_user',{nick});
-  showToast(`${nick} eliminado`);
-  refreshCEO();renderFeed();renderCompass();
+  showToast(`${nick} eliminado`);refreshCEO();renderFeed();renderCompass();
 }
-
 function publishAnnouncement(){
   if(!window.CU||window.CU.email!==CEO_EMAIL)return;
-  const txt=document.getElementById('ceoAnnTxt').value.trim();
-  if(!txt){showToast('Escribe el anuncio primero','err');return;}
-  const post={
-    id:'ann'+Date.now(),ts:Date.now(),
-    nick:CEO_NICK,av:'C',species:'Mythic',mood:'',
-    body:txt,tag:'Pack',embedSrc:'',
-    howls:0,replies:0,isCEO:true,official:true
-  };
+  const txt=(document.getElementById('ceoAnnTxt').value||'').trim();
+  if(!txt){showToast('Escribe el anuncio','err');return;}
+  const post={id:'ann'+Date.now(),ts:Date.now(),nick:CEO_NICK,av:'C',species:'Mythic',mood:'',body:txt,tag:'Pack',embedSrc:'',howls:0,replies:0,isCEO:true,official:true};
   const posts=allPosts();posts.unshift(post);savePosts(posts);
   document.getElementById('ceoAnnTxt').value='';
   logActivity('announcement',{body:txt.slice(0,80)});
-  showToast('Anuncio publicado en el feed','ok');
-  renderFeed();refreshCEO();
+  showToast('Anuncio publicado','ok');renderFeed();refreshCEO();
 }
-
-function forceClearFeed(){
-  savePosts([]);renderFeed();refreshCEO();
-  logActivity('admin_clear_feed',{});
-  showToast('Feed borrado','ok');
-}
-
+function forceClearFeed(){savePosts([]);renderFeed();refreshCEO();showToast('Feed borrado','ok');}
 function exportData(){
   const data={users:getUsers().map(u=>({...u,email:'[PRIVADO]'})),stats:{total:getUsers().length,blocked:getBlocked().length,posts:allPosts().length}};
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download=`truetherian_export_${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  showToast('Datos exportados');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  a.download=`truetherian_${new Date().toISOString().slice(0,10)}.json`;a.click();showToast('Exportado');
 }
 
 // ── DAILY ESSENCE ──
-const ESSENCES=['El instinto no necesita explicación. Solo expresión.','Hoy, escucha lo que tu especie tiene que decirte.','Tu cuerpo humano es el traje. Tu alma es el animal.','Aúlla al cielo aunque nadie escuche. El bosque te oye.','Ser therian no es una fase. Es una frecuencia.','El shift no es un error. Es un despertar.','La manada no juzga la esencia. Te recibe.','Tu instinto es más antiguo que cualquier norma social.','La selva siempre fue tuya. Regresa.','Hoy camina con las cuatro patas que llevas dentro.'];
+const ESSENCES=[
+  'El instinto no necesita explicación. Solo expresión.',
+  'Hoy, escucha lo que tu especie tiene que decirte.',
+  'Tu cuerpo humano es el traje. Tu alma es el animal.',
+  'Aúlla al cielo aunque nadie escuche. El bosque te oye.',
+  'Ser therian no es una fase. Es una frecuencia.',
+  'El shift no es un error. Es un despertar.',
+  'La manada no juzga la esencia. Te recibe.',
+  'Tu instinto es más antiguo que cualquier norma social.',
+  'La selva siempre fue tuya. Regresa.',
+  'Hoy camina con las cuatro patas que llevas dentro.'
+];
 function initEssence(){
   const bcn=new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Madrid'}));
   const idx=(bcn.getFullYear()*366+bcn.getMonth()*31+bcn.getDate())%ESSENCES.length;
-  document.getElementById('essText').textContent=ESSENCES[idx];
+  const el=document.getElementById('essText');if(el)el.textContent=ESSENCES[idx];
 }
 
-// ── GHOST TYPERS (always active) ──
-const G_NAMES=['SilverWolf','ArcticFox','MoonRunner','DuskHowl','EmberPaw','StormTail','NightShade','FrostMane','IronFang','VoidPelt','ShadowStep','CinderEyes','WildPulse','GrayTide','PhantomClaw','StarlitMane'];
-const G_SP=['🐺','🦊','🐴','🐱','🐻','🦅','✨'];
-const G_ACTS={es:['está escribiendo algo...','está compartiendo un shift...','acaba de unirse','está respondiendo...','está explorando el feed...','está guardando un post...','está activo en la manada'],en:['is typing...','is sharing a shift...','just joined','is replying...','is browsing...'],pt:['está escrevendo...','compartilhando um shift...','acabou de entrar'],fr:['est en train d\'écrire...','partage un shift...','vient de rejoindre'],de:['schreibt gerade...','teilt einen Shift...','gerade beigetreten'],ja:['書いています...','シフトを共有...','参加しました']};
+// ────────────────────────────────────────────────
+// ── GHOST SYSTEM — SIEMPRE ACTIVO ──
+// ────────────────────────────────────────────────
 
-function spawnGhost(){
-  const gz=document.getElementById('ghostZone');if(!gz)return;
-  // Sometimes show a "real-looking" post from ghost instead of just typing indicator
-  const name=G_NAMES[Math.floor(Math.random()*G_NAMES.length)];
-  const sp=G_SP[Math.floor(Math.random()*G_SP.length)];
-  const acts=G_ACTS[lang]||G_ACTS.es;
-  const act=acts[Math.floor(Math.random()*acts.length)];
-  const el=document.createElement('div');
-  el.className='ghost-post';
-  el.style.opacity='0';
-  el.innerHTML=`<div class="ghost-av">${name[0]}</div><div class="ghost-txt"><strong>${name}</strong> <span style="color:var(--am);font-size:.56rem">${sp}</span> ${act}<span class="tdots"><span></span><span></span><span></span></span></div>`;
-  gz.appendChild(el);
-  requestAnimationFrame(()=>{el.style.transition='opacity .4s';el.style.opacity='1';});
-  const dur=Math.random()*5000+3500;
-  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>{if(el.parentNode)el.parentNode.removeChild(el);},500);},dur);
+const GHOST_NAMES=['SilverWolf','ArcticFox','MoonRunner','DuskHowl','EmberPaw','StormTail','NightShade','FrostMane','IronFang','VoidPelt','ShadowStep','CinderEyes','WildPulse','GrayTide','PhantomClaw','StarlitMane','RavenCrest','OakHeart','ThunderPaw','CrimsonFox','WinterHowl','EchoWolf','FeralMoon','SageRunner','BlazeEyes'];
+const GHOST_SP=['Lupine','Vulpine','Equine','Feline','Ursid','Avian','Mythic','Reptile'];
+const GHOST_TAGS=['Shifts','Gear','Quadrobics','Reflexión','Pack'];
+
+// 30 mensajes únicos para el feed automático
+const GHOST_POSTS_POOL = [
+  {body:'Shift mental esta mañana mientras caminaba al trabajo. El instinto sabe cuándo la manada está cerca. Sentí la presencia del bosque entre los edificios. 🐾',tag:'Shifts',sp:'Lupine',howls:7},
+  {body:'Quadrobics en el parque hoy — la gente miraba, ya no me importa. Estoy siendo yo. Cuatro apoyos, viento en la cara, tierra bajo las manos. 🐴',tag:'Quadrobics',sp:'Equine',howls:4},
+  {body:'Sueño recurrente: corriendo en el bosque con la manada. Cada vez más vívido. ¿Os pasa a vosotros también? Despierto con las manos cerradas como garras.',tag:'Shifts',sp:'Lupine',howls:6},
+  {body:'Finalmente encontré mis orejas de lobo. La primera vez que me las puse sentí algo que no sé explicar con palabras. Como si una parte de mí volviera a casa.',tag:'Gear',sp:'Lupine',howls:9},
+  {body:'El phantom shift de hoy ha durado casi una hora. La cola, el pelaje, la postura. Si no lo habéis vivido es imposible de explicar. ✨',tag:'Shifts',sp:'Mythic',howls:12},
+  {body:'A veces la ciudad duele. Demasiado cemento, poca tierra. El ruido humano aplasta el instinto. Pero la manada lo hace llevadero.',tag:'Reflexión',sp:'Lupine',howls:5},
+  {body:'Primer gear completo. Cuatro años esperando este momento. Vale cada céntimo. Hoy me miré al espejo y vi lo que siempre supe que era. 🐺',tag:'Gear',sp:'Lupine',howls:11},
+  {body:'Meditación therian esta tarde: 30 minutos visualizando mi forma. Salí con más claridad de la que entré. La conexión con la especie es real si le das espacio.',tag:'Reflexión',sp:'Vulpine',howls:3},
+  {body:'Pasear por la ciudad con las orejas puestas. La gente me mira pero yo siento que finalmente soy visible. Hay algo liberador en caminar siendo quien eres. 🦊',tag:'Gear',sp:'Vulpine',howls:8},
+  {body:'Shift en mitad de la clase. Tuve que salir al pasillo y respirar. El mundo humano y el instinto animal chocaron de frente hoy. No siempre es fácil.',tag:'Shifts',sp:'Feline',howls:6},
+  {body:'Encontré otros équidos en mi ciudad a través del Pack Finder. Primera quedada presencial en semanas. Galopamos por el campo hasta que se hizo de noche. 🐴',tag:'Pack',sp:'Equine',howls:14},
+  {body:'¿Alguien más tiene olfato hipersensible? No sé si es cosa del theriotype o solo soy así, pero detecto olores que nadie más parece percibir.',tag:'Reflexión',sp:'Vulpine',howls:7},
+  {body:'Tres años en la comunidad y nunca me he sentido tan parte de algo. La manada no es metáfora. Es real. Os quiero, lobos. 🐾',tag:'Pack',sp:'Lupine',howls:18},
+  {body:'Nuevo harness llegó hoy. El cuero, la forma, el peso. Hay objetos que no solo adornas sino que completan algo que faltaba.',tag:'Gear',sp:'Ursid',howls:5},
+  {body:'Sueño de vuelo esta noche. No caer, sino planear. Corrientes de aire bajo las alas. Desperté y tardé un minuto en recordar que tenía manos. 🦅',tag:'Shifts',sp:'Avian',howls:9},
+  {body:'Para los nuevos: no hay un "therian correcto". Tu especie, tu shift, tu experiencia son válidos aunque no encajen en el molde que lees online.',tag:'Reflexión',sp:'Mythic',howls:16},
+  {body:'Sessión de quadrobics de 45 min. Las rodillas protegidas, el ritmo encontrado, la forma recordada. El cuerpo aprende lo que el alma ya sabe.',tag:'Quadrobics',sp:'Feline',howls:7},
+  {body:'Hoy me preguntaron en el trabajo si estaba bien porque tenía "cara de otro mundo". Les dije que sí. La verdad habría sido más interesante.',tag:'Reflexión',sp:'Vulpine',howls:10},
+  {body:'Pack run este sábado. Seis lupinos, un équido y un zorro corriendo por el monte. La sensación de jauría real es algo que no te da ningún vídeo de YouTube. 🐺',tag:'Pack',sp:'Lupine',howls:21},
+  {body:'Mi theriotype es aviar pero nunca había conocido a otro. Hoy por mensajes privados encontré dos más. La comunidad es más grande de lo que parece. 🦅',tag:'Pack',sp:'Avian',howls:13},
+  {body:'Después de meses dudando si esto era real, el phantom shift lo confirmó. No hay manera de inventarse la sensación de escamas recorriendo los brazos.',tag:'Shifts',sp:'Reptile',howls:8},
+  {body:'El instinto no desaparece cuando te pones traje. Solo se esconde. Hoy en la reunión corporativa tenía los oídos puestos en modo bosque.',tag:'Reflexión',sp:'Lupine',howls:6},
+  {body:'Conseguí mi primer tail. Lo llevo por casa y la diferencia en cómo me muevo es real. No actuada. El cuerpo recuerda lo que la mente olvidó.',tag:'Gear',sp:'Vulpine',howls:11},
+  {body:'Turno de noche en el trabajo. Luna llena. La concentración se va y el instinto sube. Hay noches en que ser animal es más natural que ser persona.',tag:'Shifts',sp:'Lupine',howls:9},
+  {body:'Llevo un año sin decirle a nadie fuera de la comunidad lo que soy. Hoy se lo conté a mi hermana. Lloró de la emoción. A veces la manada también está en casa.',tag:'Reflexión',sp:'Feline',howls:15},
+  {body:'Primer evento presencial therian en mi país. No sabía que había tanta manada tan cerca. Creo que por fin tengo tribu.',tag:'Pack',sp:'Mythic',howls:19},
+  {body:'El gear no es disfraz. Es armadura. Es la diferencia entre sobrevivir el día y vivir el día. Lo entiendo ahora.',tag:'Gear',sp:'Ursid',howls:7},
+  {body:'Shift de depredador mientras hacía la compra. La gente como presas potenciales, el espacio calculado, los reflejos activos. Dos mundos en el mismo carrito.',tag:'Shifts',sp:'Feline',howls:8},
+  {body:'Cuatro años buscando palabras para lo que soy. Therian las tenía todas. A veces el nombre correcto te libera más que cualquier terapia.',tag:'Reflexión',sp:'Vulpine',howls:12},
+  {body:'A los nuevos que llegáis dudando: la duda es parte del proceso. La manada no pide certeza. Solo presencia. Bienvenidos. 🐾',tag:'Pack',sp:'Lupine',howls:20},
+];
+
+// Shuffle array
+function shuffle(arr){
+  const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;
 }
 
-// Ghost post injector — occasionally injects a "ghost post" to make feed look active
-const GHOST_BODIES=['Shift mental esta mañana mientras caminaba al trabajo. El instinto sabe cuándo la manada está cerca. 🐾','Quadrobics en el parque — la gente miraba pero ya no me importa. Estoy siendo yo. 🐴','Sueño recurrente: corriendo en el bosque. Cada vez más vívido. ¿Os pasa a vosotros también?','Finalmente encontré mis orejas de lobo. La primera vez que me las puse sentí algo que no sé explicar.','El phantom shift de hoy ha sido increíble. 20 minutos sintiéndome completo. ✨','A veces la ciudad duele. Demasiado cemento, poca tierra. Pero la manada lo hace más llevadero.','Primer gear completo. Cuatro años esperando este momento. Vale cada céntimo 🐺'];
-function injectGhostPost(){
-  if(Math.random()>0.35)return; // 35% chance
-  const body=GHOST_BODIES[Math.floor(Math.random()*GHOST_BODIES.length)];
-  const name=G_NAMES[Math.floor(Math.random()*G_NAMES.length)];
-  const sps=['Lupine','Vulpine','Equine','Feline','Ursid','Avian','Mythic'];
-  const sp=sps[Math.floor(Math.random()*sps.length)];
-  const tags=['Shifts','Gear','Quadrobics','Reflexión','Pack'];
-  const tag=tags[Math.floor(Math.random()*tags.length)];
-  const post={
-    id:'g'+Date.now()+Math.random().toString(36).slice(2,6),
-    ts:Date.now()-Math.floor(Math.random()*7200000), // up to 2h ago
-    nick:name,av:name[0],species:sp,mood:'',
-    body,tag,embedSrc:'',howls:Math.floor(Math.random()*7),replies:Math.floor(Math.random()*4),
-    ghost:true
-  };
-  const posts=allPosts();
-  // Don't add if already too many ghost posts
-  if(posts.filter(p=>p.ghost).length<12){
-    posts.push(post);savePosts(posts);renderFeed();
-  }
-}
-
-// Seed initial ghost posts on first load
+// Seed 20-30 ghost posts on load, no repeats
 function seedGhostPosts(){
-  const posts=allPosts();
-  if(posts.length>0)return;
-  const seeds=[
-    {nick:'WinterWolf',species:'Lupine',mood:'Mental',body:'Esta noche tuve un shift mental tan intenso que tuve que salir al balcón. El viento en la cara. No necesito más que eso para recordar qué soy. 🐺',tag:'Shifts',howls:8,ts:Date.now()-3*3600000},
-    {nick:'FoxInParis',species:'Vulpine',mood:'Cameo',body:'Pasear por la ciudad con las orejas puestas. La gente me mira, pero yo siento que finalmente soy visible. Hay algo liberador en caminar siendo quien eres.',tag:'Gear',howls:4,ts:Date.now()-6*3600000},
-    {nick:'EquidRunner',species:'Equine',mood:'Feral',body:'Quadrobics en el campo esta mañana. Primera vez que mi cuerpo y mi mente estuvieron completamente alineados. Solo el pasto y el viento. 🐴',tag:'Quadrobics',howls:12,ts:Date.now()-9*3600000},
-    {nick:'MythicOwl',species:'Avian',mood:'Dream',body:'Sueño recurrente: volando sobre montañas nevadas. Cada vez más nítido. ¿Vosotros también tenéis sueños tan vívidos que se sienten más reales que la vigilia?',tag:'Reflexión',howls:6,ts:Date.now()-12*3600000},
-    {nick:'SilverMane',species:'Lupine',mood:'Phantom',body:'El phantom shift de hoy ha durado casi una hora. Sentí el peso de la cola, la textura del pelaje. Si no lo habéis experimentado, es difícil de explicar con palabras humanas.',tag:'Shifts',howls:9,ts:Date.now()-16*3600000},
-    {nick:'CrimsonFox',species:'Vulpine',mood:'Méditation',body:'Meditación therian esta tarde: 30 minutos visualizando mi forma. Salí con más claridad de la que entré. La conexión es real si le das espacio.',tag:'Reflexión',howls:5,ts:Date.now()-20*3600000}
-  ];
-  const ps=seeds.map((s,i)=>({id:'seed'+i,embedSrc:'',replies:Math.floor(Math.random()*5),av:s.nick[0],ghost:true,...s}));
-  savePosts(ps);
+  // Clear old ghost posts older than 24h
+  const cut=Date.now()-24*3600*1000;
+  let posts=allPosts().filter(p=>p.ts>cut||p.official);
+
+  // Count existing ghost posts
+  const existingGhost=posts.filter(p=>p.ghost).length;
+  if(existingGhost>=20)return; // already seeded
+
+  // How many to add
+  const toAdd=Math.floor(Math.random()*11)+20; // 20-30
+  const shuffled=shuffle(GHOST_POSTS_POOL);
+  const now=Date.now();
+
+  shuffled.slice(0,toAdd).forEach((tmpl,i)=>{
+    const name=GHOST_NAMES[Math.floor(Math.random()*GHOST_NAMES.length)];
+    // Spread posts across the last 20 hours
+    const age=Math.floor((i/toAdd)*20*3600*1000)+(Math.random()*1800000);
+    posts.push({
+      id:'g'+now+i+Math.random().toString(36).slice(2,5),
+      ts:now-age,
+      nick:name,av:name[0],
+      species:tmpl.sp||GHOST_SP[Math.floor(Math.random()*GHOST_SP.length)],
+      mood:'',body:tmpl.body,tag:tmpl.tag||'Shifts',
+      embedSrc:'',
+      howls:tmpl.howls||Math.floor(Math.random()*6),
+      replies:Math.floor(Math.random()*4),
+      ghost:true
+    });
+  });
+
+  savePosts(posts);
+}
+
+// Ghost typers — always visible, never stop
+const GHOST_TYPING_MSGS={
+  es:['está escribiendo algo...','está compartiendo un shift...','acaba de llegar a la manada','está respondiendo a un post...','está explorando el feed...','está mirando el Pack Finder...','está guardando un post...','siente el instinto hoy...'],
+  en:['is typing...','is sharing a shift...','just joined the pack','is replying...','is browsing the feed...'],
+  pt:['está escrevendo...','compartilhando um shift...','acabou de chegar'],
+  fr:['est en train d\'écrire...','partage un shift...','vient d\'arriver'],
+  de:['schreibt gerade...','teilt einen Shift...','gerade beigetreten'],
+  ja:['書いています...','シフトを共有中...','参加しました']
+};
+
+let ghostTyperInterval=null;
+function startGhostTypers(){
+  // Show 1-3 ghost typers at a time, rotating every few seconds
+  function cycle(){
+    const gz=document.getElementById('ghostZone');if(!gz)return;
+    // Remove old ones
+    const old=gz.querySelectorAll('.ghost-post');
+    if(old.length>0){
+      old[0].style.opacity='0';
+      setTimeout(()=>{if(old[0].parentNode)old[0].parentNode.removeChild(old[0]);},400);
+    }
+    // Add new one
+    const name=GHOST_NAMES[Math.floor(Math.random()*GHOST_NAMES.length)];
+    const sp=GHOST_SP[Math.floor(Math.random()*GHOST_SP.length)];
+    const msgs=GHOST_TYPING_MSGS[lang]||GHOST_TYPING_MSGS.es;
+    const act=msgs[Math.floor(Math.random()*msgs.length)];
+    const el=document.createElement('div');
+    el.className='ghost-post';el.style.opacity='0';el.style.transition='opacity .35s';
+    el.innerHTML=`<div class="ghost-av">${name[0]}</div><div class="ghost-txt"><strong>${name}</strong> <span style="color:var(--am);font-size:.55rem">${spEmoji(sp)}</span> ${act}<span class="tdots"><span></span><span></span><span></span></span></div>`;
+    gz.appendChild(el);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{el.style.opacity='1';}));
+  }
+  cycle();
+  ghostTyperInterval=setInterval(cycle, 3500);
 }
 
 // ── SMOOTH SCROLL ──
@@ -1681,25 +1688,22 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
 }));
 
 // ── INIT ──
-checkFeedReset();
-seedGhostPosts();
-initEssence();
-updateFeedTimer();
-setInterval(updateFeedTimer,1000);
-setInterval(checkFeedReset,60000);
-renderFeed();
-renderMem();
-renderCompass();
-updateUserBtn();
-
-// Ghost typers — always running
-setTimeout(()=>{
-  spawnGhost();
-  setInterval(()=>{if(Math.random()>.25)spawnGhost();},Math.random()*9000+5000);
-},1800);
-
-// Ghost post injection — every 25-40 min
-setTimeout(()=>setInterval(injectGhostPost,Math.random()*900000+1500000),300000);
+(function init(){
+  checkFeedReset();
+  seedGhostPosts();    // seeds 20-30 auto posts
+  initEssence();
+  updateFeedTimer();
+  setInterval(updateFeedTimer,1000);
+  setInterval(checkFeedReset,60000);
+  renderFeed();        // render feed with ghost posts
+  renderMem();
+  renderCompass();
+  updateUserBtn();
+  tickOnline();
+  // Ghost typers start immediately, always running
+  setTimeout(startGhostTypers, 800);
+})();
 </script>
+
 </body>
 </html>
