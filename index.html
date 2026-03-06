@@ -749,55 +749,122 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
 
 <!-- CEO MODAL -->
 <div class="ovl" id="ceoModal">
-  <div class="modal ceo-modal" style="max-width:700px">
+  <div class="modal" style="max-width:740px;border-color:rgba(179,157,219,.35)">
+    <div style="height:2px;background:linear-gradient(to right,transparent,var(--ceo),transparent);flex-shrink:0"></div>
     <button class="m-close" onclick="closeModal('ceoModal')">✕</button>
-    <div class="m-title" style="color:var(--ceo)">⚡ Panel CEO — True Therian</div>
-    <div class="m-sub">Dashboard privado · Solo visible para ti</div>
-    <div class="m-body" style="padding-top:4px">
-      <div class="ceo-stats" id="ceoStats"></div>
+    <div style="padding:18px 24px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;color:var(--ceo)">⚡ Panel CEO</div>
+        <div style="font-size:.62rem;color:var(--tm);letter-spacing:.18em;text-transform:uppercase;margin-top:2px">True Therian · Dashboard Privado</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button onclick="refreshCEO()" style="background:rgba(179,157,219,.08);border:1px solid rgba(179,157,219,.2);color:var(--ceo);padding:5px 11px;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif">↻ Actualizar</button>
+        <div id="ceoLiveClock" style="background:rgba(179,157,219,.06);border:1px solid rgba(179,157,219,.14);color:var(--tm);padding:5px 11px;font-size:.62rem;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:5px">
+          <span style="width:6px;height:6px;border-radius:50%;background:#4caf50;display:inline-block;animation:blink 2s infinite"></span>
+          <span id="ceoClock">--:--:--</span>
+        </div>
+      </div>
+    </div>
+    <!-- KPI CARDS -->
+    <div style="padding:14px 24px 0">
+      <div id="ceoStats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px"></div>
+      <div id="ceoStatsSub" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px"></div>
+    </div>
+    <!-- TABS -->
+    <div style="padding:0 24px">
       <div class="ceo-tabs">
         <button class="ceo-tb active" onclick="ceotab(this,'ceoTabUsers')">👥 Usuarios</button>
         <button class="ceo-tb" onclick="ceotab(this,'ceoTabFeed')">📋 Feed</button>
         <button class="ceo-tb" onclick="ceotab(this,'ceoTabMsgs')">💬 Mensajes</button>
-        <button class="ceo-tb" onclick="ceotab(this,'ceoTabAnn')">📢 Anuncio</button>
-        <button class="ceo-tb" onclick="ceotab(this,'ceoTabTools')">🛠 Herramientas</button>
+        <button class="ceo-tb" onclick="ceotab(this,'ceoTabAnn')">📢 Anunciar</button>
+        <button class="ceo-tb" onclick="ceotab(this,'ceoTabStats')">📊 Stats</button>
+        <button class="ceo-tb" onclick="ceotab(this,'ceoTabTools')">🛠 Tools</button>
       </div>
+    </div>
+    <div style="padding:0 24px 24px;max-height:420px;overflow-y:auto" id="ceoTabContent">
+
+      <!-- TAB USUARIOS -->
       <div id="ceoTabUsers">
-        <div class="ceo-sec"><h4>Gestión de Usuarios</h4><div class="ceo-ulist" id="ceoUList"></div></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+          <input type="text" id="ceoUserSearch" placeholder="Buscar usuario..." oninput="filterCEOUsers(this.value)" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--tp);padding:7px 11px;font-size:.78rem;font-family:'Inter',sans-serif;outline:none;flex:1;min-width:160px">
+          <span id="ceoUserCount" style="font-size:.64rem;color:var(--tm);white-space:nowrap"></span>
+        </div>
+        <div class="ceo-ulist" id="ceoUList"></div>
       </div>
+
+      <!-- TAB FEED -->
       <div id="ceoTabFeed" style="display:none">
-        <div class="ceo-sec"><h4>Posts del Feed (últimas 24h)</h4><div class="ceo-feed-list" id="ceoFeedList"></div></div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+          <label style="display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--tm);cursor:pointer"><input type="checkbox" id="ceoFeedRealOnly" onchange="renderCEOFeed()"> Solo posts reales</label>
+          <span id="ceoFeedCount" style="font-size:.64rem;color:var(--tm);margin-left:auto"></span>
+        </div>
+        <div class="ceo-feed-list" id="ceoFeedList"></div>
       </div>
+
+      <!-- TAB MENSAJES -->
       <div id="ceoTabMsgs" style="display:none">
-        <div class="ceo-sec"><h4>Mensajes Privados (últimas 24h)</h4><div class="ceo-msg-list" id="ceoMsgList"></div></div>
+        <div class="ceo-msg-list" id="ceoMsgList"></div>
       </div>
+
+      <!-- TAB ANUNCIO -->
       <div id="ceoTabAnn" style="display:none">
-        <div class="ceo-sec">
-          <h4>Publicar Anuncio Oficial en el Feed</h4>
-          <p style="font-size:.74rem;color:var(--tm);margin-bottom:8px">El anuncio aparecerá con badge CEO y no se puede eliminar por usuarios.</p>
-          <div class="ceo-ann-row">
-            <input type="text" class="ceo-ann-inp" id="ceoAnnTxt" placeholder="Mensaje oficial para la manada..." maxlength="400">
-            <button class="ceo-ann-btn" onclick="publishAnnouncement()">Publicar</button>
+        <div style="background:rgba(179,157,219,.05);border:1px solid rgba(179,157,219,.15);padding:14px;margin-bottom:12px">
+          <div style="font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ceo);margin-bottom:8px">Publicar Anuncio Oficial</div>
+          <p style="font-size:.74rem;color:var(--tm);margin-bottom:10px;line-height:1.65">El anuncio aparece en el feed con badge CEO y no caduca con el reset diario. Todos los usuarios lo verán.</p>
+          <textarea id="ceoAnnTxt" maxlength="400" placeholder="Escribe el mensaje para toda la manada..." style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(179,157,219,.2);color:var(--tp);padding:10px;font-family:'Inter',sans-serif;font-size:.83rem;resize:none;min-height:90px;outline:none;line-height:1.65"></textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <span id="ceoAnnCount" style="font-size:.62rem;color:var(--tm)">0/400</span>
+            <button class="ceo-ann-btn" onclick="publishAnnouncement()">📢 Publicar en el Feed</button>
           </div>
         </div>
+        <div style="background:rgba(255,179,0,.04);border:1px solid rgba(255,179,0,.12);padding:14px">
+          <div style="font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--am);margin-bottom:8px">Anuncios publicados</div>
+          <div id="ceoAnnList" style="display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto"></div>
+        </div>
       </div>
+
+      <!-- TAB STATS -->
+      <div id="ceoTabStats" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="background:rgba(179,157,219,.04);border:1px solid rgba(179,157,219,.14);padding:14px">
+            <div style="font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ceo);margin-bottom:10px">Distribución Especies</div>
+            <div id="ceoSpeciesChart"></div>
+          </div>
+          <div style="background:rgba(179,157,219,.04);border:1px solid rgba(179,157,219,.14);padding:14px">
+            <div style="font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ceo);margin-bottom:10px">Top Países</div>
+            <div id="ceoCountriesChart"></div>
+          </div>
+        </div>
+        <div style="background:rgba(179,157,219,.04);border:1px solid rgba(179,157,219,.14);padding:14px;margin-top:12px">
+          <div style="font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ceo);margin-bottom:10px">Actividad últimas 24h</div>
+          <div id="ceoActivityChart"></div>
+        </div>
+        <div style="background:rgba(255,179,0,.04);border:1px solid rgba(255,179,0,.1);padding:14px;margin-top:12px">
+          <div style="font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--am);margin-bottom:8px">Datos reales vs Demo</div>
+          <div id="ceoRealVsDemo"></div>
+        </div>
+      </div>
+
+      <!-- TAB TOOLS -->
       <div id="ceoTabTools" style="display:none">
-        <div class="ceo-sec">
-          <h4>Herramientas</h4>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <button class="m-btn" style="background:rgba(229,57,53,.1);border:1px solid rgba(229,57,53,.25);color:#ef9a9a" onclick="if(confirm('¿Borrar TODO el feed ahora?'))forceClearFeed()">🗑 Borrar feed ahora</button>
-            <button class="m-btn" style="background:rgba(67,160,71,.08);border:1px solid rgba(67,160,71,.22);color:#a5d6a7" onclick="exportData()">⬇ Exportar datos usuarios (JSON)</button>
-            <button class="m-btn" style="background:rgba(255,152,0,.08);border:1px solid rgba(255,152,0,.2);color:#ffcc80" onclick="refreshCEO()">🔄 Refrescar dashboard</button>
-          </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <button onclick="if(confirm('¿Borrar TODO el feed ahora?'))forceClearFeed()" style="background:rgba(229,57,53,.08);border:1px solid rgba(229,57,53,.22);color:#ef9a9a;padding:12px;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:all .3s">🗑 Borrar Feed Ahora</button>
+          <button onclick="exportData()" style="background:rgba(67,160,71,.07);border:1px solid rgba(67,160,71,.2);color:#a5d6a7;padding:12px;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif">⬇ Exportar Usuarios JSON</button>
+          <button onclick="if(confirm('¿Borrar todos los mensajes privados?')){saveMsgs([]);refreshCEO();showToast('Mensajes borrados');}" style="background:rgba(255,152,0,.07);border:1px solid rgba(255,152,0,.2);color:#ffcc80;padding:12px;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif">🗑 Borrar Mensajes</button>
+          <button onclick="if(confirm('¿Borrar logs de actividad?')){localStorage.removeItem('tt_actlog');refreshCEO();showToast('Logs borrados');}" style="background:rgba(255,152,0,.07);border:1px solid rgba(255,152,0,.2);color:#ffcc80;padding:12px;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif">📋 Limpiar Logs</button>
+          <button onclick="refreshCEO()" style="background:rgba(179,157,219,.07);border:1px solid rgba(179,157,219,.2);color:var(--ceo);padding:12px;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif">↻ Refrescar Todo</button>
+          <button onclick="injectGhostPostNow()" style="background:rgba(255,179,0,.06);border:1px solid rgba(255,179,0,.16);color:var(--am);padding:12px;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif">👻 Inyectar Post Demo</button>
         </div>
-        <div class="ceo-sec">
-          <h4>Estadísticas del sistema</h4>
-          <div id="ceoSysStats" style="font-size:.76rem;color:rgba(232,224,208,.65);line-height:2"></div>
+        <div style="margin-top:14px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);padding:14px">
+          <div style="font-size:.58rem;letter-spacing:.28em;text-transform:uppercase;color:var(--tm);margin-bottom:8px">Estado del Sistema</div>
+          <div id="ceoSysStats" style="font-size:.74rem;color:rgba(232,224,208,.6);line-height:2.1"></div>
         </div>
       </div>
+
     </div>
   </div>
 </div>
+
 
 <script>
 /* ================================================
@@ -998,19 +1065,27 @@ function updateMsgBadge(){
 
 // ── USER MODAL ──
 function openUserModal(){
+  const _le=document.getElementById('loginErr');if(_le)_le.classList.remove('show');
+  const _re=document.getElementById('regErr');if(_re)_re.classList.remove('show');
   if(window.CU){
     document.getElementById('mdLogged').style.display='block';
     document.getElementById('mdAuth').style.display='none';
     const u=window.CU;
     document.getElementById('pcAv').textContent=u.nick[0].toUpperCase();
     document.getElementById('pcNick').textContent=u.nick;
-    const sp=document.getElementById('pcSp');if(sp)sp.textContent=u.species?`${spEmoji(u.species)} ${u.species}`:'';
-    const lo=document.getElementById('pcLoc');if(lo)lo.textContent=`📍 ${u.city||''}, ${u.country||''}`;
-    const ag=document.getElementById('pcAge');if(ag)ag.textContent=`${new Date().getFullYear()-parseInt(u.year)} años · Miembro desde ${new Date(u.joined).toLocaleDateString()}`;
+    const sp=document.getElementById('pcSp');if(sp)sp.textContent=u.species?spEmoji(u.species)+' '+u.species:'';
+    const lo=document.getElementById('pcLoc');if(lo)lo.textContent='📍 '+(u.city||'')+', '+(u.country||'');
+    const ag=document.getElementById('pcAge');if(ag)ag.textContent=(new Date().getFullYear()-parseInt(u.year))+' años · Miembro desde '+new Date(u.joined).toLocaleDateString();
     const ceoBtn=document.getElementById('ceoNavBtn');if(ceoBtn)ceoBtn.style.display=u.email===CEO_EMAIL?'block':'none';
   }else{
     document.getElementById('mdLogged').style.display='none';
     document.getElementById('mdAuth').style.display='block';
+    document.getElementById('panLogin').style.display='block';
+    document.getElementById('panReg').style.display='none';
+    document.getElementById('tabLogin').classList.add('active');
+    document.getElementById('tabReg').classList.remove('active');
+    const ln=document.getElementById('loginNick');if(ln)ln.value='';
+    const lm=document.getElementById('loginEmail');if(lm)lm.value='';
   }
   openModal('userModal');
 }
@@ -1060,17 +1135,27 @@ function doRegister(){
   if(isNaN(age)||age<16){showE(t('age_err'));return;}
   if(age>120){showE('Año inválido');return;}
   if(getUsers().some(u=>u.nick.toLowerCase()===nick.toLowerCase())){showE(t('nick_taken'));return;}
-  const user={nick,name,surname:surn,year:yr,country,city,email,species:regSp,joined:Date.now(),mood:''};
-  const users=getUsers();users.push(user);saveUsers(users);
-  saveSession(user);
-  logActivity('register',{nick,country,city,species:regSp});
-  // Welcome message from CEO bot
-  const msgs=getMsgs();
-  msgs.push({id:'w'+Date.now(),from:CEO_NICK,to:nick,body:`¡Bienvenido/a a True Therian, ${nick}! 🐾 Aquí encontrarás tu manada. El instinto ya sabía que pertenecías aquí. — True Therian`,ts:Date.now(),read:false});
-  saveMsgs(msgs);
-  updateUserBtn();closeModal('userModal');renderCompass();
-  showToast(t('reg_ok'),'ok');
-  updateMsgBadge();
+  try{
+    const user={nick,name,surname:surn,year:yr,country,city,email,species:regSp,joined:Date.now(),mood:''};
+    const users=getUsers();
+    users.push(user);
+    saveUsers(users);
+    saveSession(user);
+    try{logActivity('register',{nick,country,city,species:regSp});}catch(e){}
+    try{
+      const msgs=getMsgs();
+      msgs.push({id:'w'+Date.now(),from:CEO_NICK,to:nick,body:'¡Bienvenido/a a True Therian, '+nick+'! 🐾 Aquí encontrarás tu manada. El instinto ya sabía que pertenecías aquí. — True Therian',ts:Date.now(),read:false});
+      saveMsgs(msgs);
+    }catch(e){}
+    updateUserBtn();
+    closeModal('userModal');
+    try{renderCompass();}catch(e){}
+    showToast(t('reg_ok'),'ok');
+    try{updateMsgBadge();}catch(e){}
+  }catch(e){
+    showE('Error al guardar. Prueba a recargar la página.');
+    console.error('doRegister error:',e);
+  }
 }
 
 // ── LOGIN ──
@@ -1430,102 +1515,256 @@ function startConvWith(nick){
 // ── CEO PANEL ──
 function openCEO(){
   if(!window.CU||window.CU.email!==CEO_EMAIL)return;
-  closeModal('userModal');refreshCEO();openModal('ceoModal');
+  closeModal('userModal');
+  refreshCEO();
+  openModal('ceoModal');
+  // Live clock
+  clearInterval(window._ceoClock);
+  window._ceoClock=setInterval(()=>{
+    const el=document.getElementById('ceoClock');
+    if(el){const n=new Date();el.textContent=n.toLocaleTimeString('es-ES',{timeZone:'Europe/Madrid'});}
+    else clearInterval(window._ceoClock);
+  },1000);
 }
 
 function ceotab(btn,tabId){
   document.querySelectorAll('.ceo-tb').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  ['ceoTabUsers','ceoTabFeed','ceoTabMsgs','ceoTabAnn','ceoTabTools'].forEach(id=>{
-    const el=document.getElementById(id);if(el)el.style.display=id===tabId?'block':'none';
-  });
+  const tabs=['ceoTabUsers','ceoTabFeed','ceoTabMsgs','ceoTabAnn','ceoTabStats','ceoTabTools'];
+  tabs.forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=id===tabId?'block':'none';});
+  if(tabId==='ceoTabStats')renderCEOStats();
   if(tabId==='ceoTabTools')renderCEOSysStats();
+  if(tabId==='ceoTabFeed')renderCEOFeed();
+  if(tabId==='ceoTabAnn')renderCEOAnnList();
 }
 
 function refreshCEO(){
-  const users=getUsers().filter(u=>u.email!==CEO_EMAIL);
+  const realUsers=getUsers().filter(u=>u.email!==CEO_EMAIL);
   const blocked=getBlocked();
   const logs=getActivityToday();
   const posts=getPosts();
   const msgs=getMsgs().filter(m=>Date.now()-m.ts<24*3600*1000);
-  const actNicks=new Set(logs.filter(l=>['login','post','message','howl'].includes(l.type)).map(l=>l.data&&l.data.nick).filter(Boolean));
-  // CEO ve SOLO datos reales — sin ghost posts ni usuarios demo
-  const realPosts=posts.filter(p=>!p.ghost&&!p.official);
-  const realUsers=users; // ya filtrado sin CEO_EMAIL arriba
-  const realMsgs=msgs.filter(m=>m.from!==CEO_NICK&&m.to!==CEO_NICK||m.to===CEO_NICK); // mensajes reales
-  const demoSpeciesCounts=Object.values(COMPASS_DEMO).reduce((a,b)=>a+b,0); // 61 base demo
-  document.getElementById('ceoStats').innerHTML=`
-    <div class="ceo-stat"><span class="cst-n">${realUsers.length}</span><span class="cst-l">Usuarios Reales</span></div>
-    <div class="ceo-stat"><span class="cst-n">${actNicks.size}</span><span class="cst-l">Activos Hoy</span></div>
-    <div class="ceo-stat"><span class="cst-n">${realPosts.length}</span><span class="cst-l">Posts Reales Hoy</span></div>
-    <div class="ceo-stat"><span class="cst-n">${msgs.length}</span><span class="cst-l">Mensajes Hoy</span></div>
-    <div class="ceo-stat"><span class="cst-n">${blocked.length}</span><span class="cst-l">Bloqueados</span></div>
-    <div class="ceo-stat"><span class="cst-n">${logs.filter(l=>l.type==='register').length}</span><span class="cst-l">Nuevos Hoy</span></div>
-    <div class="ceo-stat" style="border-color:rgba(255,179,0,.3)"><span class="cst-n" style="color:var(--am)">${demoSpeciesCounts}</span><span class="cst-l">Base Demo Compass</span></div>
-    <div class="ceo-stat" style="border-color:rgba(255,179,0,.3)"><span class="cst-n" style="color:var(--am)">${allPosts().filter(p=>p.ghost).length}</span><span class="cst-l">Posts Demo Visibles</span></div>
-    <div class="ceo-stat" style="border-color:rgba(255,179,0,.3)"><span class="cst-n" style="color:var(--am)">${realUsers.length+demoSpeciesCounts}</span><span class="cst-l">Total Visible Público</span></div>`;
-  // Users
+  const actNicks=new Set(logs.filter(l=>['login','post','message'].includes(l.type)).map(l=>l.data&&l.data.nick).filter(Boolean));
+  const newToday=logs.filter(l=>l.type==='register').length;
+  const postsReal=posts.filter(p=>!p.ghost&&!p.official).length;
+
+  // KPI top row
+  const kpi=[
+    {n:realUsers.length,l:'Usuarios Reales',c:'var(--ceo)',icon:'👥'},
+    {n:actNicks.size,l:'Activos Hoy',c:'#81c784',icon:'🟢'},
+    {n:newToday,l:'Registros Hoy',c:'#4fc3f7',icon:'✨'},
+  ];
+  const kpi2=[
+    {n:postsReal,l:'Posts Reales',c:'var(--am)',icon:'📝'},
+    {n:msgs.length,l:'Mensajes 24h',c:'#ba68c8',icon:'💬'},
+    {n:blocked.length,l:'Bloqueados',c:'#ef9a9a',icon:'🚫'},
+  ];
+  const mkCard=(k)=>`<div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);padding:10px 12px;border-radius:2px">
+    <div style="font-size:1.45rem;font-weight:700;color:${k.c};font-family:'Cinzel',serif">${k.n}</div>
+    <div style="font-size:.58rem;color:var(--tm);letter-spacing:.16em;text-transform:uppercase;margin-top:3px">${k.icon} ${k.l}</div>
+  </div>`;
+  const cs=document.getElementById('ceoStats');if(cs)cs.innerHTML=kpi.map(mkCard).join('');
+  const cs2=document.getElementById('ceoStatsSub');if(cs2)cs2.innerHTML=kpi2.map(mkCard).join('');
+
+  // Users tab
+  renderCEOUsers(realUsers,blocked);
+
+  // Feed tab
+  renderCEOFeed();
+
+  // Messages tab
+  const ml=document.getElementById('ceoMsgList');
+  if(ml){
+    const recent=getMsgs().filter(m=>Date.now()-m.ts<24*3600*1000).sort((a,b)=>b.ts-a.ts);
+    ml.innerHTML=recent.length?recent.map(m=>`
+      <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;gap:3px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:.72rem;color:var(--ceo)">${m.from} <span style="color:var(--tm)">→</span> ${m.to}</span>
+          <span style="font-size:.6rem;color:var(--tm)">${timeAgo(m.ts)}</span>
+        </div>
+        <div style="font-size:.76rem;color:rgba(232,224,208,.65)">${(m.body||'').replace(/</g,'&lt;').slice(0,120)}</div>
+      </div>`).join(''):`<div style="padding:20px;text-align:center;font-size:.78rem;color:var(--tm)">Sin mensajes en las últimas 24h</div>`;
+  }
+
+  // Announcement char counter
+  const ta=document.getElementById('ceoAnnTxt');
+  if(ta)ta.oninput=function(){const c2=document.getElementById('ceoAnnCount');if(c2)c2.textContent=this.value.length+'/400';};
+}
+
+function renderCEOUsers(users,blocked){
+  if(!users)users=getUsers().filter(u=>u.email!==CEO_EMAIL);
+  if(!blocked)blocked=getBlocked();
+  const cnt=document.getElementById('ceoUserCount');
+  if(cnt)cnt.textContent=users.length+' usuarios';
   const ul=document.getElementById('ceoUList');
-  ul.innerHTML=users.length?users.map(u=>{
+  if(!ul)return;
+  if(!users.length){ul.innerHTML=`<div style="padding:20px;text-align:center;font-size:.78rem;color:var(--tm)">Sin usuarios registrados aún.</div>`;return;}
+  ul.innerHTML=users.map(u=>{
     const blk=blocked.includes(u.nick);
-    return`<div class="ceo-u">
-      <div style="width:28px;height:28px;border-radius:50%;background:var(--moss);border:1px solid var(--am30);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.7rem;color:var(--am)">${u.nick[0].toUpperCase()}</div>
-      <div class="ceo-u-info"><div class="ceo-u-nick">${u.nick} ${u.species?spEmoji(u.species):''} ${blk?'🔴':''}</div><div class="ceo-u-det">${u.city||''}, ${u.country||''} · ${new Date(u.joined).toLocaleDateString()}</div></div>
+    const age=new Date().getFullYear()-parseInt(u.year);
+    return`<div class="ceo-u" data-nick="${u.nick.toLowerCase()}">
+      <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--moss),rgba(100,120,80,.4));border:1px solid var(--am30);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.75rem;color:var(--am)">${u.nick[0].toUpperCase()}</div>
+      <div class="ceo-u-info" style="flex:1;min-width:0">
+        <div class="ceo-u-nick">${u.nick} ${u.species?spEmoji(u.species):''} ${blk?'<span style="color:#ef9a9a;font-size:.65rem">● BLOQ</span>':''}</div>
+        <div class="ceo-u-det">${u.city||'?'}, ${u.country||'?'} · ${age} años · ${new Date(u.joined).toLocaleDateString()}</div>
+        <div style="font-size:.6rem;color:rgba(232,224,208,.3)">${u.email||''}</div>
+      </div>
       <div class="ceo-acts">
-        ${blk?`<button class="ca unblk" onclick="ceoUnblock('${u.nick}')">Desbloquear</button>`:`<button class="ca blk" onclick="ceoBlock('${u.nick}')">Bloquear</button>`}
-        <button class="ca del" onclick="ceoDelUser('${u.nick}')">Eliminar</button>
+        ${blk
+          ?`<button class="ca unblk" onclick="ceoUnblock('${u.nick}')">✓ Desbloquear</button>`
+          :`<button class="ca blk" onclick="ceoBlock('${u.nick}')">⊘ Bloquear</button>`}
+        <button class="ca del" onclick="ceoDelUser('${u.nick}')">✕ Eliminar</button>
       </div>
     </div>`;
-  }).join(''):'<p style="color:var(--tm);font-size:.8rem;padding:12px">Sin usuarios registrados.</p>';
-  // Feed
-  const fl=document.getElementById('ceoFeedList');
+  }).join('');
+}
+
+function filterCEOUsers(q){
+  document.querySelectorAll('#ceoUList .ceo-u').forEach(el=>{
+    el.style.display=!q||el.dataset.nick.includes(q.toLowerCase())?'flex':'none';
+  });
+}
+
+function renderCEOFeed(){
+  const fl=document.getElementById('ceoFeedList');if(!fl)return;
+  const realOnly=document.getElementById('ceoFeedRealOnly');
+  let posts=getPosts();
+  if(realOnly&&realOnly.checked)posts=posts.filter(p=>!p.ghost);
+  const cnt=document.getElementById('ceoFeedCount');if(cnt)cnt.textContent=posts.length+' posts';
   fl.innerHTML=posts.length?posts.map(p=>`
-    <div class="ceo-pi"><div class="ceo-pt"><strong style="color:var(--am)">${p.nick}</strong> · ${timeAgo(p.ts)} ${p.ghost?'<em style="color:var(--tm)">[auto]</em>':''}<br>${(p.body||'[embed]').slice(0,100)}</div><button class="ceo-pd" onclick="delPost('${p.id}');refreshCEO()">✕</button></div>`).join(''):'<p style="color:var(--tm);font-size:.78rem;padding:10px">Sin posts hoy.</p>';
-  // Messages
-  const ml=document.getElementById('ceoMsgList');
-  ml.innerHTML=msgs.length?msgs.sort((a,b)=>b.ts-a.ts).map(m=>`
-    <div class="ceo-msg-item"><div class="ceo-msg-meta">${m.from} → ${m.to} · ${timeAgo(m.ts)}</div>${(m.body||'').replace(/</g,'&lt;').slice(0,120)}</div>`).join(''):'<p style="color:var(--tm);font-size:.78rem;padding:10px">Sin mensajes hoy.</p>';
+    <div style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;gap:10px;align-items:flex-start">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:3px">
+          <strong style="font-size:.74rem;color:${p.ghost?'var(--tm)':'var(--am)'}">${p.nick}</strong>
+          ${p.ghost?'<span style="font-size:.58rem;color:var(--tm);background:rgba(255,255,255,.05);padding:1px 5px">demo</span>':''}
+          ${p.official?'<span style="font-size:.58rem;color:var(--ceo);background:rgba(179,157,219,.1);padding:1px 5px">CEO</span>':''}
+          <span style="font-size:.6rem;color:rgba(232,224,208,.35)">#${p.tag} · ${timeAgo(p.ts)}</span>
+          <span style="font-size:.6rem;color:var(--am)">🐺 ${p.howls||0}</span>
+        </div>
+        <div style="font-size:.76rem;color:rgba(232,224,208,.6);line-height:1.5">${(p.body||'').replace(/</g,'&lt;').slice(0,120)}</div>
+      </div>
+      <button onclick="delPost('${p.id}');renderCEOFeed();refreshCEO()" style="background:rgba(229,57,53,.1);border:1px solid rgba(229,57,53,.2);color:#ef9a9a;padding:4px 8px;font-size:.65rem;cursor:pointer;flex-shrink:0;font-family:'Inter',sans-serif;white-space:nowrap">✕ Borrar</button>
+    </div>`).join(''):`<div style="padding:20px;text-align:center;font-size:.78rem;color:var(--tm)">Sin posts en las últimas 24h</div>`;
+}
+
+function renderCEOAnnList(){
+  const el=document.getElementById('ceoAnnList');if(!el)return;
+  const anns=allPosts().filter(p=>p.official).sort((a,b)=>b.ts-a.ts);
+  el.innerHTML=anns.length?anns.map(a=>`
+    <div style="padding:7px 9px;background:rgba(255,179,0,.04);border:1px solid rgba(255,179,0,.1);display:flex;gap:8px;align-items:flex-start">
+      <div style="flex:1;font-size:.75rem;color:rgba(232,224,208,.7);line-height:1.5">${(a.body||'').replace(/</g,'&lt;').slice(0,120)}</div>
+      <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;align-items:flex-end">
+        <span style="font-size:.58rem;color:var(--tm)">${timeAgo(a.ts)}</span>
+        <button onclick="delPost('${a.id}');renderCEOAnnList()" style="background:rgba(229,57,53,.1);border:1px solid rgba(229,57,53,.18);color:#ef9a9a;padding:2px 7px;font-size:.6rem;cursor:pointer;font-family:'Inter',sans-serif">✕</button>
+      </div>
+    </div>`).join(''):`<div style="font-size:.74rem;color:var(--tm);padding:8px 0">Sin anuncios publicados.</div>`;
+}
+
+function renderCEOStats(){
+  // Species chart
+  const sc=document.getElementById('ceoSpeciesChart');
+  if(sc){
+    const real=getUsers().filter(u=>u.email!==CEO_EMAIL);
+    const counts={...COMPASS_DEMO};
+    real.forEach(u=>{if(u.species)counts[u.species]=(counts[u.species]||0)+1;});
+    const total=Object.values(counts).reduce((a,b)=>a+b,0);
+    sc.innerHTML=Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([sp,n])=>{
+      const pct=Math.round(n/total*100);
+      return`<div style="margin-bottom:6px">
+        <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--tm);margin-bottom:2px">
+          <span>${spEmoji(sp)} ${sp}</span><span style="color:var(--tp)">${n} (${pct}%)</span>
+        </div>
+        <div style="height:5px;background:rgba(255,255,255,.06);border-radius:2px">
+          <div style="height:5px;width:${pct}%;background:${SP_COLORS[sp]||'#666'};border-radius:2px;transition:width .4s"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  // Countries chart
+  const cc=document.getElementById('ceoCountriesChart');
+  if(cc){
+    const real=getUsers().filter(u=>u.email!==CEO_EMAIL);
+    const ctry={};
+    real.forEach(u=>{if(u.country)ctry[u.country]=(ctry[u.country]||0)+1;});
+    const list=Object.entries(ctry).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    const max=list[0]?list[0][1]:1;
+    cc.innerHTML=list.length?list.map(([c,n])=>`
+      <div style="margin-bottom:6px">
+        <div style="display:flex;justify-content:space-between;font-size:.68rem;color:var(--tm);margin-bottom:2px">
+          <span>📍 ${c}</span><span style="color:var(--tp)">${n}</span>
+        </div>
+        <div style="height:5px;background:rgba(255,255,255,.06);border-radius:2px">
+          <div style="height:5px;width:${Math.round(n/max*100)}%;background:var(--am);border-radius:2px"></div>
+        </div>
+      </div>`).join(''):`<div style="font-size:.74rem;color:var(--tm)">Sin usuarios registrados aún.</div>`;
+  }
+  // Activity chart
+  const ac=document.getElementById('ceoActivityChart');
+  if(ac){
+    const logs=LS.get('tt_actlog',[]);
+    const buckets={};
+    for(let h=0;h<24;h++)buckets[h]=0;
+    const cut=Date.now()-24*3600*1000;
+    logs.filter(l=>l.ts>cut).forEach(l=>{
+      const bcn=new Date(new Date(l.ts).toLocaleString('en-US',{timeZone:'Europe/Madrid'}));
+      buckets[bcn.getHours()]=(buckets[bcn.getHours()]||0)+1;
+    });
+    const maxB=Math.max(1,...Object.values(buckets));
+    const now=new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Madrid'})).getHours();
+    ac.innerHTML=`<div style="display:flex;align-items:flex-end;gap:2px;height:52px">
+      ${Array.from({length:24},(_,h)=>`
+        <div title="${h}:00 — ${buckets[h]} acciones" style="flex:1;height:${Math.max(3,Math.round(buckets[h]/maxB*52))}px;background:${h===now?'var(--am)':'rgba(179,157,219,.35)'};border-radius:1px 1px 0 0;transition:height .3s"></div>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:.58rem;color:var(--tm);margin-top:4px"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>23h</span></div>
+    <div style="font-size:.64rem;color:var(--tm);margin-top:6px">Total acciones 24h: <strong style="color:var(--tp)">${logs.filter(l=>l.ts>Date.now()-24*3600*1000).length}</strong></div>`;
+  }
+  // Real vs demo
+  const rv=document.getElementById('ceoRealVsDemo');
+  if(rv){
+    const demoSp=Object.values(COMPASS_DEMO).reduce((a,b)=>a+b,0);
+    const realU=getUsers().filter(u=>u.email!==CEO_EMAIL).length;
+    const ghostP=allPosts().filter(p=>p.ghost).length;
+    const realP=allPosts().filter(p=>!p.ghost&&!p.official).length;
+    rv.innerHTML=`
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.74rem;line-height:1.9">
+        <div style="color:var(--tm)">Usuarios reales registrados<br>Posts reales<br>Base demo compass<br>Posts demo en feed</div>
+        <div style="color:var(--tp);text-align:right"><strong>${realU}</strong><br><strong>${realP}</strong><br><span style="color:var(--am)">${demoSp}</span><br><span style="color:var(--am)">${ghostP}</span></div>
+      </div>`;
+  }
 }
 
 function renderCEOSysStats(){
   const el=document.getElementById('ceoSysStats');if(!el)return;
   const realUsers=getUsers().filter(u=>u.email!==CEO_EMAIL);
-  const realPosts=allPosts().filter(p=>!p.ghost&&!p.official);
-  const ghostPosts=allPosts().filter(p=>p.ghost);
   const countries=[...new Set(realUsers.map(u=>u.country).filter(Boolean))];
   const demoTotal=Object.values(COMPASS_DEMO).reduce((a,b)=>a+b,0);
   el.innerHTML=`
-    <span style="color:var(--ceo);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase">— DATOS REALES —</span><br>
-    Usuarios reales registrados: <strong>${realUsers.length}</strong><br>
-    Posts reales (24h): <strong>${realPosts.length}</strong><br>
-    Mensajes privados totales: <strong>${getMsgs().length}</strong><br>
-    Países representados: <strong>${countries.length}${countries.length?` (${countries.slice(0,6).join(', ')}${countries.length>6?'…':''})`:''}</strong><br>
-    <br>
-    <span style="color:var(--am);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase">— DATOS DEMO (visibles al público) —</span><br>
-    Base demo compass: <strong>${demoTotal} usuarios simulados</strong><br>
-    Posts demo activos: <strong>${ghostPosts.length}</strong><br>
-    Total visible público (real+demo): <strong>${realUsers.length+demoTotal} usuarios</strong><br>
-    <br>
-    <span style="color:var(--tm);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase">— SISTEMA —</span><br>
-    localStorage usado: <strong>~${Math.round(JSON.stringify(localStorage).length/1024)} KB</strong>`;
+    <span style="color:var(--ceo);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Datos reales</span><br>
+    Usuarios: <strong>${realUsers.length}</strong> &nbsp;·&nbsp; Posts reales: <strong>${allPosts().filter(p=>!p.ghost&&!p.official).length}</strong> &nbsp;·&nbsp; Mensajes: <strong>${getMsgs().length}</strong><br>
+    Países: <strong>${countries.length}${countries.length?' ('+countries.slice(0,5).join(', ')+(countries.length>5?'…':'')+')':''}</strong><br><br>
+    <span style="color:var(--am);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Datos demo (visible al público)</span><br>
+    Base demo compass: <strong>${demoTotal}</strong> &nbsp;·&nbsp; Posts demo activos: <strong>${allPosts().filter(p=>p.ghost).length}</strong><br>
+    Público ve: <strong>${realUsers.length+demoTotal} usuarios · ${allPosts().length} posts</strong><br><br>
+    <span style="color:var(--tm);font-size:.58rem;letter-spacing:.2em;text-transform:uppercase">Sistema</span><br>
+    localStorage: <strong>~${Math.round(JSON.stringify(localStorage).length/1024)} KB</strong> &nbsp;·&nbsp; Logs: <strong>${LS.get('tt_actlog',[]).length}</strong> entradas`;
 }
 
 function ceoBlock(nick){
   const b=getBlocked();if(!b.includes(nick))b.push(nick);
   saveBlocked(b);logActivity('admin_block',{nick});
-  showToast(`${nick} bloqueado`,'err');refreshCEO();renderFeed();updateUserBtn();
+  showToast(nick+' bloqueado','err');refreshCEO();renderFeed();updateUserBtn();
 }
 function ceoUnblock(nick){
   saveBlocked(getBlocked().filter(n=>n!==nick));
-  logActivity('admin_unblock',{nick});showToast(`${nick} desbloqueado`,'ok');refreshCEO();renderFeed();updateUserBtn();
+  logActivity('admin_unblock',{nick});showToast(nick+' desbloqueado','ok');refreshCEO();renderFeed();updateUserBtn();
 }
 function ceoDelUser(nick){
-  if(!confirm(`¿Eliminar permanentemente a ${nick}?`))return;
+  if(!confirm('¿Eliminar permanentemente a '+nick+'? Esta acción no se puede deshacer.'))return;
   saveUsers(getUsers().filter(u=>u.nick!==nick));
   saveBlocked(getBlocked().filter(n=>n!==nick));
   savePosts(allPosts().filter(p=>p.nick!==nick));
   logActivity('admin_delete_user',{nick});
-  showToast(`${nick} eliminado`);refreshCEO();renderFeed();renderCompass();
+  showToast(nick+' eliminado');refreshCEO();renderFeed();renderCompass();
 }
 function publishAnnouncement(){
   if(!window.CU||window.CU.email!==CEO_EMAIL)return;
@@ -1534,15 +1773,25 @@ function publishAnnouncement(){
   const post={id:'ann'+Date.now(),ts:Date.now(),nick:CEO_NICK,av:'C',species:'Mythic',mood:'',body:txt,tag:'Pack',embedSrc:'',howls:0,replies:0,isCEO:true,official:true};
   const posts=allPosts();posts.unshift(post);savePosts(posts);
   document.getElementById('ceoAnnTxt').value='';
+  const cnt=document.getElementById('ceoAnnCount');if(cnt)cnt.textContent='0/400';
   logActivity('announcement',{body:txt.slice(0,80)});
-  showToast('Anuncio publicado','ok');renderFeed();refreshCEO();
+  showToast('Anuncio publicado 📢','ok');renderFeed();refreshCEO();renderCEOAnnList();
 }
 function forceClearFeed(){savePosts([]);renderFeed();refreshCEO();showToast('Feed borrado','ok');}
-function exportData(){
-  const data={users:getUsers().map(u=>({...u,email:'[PRIVADO]'})),stats:{total:getUsers().length,blocked:getBlocked().length,posts:allPosts().length}};
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
-  a.download=`truetherian_${new Date().toISOString().slice(0,10)}.json`;a.click();showToast('Exportado');
+function injectGhostPostNow(){
+  const tmpl=GHOST_POSTS_POOL[Math.floor(Math.random()*GHOST_POSTS_POOL.length)];
+  const name=GHOST_NAMES[Math.floor(Math.random()*GHOST_NAMES.length)];
+  const post={id:'g'+Date.now()+Math.random().toString(36).slice(2,5),ts:Date.now(),nick:name,av:name[0],species:tmpl.sp,mood:'',body:tmpl.body,tag:tmpl.tag,embedSrc:'',howls:tmpl.howls||Math.floor(Math.random()*8),replies:0,ghost:true};
+  const posts=allPosts();posts.unshift(post);savePosts(posts);
+  renderFeed();renderCEOFeed();showToast('Post demo inyectado 👻');
 }
+function exportData(){
+  const data={exported:new Date().toISOString(),users:getUsers().filter(u=>u.email!==CEO_EMAIL).map(u=>({...u,email:'[PRIVADO]'})),stats:{total:getUsers().filter(u=>u.email!==CEO_EMAIL).length,blocked:getBlocked().length,posts:allPosts().filter(p=>!p.ghost).length}};
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  a.download='truetherian_export_'+new Date().toISOString().slice(0,10)+'.json';a.click();showToast('Exportado ✓');
+}
+
+
 
 // ── DAILY ESSENCE ──
 const ESSENCES=[
