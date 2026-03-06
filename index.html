@@ -170,6 +170,8 @@ section{position:relative;z-index:1;padding:90px 34px}
 .pf-btn{padding:9px 18px;background:var(--am);color:var(--ob);border:none;cursor:pointer;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;font-family:'Inter',sans-serif;font-weight:500;transition:all .3s;white-space:nowrap}
 .pf-res{margin-top:16px;display:flex;flex-direction:column;gap:8px}
 .pf-card{background:var(--card);border:1px solid rgba(255,179,0,.07);padding:13px 15px;display:flex;align-items:center;gap:10px}
+.pf-me{border-color:var(--am30)!important;opacity:.85;}
+
 .pf-av{width:34px;height:34px;border-radius:50%;background:var(--moss);border:1px solid var(--am30);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.8rem;color:var(--am)}
 .pf-info{flex:1}
 .pf-nick{font-size:.82rem;font-weight:500}
@@ -380,6 +382,14 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
   .ceo-stats{grid-template-columns:1fr}
 }
 @media(max-width:480px){.masonry{column-count:1}.hero h1{font-size:2.3rem}}
+
+/* Toggle switch */
+.toggle-sw{position:relative;display:inline-block;width:38px;height:21px;flex-shrink:0}
+.toggle-sw input{opacity:0;width:0;height:0}
+.toggle-sl{position:absolute;cursor:pointer;inset:0;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);transition:.3s;border-radius:21px}
+.toggle-sl:before{content:"";position:absolute;width:15px;height:15px;left:2px;bottom:2px;background:rgba(232,224,208,.4);transition:.3s;border-radius:50%}
+.toggle-sw input:checked+.toggle-sl{background:rgba(255,179,0,.2);border-color:var(--am30)}
+.toggle-sw input:checked+.toggle-sl:before{transform:translateX(17px);background:var(--am)}
 </style>
 </head>
 <body>
@@ -527,7 +537,7 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
       <div class="pf-form">
         <input type="text" class="pf-inp" id="pfCountry" placeholder="País...">
         <input type="text" class="pf-inp" id="pfCity" placeholder="Ciudad (opcional)...">
-        <button class="pf-btn" onclick="runPackFinder()">Buscar</button>
+        <button class="pf-btn" onclick="runPackFinder()">Buscar</button><button class="pf-btn" style="background:transparent;border:1px solid var(--am30);color:var(--am)" onclick="runPackFinderAll()">Ver todos</button>
       </div>
       <div class="pf-res" id="pfRes"></div>
     </div>
@@ -675,6 +685,46 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
         </div>
         <button class="m-btn" style="background:transparent;border:1px solid rgba(255,179,0,.2);color:var(--am);margin-bottom:7px" onclick="openInbox()">📬 Mensajes</button>
         <div id="ceoNavBtn" style="display:none"><button class="m-btn" style="background:rgba(179,157,219,.1);border:1px solid rgba(179,157,219,.3);color:var(--ceo);margin-bottom:7px" onclick="openCEO()">⚡ Panel CEO</button></div>
+
+        <!-- AJUSTES DE PERFIL -->
+        <div style="margin:10px 0 4px;border-top:1px solid rgba(255,255,255,.06);padding-top:12px">
+          <div style="font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--tm);margin-bottom:10px">⚙ Ajustes de Perfil</div>
+
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <!-- Instagram -->
+            <div class="mf" style="margin:0">
+              <label style="font-size:.65rem;color:var(--tm)">📸 Instagram <span style="color:rgba(232,224,208,.3)">(opcional)</span></label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <span style="color:var(--tm);font-size:.78rem;flex-shrink:0">@</span>
+                <input type="text" id="settingIg" placeholder="tuusuario" maxlength="40" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--tp);padding:6px 9px;font-size:.78rem;font-family:'Inter',sans-serif;outline:none;flex:1">
+              </div>
+            </div>
+
+            <!-- TikTok -->
+            <div class="mf" style="margin:0">
+              <label style="font-size:.65rem;color:var(--tm)">🎵 TikTok <span style="color:rgba(232,224,208,.3)">(opcional)</span></label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <span style="color:var(--tm);font-size:.78rem;flex-shrink:0">@</span>
+                <input type="text" id="settingTk" placeholder="tuusuario" maxlength="40" style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--tp);padding:6px 9px;font-size:.78rem;font-family:'Inter',sans-serif;outline:none;flex:1">
+              </div>
+            </div>
+
+            <!-- Visibilidad Pack Finder -->
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)">
+              <div>
+                <div style="font-size:.72rem;color:var(--tp)">🔍 Visible en Pack Finder</div>
+                <div style="font-size:.62rem;color:var(--tm);margin-top:2px">Otros therians pueden encontrarte</div>
+              </div>
+              <label class="toggle-sw">
+                <input type="checkbox" id="settingVisible" checked onchange="saveProfileSettings()">
+                <span class="toggle-sl"></span>
+              </label>
+            </div>
+
+            <button onclick="saveProfileSettings()" style="background:rgba(255,179,0,.08);border:1px solid var(--am30);color:var(--am);padding:7px;font-size:.65rem;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;width:100%">Guardar Ajustes</button>
+          </div>
+        </div>
+
         <button class="pc-logout" onclick="doLogout()">Cerrar Sesión</button>
       </div>
     </div>
@@ -1101,6 +1151,45 @@ function selectAvatar(id){
   renderFeed();
 }
 
+
+// ── PROFILE SETTINGS ──
+function saveProfileSettings(){
+  if(!window.CU)return;
+  const ig=(document.getElementById('settingIg')||{}).value||'';
+  const tk=(document.getElementById('settingTk')||{}).value||'';
+  const vis=document.getElementById('settingVisible');
+  const visible=vis?vis.checked:true;
+
+  // Sanitize — only alphanumeric, dots, underscores
+  const clean=s=>s.trim().replace(/[^a-zA-Z0-9._]/g,'').slice(0,40);
+
+  window.CU.instagram=clean(ig);
+  window.CU.tiktok=clean(tk);
+  window.CU.visibleInFinder=visible;
+  saveSession(window.CU);
+
+  // Update in users array
+  const users=getUsers();
+  const idx=users.findIndex(u=>u.nick===window.CU.nick);
+  if(idx>-1){
+    users[idx].instagram=window.CU.instagram;
+    users[idx].tiktok=window.CU.tiktok;
+    users[idx].visibleInFinder=visible;
+    saveUsers(users);
+  }
+  showToast('Ajustes guardados ✓','ok');
+}
+
+function loadProfileSettings(){
+  if(!window.CU)return;
+  const ig=document.getElementById('settingIg');
+  const tk=document.getElementById('settingTk');
+  const vis=document.getElementById('settingVisible');
+  if(ig)ig.value=window.CU.instagram||'';
+  if(tk)tk.value=window.CU.tiktok||'';
+  if(vis)vis.checked=window.CU.visibleInFinder!==false; // default true
+}
+
 // ── USER BUTTON ──
 function updateUserBtn(){
   const u=window.CU;
@@ -1158,6 +1247,7 @@ function openUserModal(){
     const lo=document.getElementById('pcLoc');if(lo)lo.textContent='📍 '+(u.city||'')+', '+(u.country||'');
     const ag=document.getElementById('pcAge');if(ag)ag.textContent=(new Date().getFullYear()-parseInt(u.year))+' años · Miembro desde '+new Date(u.joined).toLocaleDateString();
     const ceoBtn=document.getElementById('ceoNavBtn');if(ceoBtn)ceoBtn.style.display=u.email===CEO_EMAIL?'block':'none';
+    loadProfileSettings();
   }else{
     document.getElementById('mdLogged').style.display='none';
     document.getElementById('mdAuth').style.display='block';
@@ -1354,25 +1444,72 @@ function renderCompass(){
 
 // ── PACK FINDER ──
 function runPackFinder(){
-  const country=document.getElementById('pfCountry').value.trim().toLowerCase();
-  const city=document.getElementById('pfCity').value.trim().toLowerCase();
-  if(!country){showToast('Escribe un país','err');return;}
-  const users=getUsers().filter(u=>{
-    if(isBlocked(u.nick)||u.email===CEO_EMAIL)return false;
-    return u.country&&u.country.toLowerCase().includes(country)&&(!city||(u.city&&u.city.toLowerCase().includes(city)));
-  });
+  const countryQ=(document.getElementById('pfCountry').value||'').trim().toLowerCase();
+  const cityQ=(document.getElementById('pfCity').value||'').trim().toLowerCase();
   const wrap=document.getElementById('pfRes');
-  if(!users.length){wrap.innerHTML=`<div class="pf-none">No hay therians registrados en esa zona aún.</div>`;return;}
-  wrap.innerHTML=users.slice(0,20).map(u=>`
-    <div class="pf-card">
-      <div class="pf-av">${u.nick[0].toUpperCase()}</div>
+  if(!wrap)return;
+
+  if(!countryQ){showToast('Escribe un país o deja vacío para ver todos','err');return;}
+
+  const allUsers=getUsers();
+
+  // Filter
+  const users=allUsers.filter(u=>{
+    if(isBlocked(u.nick))return false;
+    if(u.email&&u.email===CEO_EMAIL)return false;
+    if(u.visibleInFinder===false&&!(window.CU&&window.CU.nick===u.nick))return false;
+    const uc=(u.country||'').toLowerCase();
+    const uci=(u.city||'').toLowerCase();
+    const matchCountry=uc.includes(countryQ)||countryQ.includes(uc.split(' ')[0]);
+    const matchCity=!cityQ||uci.includes(cityQ)||cityQ.includes(uci.split(' ')[0]);
+    return matchCountry&&matchCity;
+  });
+
+  if(!users.length){
+    wrap.innerHTML=`<div class="pf-none">
+      <div>No hay therians en esa zona aún.</div>
+      <div style="font-size:.7rem;color:var(--tm);margin-top:8px">Usuarios totales en la red: ${allUsers.filter(u=>!u.email||u.email!==CEO_EMAIL).length}</div>
+      <button onclick="document.getElementById('pfCountry').value='';document.getElementById('pfCity').value='';runPackFinderAll()" style="margin-top:10px;background:none;border:1px solid var(--am30);color:var(--am);padding:5px 14px;font-size:.7rem;cursor:pointer;letter-spacing:.12em;text-transform:uppercase">Ver todos</button>
+    </div>`;
+    return;
+  }
+
+  renderPackResults(users);
+}
+
+function runPackFinderAll(){
+  const allUsers=getUsers().filter(u=>{
+    if(isBlocked(u.nick))return false;
+    if(u.email&&u.email===CEO_EMAIL)return false;
+    if(u.visibleInFinder===false&&!(window.CU&&window.CU.nick===u.nick))return false;
+    return true;
+  });
+  renderPackResults(allUsers);
+}
+
+function renderPackResults(users){
+  const wrap=document.getElementById('pfRes');if(!wrap)return;
+  wrap.innerHTML=`<div style="font-size:.64rem;color:var(--tm);margin-bottom:10px;letter-spacing:.1em">${users.length} therian${users.length!==1?'s':''} encontrado${users.length!==1?'s':''}</div>`+
+  users.slice(0,30).map(u=>{
+    const av=u.avatarId?getAvatar(u.avatarId):null;
+    const avHTML=av
+      ?`<img src="${av.src}" style="width:100%;height:100%;object-fit:cover;border-radius:50%" alt="">`
+      :`<span style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-family:'Cinzel',serif;font-size:1.1rem">${u.nick[0].toUpperCase()}</span>`;
+    const isMe=window.CU&&window.CU.nick===u.nick;
+    return`<div class="pf-card${isMe?' pf-me':''}">
+      <div class="pf-av" style="overflow:hidden;padding:0;cursor:${isMe?'default':'pointer'}" ${isMe?'':` onclick="startConvWith('${u.nick}')"`}>${avHTML}</div>
       <div class="pf-info">
-        <div class="pf-nick">${u.nick} ${u.species?spEmoji(u.species):''}</div>
-        <div class="pf-loc">📍 ${u.city}, ${u.country}</div>
-        <div class="pf-sp">${u.species||'Especie desconocida'} · Miembro desde ${new Date(u.joined).toLocaleDateString()}</div>
+        <div class="pf-nick">${u.nick} ${u.species?spEmoji(u.species):''} ${isMe?'<span style="font-size:.6rem;color:var(--am);background:rgba(255,179,0,.1);padding:1px 6px;border-radius:2px">tú</span>':''}</div>
+        <div class="pf-loc">📍 ${u.city||'?'}, ${u.country||'?'}</div>
+        <div class="pf-sp">${u.species||'Especie desconocida'}</div>
+        ${(u.instagram||u.tiktok)?`<div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap">
+          ${u.instagram?`<a href="https://instagram.com/${u.instagram}" target="_blank" rel="noopener" style="font-size:.65rem;color:rgba(232,224,208,.5);text-decoration:none;display:flex;align-items:center;gap:3px" onclick="event.stopPropagation()">📸 @${u.instagram}</a>`:''}
+          ${u.tiktok?`<a href="https://tiktok.com/@${u.tiktok}" target="_blank" rel="noopener" style="font-size:.65rem;color:rgba(232,224,208,.5);text-decoration:none;display:flex;align-items:center;gap:3px" onclick="event.stopPropagation()">🎵 @${u.tiktok}</a>`:''}
+        </div>`:''}
       </div>
-      <button class="pf-msg" onclick="startConvWith('${u.nick}')">💬 Mensaje</button>
-    </div>`).join('');
+      ${isMe?'<div style="font-size:.62rem;color:var(--tm);padding:4px 0">Tu perfil</div>':`<button class="pf-msg" onclick="startConvWith('${u.nick}')">💬 Mensaje</button>`}
+    </div>`;
+  }).join('');
 }
 
 // ── EMBED ──
@@ -1999,6 +2136,55 @@ function shuffle(arr){
 }
 
 // Seed 20-30 ghost posts on load, no repeats
+
+// ── DEMO USERS — seed en tt_users para Pack Finder ──
+const DEMO_USER_DATA = [
+  {nick:'SilverWolf',   species:'Lupine',  country:'España',       city:'Madrid',      year:2001, avatarId:'wolf_arctic'},
+  {nick:'ArcticFox',    species:'Vulpine', country:'España',       city:'Barcelona',   year:1999, avatarId:'fox_red'},
+  {nick:'MoonRunner',   species:'Lupine',  country:'México',       city:'Ciudad de México', year:2003, avatarId:'wolf_brown'},
+  {nick:'DuskHowl',     species:'Lupine',  country:'Argentina',    city:'Buenos Aires', year:2000, avatarId:'wolf_gray'},
+  {nick:'EmberPaw',     species:'Feline',  country:'España',       city:'Valencia',    year:2002, avatarId:'cat_tabby'},
+  {nick:'StormTail',    species:'Equine',  country:'Chile',        city:'Santiago',    year:1998, avatarId:'horse_white'},
+  {nick:'NightShade',   species:'Feline',  country:'España',       city:'Sevilla',     year:2004, avatarId:'cat_black'},
+  {nick:'FrostMane',    species:'Equine',  country:'España',       city:'Bilbao',      year:1997, avatarId:'horse_black'},
+  {nick:'IronFang',     species:'Lupine',  country:'Colombia',     city:'Bogotá',      year:2001, avatarId:'wolf_brown'},
+  {nick:'VoidPelt',     species:'Mythic',  country:'España',       city:'Málaga',      year:2000, avatarId:'dragon_purple'},
+  {nick:'ShadowStep',   species:'Feline',  country:'México',       city:'Guadalajara', year:2002, avatarId:'cat_black'},
+  {nick:'CinderEyes',   species:'Avian',   country:'España',       city:'Zaragoza',    year:1999, avatarId:'eagle_bald'},
+  {nick:'WildPulse',    species:'Ursid',   country:'Argentina',    city:'Córdoba',     year:2003, avatarId:'bear_brown'},
+  {nick:'GrayTide',     species:'Lupine',  country:'España',       city:'Granada',     year:2001, avatarId:'wolf_gray'},
+  {nick:'PhantomClaw',  species:'Reptile', country:'Brasil',       city:'São Paulo',   year:2000, avatarId:'snake_green'},
+  {nick:'StarlitMane',  species:'Equine',  country:'España',       city:'Murcia',      year:2002, avatarId:'horse_white'},
+  {nick:'RavenCrest',   species:'Avian',   country:'México',       city:'Monterrey',   year:1998, avatarId:'parrot'},
+  {nick:'OakHeart',     species:'Ursid',   country:'España',       city:'Valladolid',  year:2003, avatarId:'bear_polar'},
+  {nick:'ThunderPaw',   species:'Lupine',  country:'Colombia',     city:'Medellín',    year:2001, avatarId:'wolf_brown'},
+  {nick:'CrimsonFox',   species:'Vulpine', country:'España',       city:'Alicante',    year:1999, avatarId:'fox_red'},
+  {nick:'WinterHowl',   species:'Lupine',  country:'Chile',        city:'Valparaíso',  year:2002, avatarId:'wolf_arctic'},
+  {nick:'EchoWolf',     species:'Lupine',  country:'España',       city:'Palma',       year:2000, avatarId:'wolf_gray'},
+  {nick:'FeralMoon',    species:'Mythic',  country:'México',       city:'Puebla',      year:2004, avatarId:'dragon_green'},
+  {nick:'SageRunner',   species:'Equine',  country:'Argentina',    city:'Rosario',     year:1997, avatarId:'horse_black'},
+  {nick:'BlazeEyes',    species:'Reptile', country:'España',       city:'Santander',   year:2001, avatarId:'snake_red'},
+];
+
+function seedDemoUsers(){
+  let users = getUsers();
+  const existingNicks = new Set(users.map(u=>u.nick));
+  let added = 0;
+  DEMO_USER_DATA.forEach(d=>{
+    if(!existingNicks.has(d.nick)){
+      users.push({
+        nick:d.nick, name:d.nick, surname:'', year:d.year,
+        country:d.country, city:d.city, email:'',
+        species:d.species, avatarId:d.avatarId,
+        joined:Date.now()-Math.floor(Math.random()*60)*24*3600*1000,
+        mood:'', ghost:true
+      });
+      added++;
+    }
+  });
+  if(added>0) saveUsers(users);
+}
+
 function seedGhostPosts(){
   // Clear old ghost posts older than 24h
   const cut=Date.now()-24*3600*1000;
@@ -2078,6 +2264,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
 // ── INIT ──
 (function init(){
   checkFeedReset();
+  seedDemoUsers();     // seed demo users for Pack Finder
   seedGhostPosts();    // seeds 20-30 auto posts
   initEssence();
   updateFeedTimer();
