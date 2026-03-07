@@ -8,51 +8,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <script>
-// ── NAV ──
-function toggleNav(){
-  const nl=document.getElementById('navLinks');
-  const hm=document.getElementById('navHam');
-  if(!nl||!hm)return;
-  nl.classList.toggle('open');
-  hm.classList.toggle('open');
-}
-function closeNav(){
-  const nl=document.getElementById('navLinks');
-  const hm=document.getElementById('navHam');
-  if(nl)nl.classList.remove('open');
-  if(hm)hm.classList.remove('open');
-}
-function toggleLangDD(){
-  const dd=document.getElementById('langDD');
-  if(dd)dd.classList.toggle('open');
-}
-document.addEventListener('click',function(e){
-  const lb=document.getElementById('langBtn');
-  const dd=document.getElementById('langDD');
-  if(dd&&lb&&!lb.contains(e.target)&&!dd.contains(e.target))dd.classList.remove('open');
-});
-
-// Leaflet loader with CDN fallback
 (function(){
-  function loadLeaflet(src, cb){
-    var s=document.createElement('script');
-    s.src=src;
-    s.onload=cb;
-    s.onerror=function(){
-      // Try jsDelivr fallback
-      loadLeaflet('https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js', cb);
+  var attempts = 0;
+  var cdns = [
+    'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+    'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js'
+  ];
+  function tryLoad(idx){
+    if(idx >= cdns.length){ window._leafletFailed=true; return; }
+    var s = document.createElement('script');
+    s.src = cdns[idx];
+    s.onload = function(){
+      window._leafletReady = true;
+      if(window._onLeafletReady) window._onLeafletReady();
     };
+    s.onerror = function(){ tryLoad(idx+1); };
     document.head.appendChild(s);
   }
-  window._leafletReady=false;
-  loadLeaflet('https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', function(){
-    window._leafletReady=true;
-    if(window._onLeafletReady) window._onLeafletReady();
-  });
+  tryLoad(0);
 })();
 </script>
 <style>nav{
-  position:fixed;top:0;left:0;right:0;z-index:300;
+  position:fixed;top:0;left:0;right:0;z-index:1000;
   padding:0 32px;height:58px;display:flex;align-items:center;
   background:rgba(8,10,8,.82);backdrop-filter:blur(18px);
   border-bottom:1px solid rgba(255,179,0,.1);
@@ -174,7 +151,7 @@ nav.scrolled{
   --night:rgba(4,8,16,.85);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden;background:var(--bg)}
+html{height:100%;overflow:hidden}body{height:100%;overflow:hidden;display:flex;flex-direction:column;background:var(--bg);padding-top:58px;box-sizing:border-box}
 body{font-family:'Crimson Pro',Georgia,serif;color:var(--tp);display:flex;flex-direction:column}
 
 /* ── SCANLINE OVERLAY ── */
@@ -187,7 +164,7 @@ body::after{
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse-live 2s infinite}
 @keyframes pulse-live{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
 /* ── MAIN LAYOUT ── */
-.main{flex:1;display:flex;min-height:0;position:relative}
+.main{flex:1;display:flex;min-height:0;position:relative;overflow:hidden}
 
 /* ── MAP ── */
 #map{flex:1;z-index:1;min-width:0}
@@ -500,7 +477,7 @@ html,body{overflow-x:hidden}
   .sidebar{
     width:100%;height:auto;
     border-left:none;border-top:1px solid rgba(77,184,232,.12);
-    max-height:50vh;flex-shrink:0;
+    max-height:45vh;flex-shrink:0;
     overflow-y:auto;
   }
   .mob-toggle{display:none !important} /* not needed anymore */
@@ -565,10 +542,10 @@ html,body{overflow-x:hidden}
 <nav id="nav">
   <a href="index.html" class="nav-logo">True Therian<small>Social Link Life</small></a>
   <ul class="nav-links" id="navLinks">
-    <li><a href="#feed" onclick="closeNav()"><span class="ni">🐺</span> Manada</a></li>
-    <li><a href="#packfinder" onclick="closeNav()"><span class="ni">🔍</span> Pack Finder</a></li>
-    <li><a href="#que-es" onclick="closeNav()"><span class="ni">✦</span> ¿Qué somos?</a></li>
-    <li><a href="#galeria" onclick="closeNav()"><span class="ni">🌿</span> Galería</a></li>
+    <li><a href="index.html#feed" onclick="closeNav()"><span class="ni">🐺</span> Manada</a></li>
+    <li><a href="index.html#packfinder" onclick="closeNav()"><span class="ni">🔍</span> Pack Finder</a></li>
+    <li><a href="index.html#que-es" onclick="closeNav()"><span class="ni">✦</span> ¿Qué somos?</a></li>
+    <li><a href="index.html#galeria" onclick="closeNav()"><span class="ni">🌿</span> Galería</a></li>
     <li><a href="memoria.html" onclick="closeNav()"><span class="ni">🔖</span> Memoria</a></li>
     <li><a href="mensajeria.html" onclick="closeNav()"><span class="ni">💬</span> Mensajes</a></li>
     <li><a href="gathermap.html" onclick="closeNav()"><span class="ni">🗺</span> GatherMap</a></li>
@@ -770,6 +747,7 @@ let map, activeMarkerId=null;
 const markers={};
 
 function initMap(){
+  if(typeof L==='undefined')return;
   map=L.map('map',{
     center:[20,10],zoom:3,
     zoomControl:false,
@@ -848,6 +826,7 @@ function buildPopupHTML(m){
 function addMarker(m){
   if(markers[m.id]){markers[m.id].remove();delete markers[m.id];}
   const icon=makeDivIcon(m);
+  if(typeof L==='undefined')return;
   const marker=L.marker([m.lat,m.lng],{icon,title:m.city+' — '+m.place}).addTo(map);
   if(!marker||!marker.bindTooltip)return;
   
@@ -1140,29 +1119,33 @@ function cleanExpired(){
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded',function(){
-  // Nav
+  // ── Nav user button ──
   const CU=getSession();
-  const navBtn=document.getElementById('navUserBtn');
-  if(navBtn)navBtn.textContent=CU?CU.nick:'Perfil';
+  // (user btn removed from this nav, handled by universal nav)
 
   cleanExpired();
+  renderList(); // render list immediately (no map needed)
+  setInterval(tickCountdowns,1000);
+  setInterval(()=>{cleanExpired();renderAllMarkers();renderList();},300000);
+});
+
+// ── Map init — waits for Leaflet CDN ──
+function _doInitMap(){
+  if(typeof L === 'undefined'){
+    setTimeout(_doInitMap, 150);
+    return;
+  }
   initMap();
   renderAllMarkers();
-  renderList();
-
-  // Fly to a random interesting meet on load
   const all=getAllMeets();
   if(all.length){
     const pick=all[Math.floor(Math.random()*Math.min(all.length,10))];
-    setTimeout(()=>map.flyTo([pick.lat,pick.lng],4,{duration:3}),500);
+    setTimeout(()=>{if(map)map.flyTo([pick.lat,pick.lng],4,{duration:3});},600);
   }
-
-  // Countdown ticker
-  setInterval(tickCountdowns,1000);
-
-  // Refresh markers every 5 minutes
-  setInterval(()=>{cleanExpired();renderAllMarkers();renderList();},300000);
-});
+}
+// Hook into loader OR fallback poll
+if(window._leafletReady){ _doInitMap(); }
+else { window._onLeafletReady = _doInitMap; setTimeout(_doInitMap, 300); }
 </script>
 </body>
 </html>

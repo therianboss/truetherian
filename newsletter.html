@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>nav{
-  position:fixed;top:0;left:0;right:0;z-index:300;
+  position:fixed;top:0;left:0;right:0;z-index:1000;
   padding:0 32px;height:58px;display:flex;align-items:center;
   background:rgba(8,10,8,.82);backdrop-filter:blur(18px);
   border-bottom:1px solid rgba(255,179,0,.1);
@@ -247,10 +247,10 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:36px
 <nav id="nav">
   <a href="index.html" class="nav-logo">True Therian<small>Social Link Life</small></a>
   <ul class="nav-links" id="navLinks">
-    <li><a href="#feed" onclick="closeNav()"><span class="ni">🐺</span> Manada</a></li>
-    <li><a href="#packfinder" onclick="closeNav()"><span class="ni">🔍</span> Pack Finder</a></li>
-    <li><a href="#que-es" onclick="closeNav()"><span class="ni">✦</span> ¿Qué somos?</a></li>
-    <li><a href="#galeria" onclick="closeNav()"><span class="ni">🌿</span> Galería</a></li>
+    <li><a href="index.html#feed" onclick="closeNav()"><span class="ni">🐺</span> Manada</a></li>
+    <li><a href="index.html#packfinder" onclick="closeNav()"><span class="ni">🔍</span> Pack Finder</a></li>
+    <li><a href="index.html#que-es" onclick="closeNav()"><span class="ni">✦</span> ¿Qué somos?</a></li>
+    <li><a href="index.html#galeria" onclick="closeNav()"><span class="ni">🌿</span> Galería</a></li>
     <li><a href="memoria.html" onclick="closeNav()"><span class="ni">🔖</span> Memoria</a></li>
     <li><a href="mensajeria.html" onclick="closeNav()"><span class="ni">💬</span> Mensajes</a></li>
     <li><a href="gathermap.html" onclick="closeNav()"><span class="ni">🗺</span> GatherMap</a></li>
@@ -447,34 +447,34 @@ function applyL(){
   const d=L[curL]||L.es;
   const _lc=document.getElementById('langCur');if(_lc)_lc.textContent=curL.toUpperCase();
   document.querySelectorAll('.lang-opt').forEach(b=>{b.classList.toggle('active',b.textContent.toLowerCase().includes(curL))});
-  document.getElementById('t_eyebrow').textContent=d.eyebrow;
-  document.getElementById('t_h1').innerHTML=d.h1;
-  document.getElementById('t_intro').innerHTML=d.intro;
-  document.getElementById('lbl_nick').textContent=d.lbl_nick;
-  document.getElementById('lbl_country').textContent=d.lbl_country;
-  document.getElementById('opt_country').textContent=d.opt_country;
-  document.getElementById('lbl_city').textContent=d.lbl_city;
-  document.getElementById('lbl_email').textContent=d.lbl_email;
-  document.getElementById('lbl_species').textContent=d.lbl_species;
-  document.getElementById('sp_other').textContent=d.sp_other;
-  document.getElementById('lbl_msg').textContent='';
-  document.getElementById('lbl_consent').innerHTML=d.lbl_consent;
-  document.getElementById('submitBtn').textContent=d.submit;
-  document.getElementById('t_success_h').innerHTML=d.s_h;
-  document.getElementById('t_success_p').textContent=d.s_p;
-  document.getElementById('t_back_btn').textContent=d.s_btn;
-  document.getElementById('t_sp1').textContent=d.sp1;
-  document.getElementById('t_sp2').textContent=d.sp2;
-  document.getElementById('t_sp3').textContent=d.sp3;
-  document.getElementById('nl_home').textContent=d.home;
-  document.getElementById('nl_feed').textContent=d.feed;
-  document.getElementById('nl_finder').textContent=d.finder;
-  document.getElementById('nl_newsletter').textContent=d.newsletter;
-  document.getElementById('nl_privacy').textContent=d.privacy;
-  document.getElementById('f_home').textContent=d.f_home;
-  document.getElementById('f_feed').textContent=d.f_feed;
-  document.getElementById('f_nl').textContent=d.f_nl;
-  document.getElementById('f_priv').textContent=d.f_priv;
+  const _el_t_eyebrow=document.getElementById('t_eyebrow');if(_el_t_eyebrow)_el_t_eyebrow.textContent=d.eyebrow;
+  const _eth1=document.getElementById('t_h1');if(_eth1)_eth1.innerHTML=d.h1;
+  const _etintro=document.getElementById('t_intro');if(_etintro)_etintro.innerHTML=d.intro;
+  const _el_lbl_nick=document.getElementById('lbl_nick');if(_el_lbl_nick)_el_lbl_nick.textContent=d.lbl_nick;
+  const _el_lbl_country=document.getElementById('lbl_country');if(_el_lbl_country)_el_lbl_country.textContent=d.lbl_country;
+  const _el_opt_country=document.getElementById('opt_country');if(_el_opt_country)_el_opt_country.textContent=d.opt_country;
+  const _el_lbl_city=document.getElementById('lbl_city');if(_el_lbl_city)_el_lbl_city.textContent=d.lbl_city;
+  const _el_lbl_email=document.getElementById('lbl_email');if(_el_lbl_email)_el_lbl_email.textContent=d.lbl_email;
+  const _el_lbl_species=document.getElementById('lbl_species');if(_el_lbl_species)_el_lbl_species.textContent=d.lbl_species;
+  const _el_sp_other=document.getElementById('sp_other');if(_el_sp_other)_el_sp_other.textContent=d.sp_other;
+  const _el_lbl_msg=document.getElementById('lbl_msg');if(_el_lbl_msg)_el_lbl_msg.textContent='';
+  const _elblconse=document.getElementById('lbl_consent');if(_elblconse)_elblconse.innerHTML=d.lbl_consent;
+  const _el_submitBtn=document.getElementById('submitBtn');if(_el_submitBtn)_el_submitBtn.textContent=d.submit;
+  const _etsuccess=document.getElementById('t_success_h');if(_etsuccess)_etsuccess.innerHTML=d.s_h;
+  const _el_t_success_p=document.getElementById('t_success_p');if(_el_t_success_p)_el_t_success_p.textContent=d.s_p;
+  const _el_t_back_btn=document.getElementById('t_back_btn');if(_el_t_back_btn)_el_t_back_btn.textContent=d.s_btn;
+  const _el_t_sp1=document.getElementById('t_sp1');if(_el_t_sp1)_el_t_sp1.textContent=d.sp1;
+  const _el_t_sp2=document.getElementById('t_sp2');if(_el_t_sp2)_el_t_sp2.textContent=d.sp2;
+  const _el_t_sp3=document.getElementById('t_sp3');if(_el_t_sp3)_el_t_sp3.textContent=d.sp3;
+  const _el_nl_home=document.getElementById('nl_home');if(_el_nl_home)_el_nl_home.textContent=d.home;
+  const _el_nl_feed=document.getElementById('nl_feed');if(_el_nl_feed)_el_nl_feed.textContent=d.feed;
+  const _el_nl_finder=document.getElementById('nl_finder');if(_el_nl_finder)_el_nl_finder.textContent=d.finder;
+  const _el_nl_newslette=document.getElementById('nl_newsletter');if(_el_nl_newslette)_el_nl_newslette.textContent=d.newsletter;
+  const _el_nl_privacy=document.getElementById('nl_privacy');if(_el_nl_privacy)_el_nl_privacy.textContent=d.privacy;
+  const _el_f_home=document.getElementById('f_home');if(_el_f_home)_el_f_home.textContent=d.f_home;
+  const _el_f_feed=document.getElementById('f_feed');if(_el_f_feed)_el_f_feed.textContent=d.f_feed;
+  const _el_f_nl=document.getElementById('f_nl');if(_el_f_nl)_el_f_nl.textContent=d.f_nl;
+  const _el_f_priv=document.getElementById('f_priv');if(_el_f_priv)_el_f_priv.textContent=d.f_priv;
 }
 applyL();
 
