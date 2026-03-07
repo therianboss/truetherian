@@ -623,6 +623,7 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
   .user-btn span:not(.msg-dot){display:none} /* show only icon on tiny screens */
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 <div class="fog t"></div><div class="fog b"></div><div class="fog l"></div><div class="fog r"></div>
@@ -963,9 +964,9 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
       </div>
       <div id="panLogin" class="m-body">
         <div class="m-err" id="loginErr"></div>
-        <div class="mf"><label>NickName</label><input type="text" id="loginNick" placeholder="Tu NickName..." maxlength="30"></div>
         <div class="mf"><label>Email</label><input type="email" id="loginEmail" placeholder="tu@email.com"></div>
-        <button class="m-btn" onclick="doLogin()">Entrar a la Manada</button>
+        <div class="mf"><label>Contraseña</label><input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <button class="m-btn" id="loginBtn" onclick="doLogin()">Entrar a la Manada</button>
         <p class="m-sw">¿Sin cuenta? <a onclick="switchTab('register')">Créala aquí</a></p>
       </div>
       <div id="panReg" class="m-body" style="display:none">
@@ -989,6 +990,7 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
           <div class="mf"><label>Ciudad *</label><input type="text" id="regCity" placeholder="Madrid..." maxlength="60"></div>
         </div>
         <div class="mf"><label>Email *</label><input type="email" id="regEmail" placeholder="tu@email.com"></div>
+        <div class="mf"><label>Contraseña * <span class="mf-hint">(mín. 6 caracteres)</span></label><input type="password" id="regPass" placeholder="Elige una contraseña segura"></div>
         <div class="mf">
           <label>Tu Especie (opcional)</label>
           <div class="sp-grid">
@@ -1153,6 +1155,246 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
 
 
 <script>
+// ════════════════════════════════════════════════════════════════════
+// SUPABASE INTEGRATION — True Therian
+// Auth + Profiles + Posts + Messages + Meets
+// ════════════════════════════════════════════════════════════════════
+
+const SUPA_URL = 'https://fyytpoeulfmjoqlarxsa.supabase.co';
+const SUPA_KEY = 'sb_publishable_zJkwx5zfyhUb-4Giu5HlIg_w56oKSal';
+
+// ── Supabase client (loaded via CDN) ──
+let _supa = null;
+function getSupa(){
+  if(_supa) return _supa;
+  if(typeof supabase !== 'undefined'){
+    _supa = supabase.createClient(SUPA_URL, SUPA_KEY, {
+      auth:{ persistSession:true, autoRefreshToken:true, storageKey:'tt_supa_session' }
+    });
+    return _supa;
+  }
+  return null;
+}
+
+// ── Auth ──
+const SupaAuth = {
+
+  // Register: creates Supabase auth user + profile row
+  async register(nick, email, password, profileData){
+    const db = getSupa(); if(!db) throw new Error('Supabase no disponible');
+    
+    // 1. Check nick not taken
+    const {data:existing} = await db.from('profiles').select('nick').eq('nick', nick).single();
+    if(existing) throw new Error('nick_taken');
+
+    // 2. Create auth user
+    const {data, error} = await db.auth.signUp({
+      email, password,
+      options:{ data:{ nick } }
+    });
+    if(error) throw error;
+
+    // 3. Insert profile
+    const {error: profErr} = await db.from('profiles').insert({
+      id: data.user.id,
+      nick,
+      species: profileData.species || '',
+      location: profileData.country + (profileData.city ? ', '+profileData.city : ''),
+      age: profileData.age || null,
+      avatar_id: profileData.avatarId || '',
+      bio: '',
+      visible_in_finder: true,
+    });
+    if(profErr) throw profErr;
+
+    // 4. Send welcome message
+    await db.from('messages').insert({
+      id: 'w'+Date.now(),
+      from_nick: 'TT_CEO',
+      to_nick: nick,
+      body: '¡Bienvenido/a a True Therian, '+nick+'! 🐾 Aquí encontrarás tu manada. El instinto ya sabía que pertenecías aquí. — True Therian',
+      ts: Date.now(),
+      read: false
+    });
+
+    return { ...profileData, nick, email, supaId: data.user.id };
+  },
+
+  // Login: Supabase auth sign in
+  async login(email, password){
+    const db = getSupa(); if(!db) throw new Error('Supabase no disponible');
+    const {data, error} = await db.auth.signInWithPassword({ email, password });
+    if(error) throw error;
+
+    // Fetch profile
+    const {data:prof} = await db.from('profiles').select('*').eq('id', data.user.id).single();
+    
+    return {
+      nick: prof?.nick || data.user.user_metadata?.nick || email.split('@')[0],
+      email: data.user.email,
+      species: prof?.species || '',
+      avatarId: prof?.avatar_id || '',
+      location: prof?.location || '',
+      supaId: data.user.id,
+      isSupa: true,
+    };
+  },
+
+  // Logout
+  async logout(){
+    const db = getSupa(); if(!db) return;
+    await db.auth.signOut();
+  },
+
+  // Restore session on page load
+  async restoreSession(){
+    const db = getSupa(); if(!db) return null;
+    const {data:{session}} = await db.auth.getSession();
+    if(!session) return null;
+    const {data:prof} = await db.from('profiles').select('*').eq('id', session.user.id).single();
+    if(!prof) return null;
+    return {
+      nick: prof.nick,
+      email: session.user.email,
+      species: prof.species || '',
+      avatarId: prof.avatar_id || '',
+      location: prof.location || '',
+      supaId: session.user.id,
+      isSupa: true,
+    };
+  },
+
+  // Update profile
+  async updateProfile(userId, fields){
+    const db = getSupa(); if(!db) return;
+    await db.from('profiles').update(fields).eq('id', userId);
+  },
+};
+
+// ── Posts ──
+const SupaPosts = {
+  async load(limit=60){
+    const db = getSupa(); if(!db) return null;
+    const since = Date.now() - 24*3600*1000;
+    const {data, error} = await db.from('posts')
+      .select('*').gte('ts', since).order('ts', {ascending:false}).limit(limit);
+    if(error) return null;
+    return data;
+  },
+
+  async publish(post){
+    const db = getSupa(); if(!db) return false;
+    const {error} = await db.from('posts').insert({
+      id: post.id,
+      user_id: window.CU?.supaId || null,
+      nick: post.nick,
+      species: post.species || '',
+      body: post.body,
+      tag: post.tag,
+      mood: post.mood || '',
+      embed_src: post.embedSrc || '',
+      howls: 0,
+      ghost: post.ghost || false,
+      gathermap: post.gathermap || false,
+      ts: post.ts,
+    });
+    return !error;
+  },
+
+  async updateHowls(postId, delta){
+    const db = getSupa(); if(!db) return;
+    const {data} = await db.from('posts').select('howls').eq('id', postId).single();
+    if(data) await db.from('posts').update({howls: Math.max(0,(data.howls||0)+delta)}).eq('id', postId);
+  },
+};
+
+// ── Messages ──
+const SupaMsgs = {
+  async load(nick){
+    const db = getSupa(); if(!db) return null;
+    const {data, error} = await db.from('messages')
+      .select('*')
+      .or(`from_nick.eq.${nick},to_nick.eq.${nick}`)
+      .order('ts', {ascending:true});
+    if(error) return null;
+    return data;
+  },
+
+  async send(msg){
+    const db = getSupa(); if(!db) return false;
+    const {error} = await db.from('messages').insert({
+      id: msg.id,
+      from_nick: msg.from,
+      to_nick: msg.to,
+      body: msg.body,
+      ts: msg.ts,
+      read: false,
+    });
+    return !error;
+  },
+
+  async markRead(fromNick, toNick){
+    const db = getSupa(); if(!db) return;
+    await db.from('messages').update({read:true})
+      .eq('to_nick', toNick).eq('from_nick', fromNick).eq('read', false);
+  },
+
+  async unreadCount(nick){
+    const db = getSupa(); if(!db) return 0;
+    const {count} = await db.from('messages')
+      .select('*', {count:'exact', head:true})
+      .eq('to_nick', nick).eq('read', false);
+    return count || 0;
+  },
+};
+
+// ── Meets (GatherMap) ──
+const SupaMeets = {
+  async load(){
+    const db = getSupa(); if(!db) return null;
+    const now = Date.now();
+    const {data, error} = await db.from('meets')
+      .select('*').gte('ts', now).order('ts', {ascending:true});
+    if(error) return null;
+    return data?.map(m => ({
+      id: m.id, nick: m.nick, city: m.city, country: m.country,
+      flag: m.flag, place: m.place, lat: m.lat, lng: m.lng,
+      ts: m.ts, species: m.species, comment: m.comment,
+    }));
+  },
+
+  async publish(meet){
+    const db = getSupa(); if(!db) return false;
+    const {error} = await db.from('meets').insert({
+      id: meet.id,
+      user_id: window.CU?.supaId || null,
+      nick: meet.nick,
+      city: meet.city, country: meet.country, flag: meet.flag,
+      place: meet.place, lat: meet.lat, lng: meet.lng,
+      ts: meet.ts, species: meet.species, comment: meet.comment,
+    });
+    return !error;
+  },
+};
+
+// ── Users / Pack Finder ──
+const SupaUsers = {
+  async search(countryQ, cityQ){
+    const db = getSupa(); if(!db) return null;
+    let q = db.from('profiles').select('nick,species,location,avatar_id,visible_in_finder')
+      .eq('visible_in_finder', true);
+    if(countryQ) q = q.ilike('location', `%${countryQ}%`);
+    if(cityQ)    q = q.ilike('location', `%${cityQ}%`);
+    const {data, error} = await q.limit(50);
+    if(error) return null;
+    return data?.map(u => ({
+      nick: u.nick, species: u.species, location: u.location,
+      avatarId: u.avatar_id, visibleInFinder: u.visible_in_finder,
+    }));
+  },
+};
+
+
 /* ================================================
    TRUE THERIAN v3.1 — ENGINE COMPLETO
    ================================================ */
@@ -1535,6 +1777,7 @@ function doRegister(){
   const country=document.getElementById('regCountry').value.trim();
   const city=document.getElementById('regCity').value.trim();
   const email=document.getElementById('regEmail').value.trim().toLowerCase();
+  const pass=document.getElementById('regPass')?.value||'';
   const err=document.getElementById('regErr');
   const showE=msg=>{err.textContent=msg;err.classList.add('show');};
   err.classList.remove('show');
@@ -1544,38 +1787,35 @@ function doRegister(){
   const age=new Date().getFullYear()-yr;
   if(isNaN(age)||age<16){showE(t('age_err'));return;}
   if(age>120){showE('Año inválido');return;}
-  if(getUsers().some(u=>u.nick.toLowerCase()===nick.toLowerCase())){showE(t('nick_taken'));return;}
-  try{
-    const user={nick,name,surname:surn,year:yr,country,city,email,species:regSp,joined:Date.now(),mood:''};
-    const users=getUsers();
-    users.push(user);
-    saveUsers(users);
-    saveSession(user);
-    try{logActivity('register',{nick,country,city,species:regSp});}catch(e){}
-    try{
-      const msgs=getMsgs();
-      msgs.push({id:'w'+Date.now(),from:CEO_NICK,to:nick,body:'¡Bienvenido/a a True Therian, '+nick+'! 🐾 Aquí encontrarás tu manada. El instinto ya sabía que pertenecías aquí. — True Therian',ts:Date.now(),read:false});
-      saveMsgs(msgs);
-    }catch(e){}
-    updateUserBtn();
-    closeModal('userModal');
-    try{renderCompass();}catch(e){}
-    showToast(t('reg_ok'),'ok');
-    try{updateMsgBadge();}catch(e){}
-  }catch(e){
-    showE('Error al guardar. Prueba a recargar la página.');
-    console.error('doRegister error:',e);
-  }
+  if(!pass||pass.length<6){showE('Contraseña mínimo 6 caracteres');return;}
+  const btn=document.getElementById('regBtn');
+  if(btn){btn.textContent='Registrando...';btn.disabled=true;}
+  const profileData={species:regSp,country,city,age,avatarId:''};
+  SupaAuth.register(nick,email,pass,profileData)
+    .then(user=>{
+      saveSession(user);
+      updateUserBtn();closeModal('userModal');
+      try{renderCompass();}catch(e){}
+      showToast(t('reg_ok'),'ok');
+      try{updateMsgBadge();}catch(e){}
+    })
+    .catch(err2=>{
+      const msg=err2.message==='nick_taken'?t('nick_taken'):
+                err2.message?.includes('already registered')?'Email ya registrado':
+                err2.message||'Error al registrar';
+      showE(msg);
+    })
+    .finally(()=>{if(btn){btn.textContent='Crear cuenta';btn.disabled=false;}});
 }
 
 // ── LOGIN ──
 function doLogin(){
-  const nick=document.getElementById('loginNick').value.trim();
   const email=document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass=document.getElementById('loginPass')?.value||'';
   const err=document.getElementById('loginErr');
   err.classList.remove('show');
   if(!email){err.textContent='Introduce tu email';err.classList.add('show');return;}
-  // CEO path
+  // CEO path (kept local)
   if(email===CEO_EMAIL){
     const CEOKey='tt_ceo_verified';
     if(LS.raw(CEOKey)!=='1'){
@@ -1590,22 +1830,26 @@ function doLogin(){
     }
     let users=getUsers();
     let ceo=users.find(u=>u.email===CEO_EMAIL);
-    if(!ceo){
-      ceo={nick:CEO_NICK,name:'CEO',surname:'',year:1990,country:'España',city:'Barcelona',email:CEO_EMAIL,species:'Mythic',joined:Date.now(),mood:'',isCEO:true};
-      users.push(ceo);saveUsers(users);
-    }
+    if(!ceo){ceo={nick:CEO_NICK,name:'CEO',surname:'',year:1990,country:'España',city:'Barcelona',email:CEO_EMAIL,species:'Mythic',joined:Date.now(),mood:'',isCEO:true};users.push(ceo);saveUsers(users);}
     saveSession(ceo);updateUserBtn();closeModal('userModal');
     logActivity('login',{nick:ceo.nick,role:'CEO'});
     renderCompass();showToast('⚡ Bienvenido','ok');return;
   }
-  // Normal user
-  if(!nick){err.textContent='Introduce tu NickName';err.classList.add('show');return;}
-  const user=getUsers().find(u=>u.nick.toLowerCase()===nick.toLowerCase()&&u.email===email);
-  if(!user){err.textContent='Nick o email incorrectos';err.classList.add('show');return;}
-  saveSession(user);
-  logActivity('login',{nick:user.nick,country:user.country});
-  updateUserBtn();closeModal('userModal');showToast(t('login_ok'),'ok');
-  renderCompass();
+  if(!pass){err.textContent='Introduce tu contraseña';err.classList.add('show');return;}
+  const btn=document.getElementById('loginBtn');
+  if(btn){btn.textContent='Entrando...';btn.disabled=true;}
+  SupaAuth.login(email,pass)
+    .then(user=>{
+      saveSession(user);
+      logActivity('login',{nick:user.nick});
+      updateUserBtn();closeModal('userModal');showToast(t('login_ok'),'ok');
+      renderCompass();
+    })
+    .catch(err2=>{
+      const msg=err2.message?.includes('Invalid')?'Email o contraseña incorrectos':err2.message||'Error al iniciar sesión';
+      err.textContent=msg;err.classList.add('show');
+    })
+    .finally(()=>{if(btn){btn.textContent='Entrar';btn.disabled=false;}});
 }
 
 function doLogout(){
@@ -1814,6 +2058,7 @@ function publishPost(){
     howls:0,replies:0,isCEO:u&&u.email===CEO_EMAIL
   };
   const posts=allPosts();posts.unshift(post);savePosts(posts);
+  SupaPosts.publish(post).catch(()=>{}); // also persist to Supabase
   logActivity('post',{nick:post.nick,tag:curTag});
   document.getElementById('postText').value='';clearEmbed();updateCharCount();
   renderFeed();showToast(t('posted'),'ok');
@@ -2562,12 +2807,35 @@ document.addEventListener('DOMContentLoaded',function init(){
   updateFeedTimer();
   setInterval(updateFeedTimer,1000);
   setInterval(checkFeedReset,60000);
-  renderFeed();        // render feed with ghost posts
+  // Load real posts from Supabase and merge with ghost posts
+  SupaPosts.load().then(supaPosts=>{
+    if(supaPosts&&supaPosts.length){
+      const localPosts=allPosts();
+      const supaIds=new Set(supaPosts.map(p=>p.id));
+      // Keep ghost posts, merge real ones from Supabase
+      const ghostOnly=localPosts.filter(p=>p.ghost&&!supaIds.has(p.id));
+      const merged=[...supaPosts.map(p=>({
+        id:p.id,ts:p.ts,nick:p.nick,species:p.species||'',body:p.body,
+        tag:p.tag,mood:p.mood||'',embedSrc:p.embed_src||'',
+        howls:p.howls||0,ghost:p.ghost||false,gathermap:p.gathermap||false,
+        replies:0,av:(p.nick||'?')[0].toUpperCase(),
+      })),...ghostOnly];
+      merged.sort((a,b)=>b.ts-a.ts);
+      savePosts(merged);
+    }
+    renderFeed();
+  }).catch(()=>renderFeed()); // fallback to local if Supabase fails
   if(document.getElementById('memGrid'))renderMem();
   renderCompass();
   updateUserBtn();
   tickOnline();
   // Ghost typers start immediately, always running
+  // Restore Supabase session if not already set
+  if(!window.CU){
+    SupaAuth.restoreSession().then(user=>{
+      if(user){saveSession(user);updateUserBtn();renderCompass();}
+    }).catch(()=>{});
+  }
   markActiveNav();
   // Auto-open user modal if redirected from another page
   if(location.search.includes('openUser=1')){

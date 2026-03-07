@@ -537,9 +537,250 @@ html,body{overflow-x:hidden}
   .msg-dot{font-size:.5rem}
 
 }</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
 <script>
+// ════════════════════════════════════════════════════════════════════
+// SUPABASE INTEGRATION — True Therian
+// Auth + Profiles + Posts + Messages + Meets
+// ════════════════════════════════════════════════════════════════════
+
+const SUPA_URL = 'https://fyytpoeulfmjoqlarxsa.supabase.co';
+const SUPA_KEY = 'sb_publishable_zJkwx5zfyhUb-4Giu5HlIg_w56oKSal';
+
+// ── Supabase client (loaded via CDN) ──
+let _supa = null;
+function getSupa(){
+  if(_supa) return _supa;
+  if(typeof supabase !== 'undefined'){
+    _supa = supabase.createClient(SUPA_URL, SUPA_KEY, {
+      auth:{ persistSession:true, autoRefreshToken:true, storageKey:'tt_supa_session' }
+    });
+    return _supa;
+  }
+  return null;
+}
+
+// ── Auth ──
+const SupaAuth = {
+
+  // Register: creates Supabase auth user + profile row
+  async register(nick, email, password, profileData){
+    const db = getSupa(); if(!db) throw new Error('Supabase no disponible');
+    
+    // 1. Check nick not taken
+    const {data:existing} = await db.from('profiles').select('nick').eq('nick', nick).single();
+    if(existing) throw new Error('nick_taken');
+
+    // 2. Create auth user
+    const {data, error} = await db.auth.signUp({
+      email, password,
+      options:{ data:{ nick } }
+    });
+    if(error) throw error;
+
+    // 3. Insert profile
+    const {error: profErr} = await db.from('profiles').insert({
+      id: data.user.id,
+      nick,
+      species: profileData.species || '',
+      location: profileData.country + (profileData.city ? ', '+profileData.city : ''),
+      age: profileData.age || null,
+      avatar_id: profileData.avatarId || '',
+      bio: '',
+      visible_in_finder: true,
+    });
+    if(profErr) throw profErr;
+
+    // 4. Send welcome message
+    await db.from('messages').insert({
+      id: 'w'+Date.now(),
+      from_nick: 'TT_CEO',
+      to_nick: nick,
+      body: '¡Bienvenido/a a True Therian, '+nick+'! 🐾 Aquí encontrarás tu manada. El instinto ya sabía que pertenecías aquí. — True Therian',
+      ts: Date.now(),
+      read: false
+    });
+
+    return { ...profileData, nick, email, supaId: data.user.id };
+  },
+
+  // Login: Supabase auth sign in
+  async login(email, password){
+    const db = getSupa(); if(!db) throw new Error('Supabase no disponible');
+    const {data, error} = await db.auth.signInWithPassword({ email, password });
+    if(error) throw error;
+
+    // Fetch profile
+    const {data:prof} = await db.from('profiles').select('*').eq('id', data.user.id).single();
+    
+    return {
+      nick: prof?.nick || data.user.user_metadata?.nick || email.split('@')[0],
+      email: data.user.email,
+      species: prof?.species || '',
+      avatarId: prof?.avatar_id || '',
+      location: prof?.location || '',
+      supaId: data.user.id,
+      isSupa: true,
+    };
+  },
+
+  // Logout
+  async logout(){
+    const db = getSupa(); if(!db) return;
+    await db.auth.signOut();
+  },
+
+  // Restore session on page load
+  async restoreSession(){
+    const db = getSupa(); if(!db) return null;
+    const {data:{session}} = await db.auth.getSession();
+    if(!session) return null;
+    const {data:prof} = await db.from('profiles').select('*').eq('id', session.user.id).single();
+    if(!prof) return null;
+    return {
+      nick: prof.nick,
+      email: session.user.email,
+      species: prof.species || '',
+      avatarId: prof.avatar_id || '',
+      location: prof.location || '',
+      supaId: session.user.id,
+      isSupa: true,
+    };
+  },
+
+  // Update profile
+  async updateProfile(userId, fields){
+    const db = getSupa(); if(!db) return;
+    await db.from('profiles').update(fields).eq('id', userId);
+  },
+};
+
+// ── Posts ──
+const SupaPosts = {
+  async load(limit=60){
+    const db = getSupa(); if(!db) return null;
+    const since = Date.now() - 24*3600*1000;
+    const {data, error} = await db.from('posts')
+      .select('*').gte('ts', since).order('ts', {ascending:false}).limit(limit);
+    if(error) return null;
+    return data;
+  },
+
+  async publish(post){
+    const db = getSupa(); if(!db) return false;
+    const {error} = await db.from('posts').insert({
+      id: post.id,
+      user_id: window.CU?.supaId || null,
+      nick: post.nick,
+      species: post.species || '',
+      body: post.body,
+      tag: post.tag,
+      mood: post.mood || '',
+      embed_src: post.embedSrc || '',
+      howls: 0,
+      ghost: post.ghost || false,
+      gathermap: post.gathermap || false,
+      ts: post.ts,
+    });
+    return !error;
+  },
+
+  async updateHowls(postId, delta){
+    const db = getSupa(); if(!db) return;
+    const {data} = await db.from('posts').select('howls').eq('id', postId).single();
+    if(data) await db.from('posts').update({howls: Math.max(0,(data.howls||0)+delta)}).eq('id', postId);
+  },
+};
+
+// ── Messages ──
+const SupaMsgs = {
+  async load(nick){
+    const db = getSupa(); if(!db) return null;
+    const {data, error} = await db.from('messages')
+      .select('*')
+      .or(`from_nick.eq.${nick},to_nick.eq.${nick}`)
+      .order('ts', {ascending:true});
+    if(error) return null;
+    return data;
+  },
+
+  async send(msg){
+    const db = getSupa(); if(!db) return false;
+    const {error} = await db.from('messages').insert({
+      id: msg.id,
+      from_nick: msg.from,
+      to_nick: msg.to,
+      body: msg.body,
+      ts: msg.ts,
+      read: false,
+    });
+    return !error;
+  },
+
+  async markRead(fromNick, toNick){
+    const db = getSupa(); if(!db) return;
+    await db.from('messages').update({read:true})
+      .eq('to_nick', toNick).eq('from_nick', fromNick).eq('read', false);
+  },
+
+  async unreadCount(nick){
+    const db = getSupa(); if(!db) return 0;
+    const {count} = await db.from('messages')
+      .select('*', {count:'exact', head:true})
+      .eq('to_nick', nick).eq('read', false);
+    return count || 0;
+  },
+};
+
+// ── Meets (GatherMap) ──
+const SupaMeets = {
+  async load(){
+    const db = getSupa(); if(!db) return null;
+    const now = Date.now();
+    const {data, error} = await db.from('meets')
+      .select('*').gte('ts', now).order('ts', {ascending:true});
+    if(error) return null;
+    return data?.map(m => ({
+      id: m.id, nick: m.nick, city: m.city, country: m.country,
+      flag: m.flag, place: m.place, lat: m.lat, lng: m.lng,
+      ts: m.ts, species: m.species, comment: m.comment,
+    }));
+  },
+
+  async publish(meet){
+    const db = getSupa(); if(!db) return false;
+    const {error} = await db.from('meets').insert({
+      id: meet.id,
+      user_id: window.CU?.supaId || null,
+      nick: meet.nick,
+      city: meet.city, country: meet.country, flag: meet.flag,
+      place: meet.place, lat: meet.lat, lng: meet.lng,
+      ts: meet.ts, species: meet.species, comment: meet.comment,
+    });
+    return !error;
+  },
+};
+
+// ── Users / Pack Finder ──
+const SupaUsers = {
+  async search(countryQ, cityQ){
+    const db = getSupa(); if(!db) return null;
+    let q = db.from('profiles').select('nick,species,location,avatar_id,visible_in_finder')
+      .eq('visible_in_finder', true);
+    if(countryQ) q = q.ilike('location', `%${countryQ}%`);
+    if(cityQ)    q = q.ilike('location', `%${cityQ}%`);
+    const {data, error} = await q.limit(50);
+    if(error) return null;
+    return data?.map(u => ({
+      nick: u.nick, species: u.species, location: u.location,
+      avatarId: u.avatar_id, visibleInFinder: u.visible_in_finder,
+    }));
+  },
+};
+
+
 
 // ══════════════════════════════════════════════
 // UNIVERSAL SESSION + NAV — runs on every page
@@ -827,6 +1068,24 @@ function getUserMeets(){
 }
 
 function getAllMeets(){
+  // Try to refresh from Supabase in background
+  if(getSupa() && !window._meetsFetched){
+    window._meetsFetched = true;
+    SupaMeets.load().then(supaMeets=>{
+      if(supaMeets && supaMeets.length){
+        // Merge Supabase meets with local user meets
+        const local = JSON.parse(localStorage.getItem('tt_meets')||'[]');
+        const supaIds = new Set(supaMeets.map(m=>m.id));
+        const localOnly = local.filter(m=>!supaIds.has(m.id));
+        const merged = [...supaMeets, ...localOnly];
+        localStorage.setItem('tt_meets', JSON.stringify(merged));
+        markers={};
+        document.querySelectorAll('.leaflet-marker-icon,.leaflet-marker-shadow').forEach(el=>el.remove());
+        renderAllMarkers();
+        renderList();
+      }
+    }).catch(()=>{});
+  }
   return [...getDemoMeets(),...getUserMeets()].sort((a,b)=>a.ts-b.ts);
 }
 
@@ -1168,6 +1427,7 @@ function submitMeet(){
     localStorage.setItem('tt_posts',JSON.stringify(posts.slice(0,500)));
   }catch(e){}
 
+  SupaMeets.publish(meet).catch(()=>{});
   showToast('¡GatherSpot publicado en el mapa y en el feed! 🐾','ok');
   switchTab('list',document.querySelector('.sb-tab'));
 }
