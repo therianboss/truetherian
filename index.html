@@ -2344,6 +2344,39 @@ function seedDemoUsers(){
   if(added>0) saveUsers(users);
 }
 
+// ── GHOST DRIP — injects 1 fresh ghost post every few minutes ──
+// This keeps the feed feeling alive even when real users are posting.
+function ghostDrip(){
+  const pool=GHOST_POSTS_POOL;
+  const names=GHOST_NAMES;
+  const posts=allPosts();
+  // Pick a random post from pool, excluding ones recently used (last 5 ghost posts)
+  const recentBodies=posts.filter(p=>p.ghost).slice(0,5).map(p=>p.body);
+  const available=pool.filter(p=>!recentBodies.includes(p.body));
+  const tmpl=(available.length?available:pool)[Math.floor(Math.random()*(available.length||pool.length))];
+  const name=names[Math.floor(Math.random()*names.length)];
+  const now=Date.now();
+  // Small random offset so it doesn't always appear as "ahora mismo" at exact same second
+  const jitter=Math.floor(Math.random()*90)*1000; // 0-90 seconds ago
+  const ghost={
+    id:'g'+now+Math.random().toString(36).slice(2,6),
+    ts:now-jitter,
+    nick:name,av:name[0],species:tmpl.sp||GHOST_SP[Math.floor(Math.random()*GHOST_SP.length)],
+    mood:'',body:tmpl.body,tag:tmpl.tag||'Shifts',
+    embedSrc:'',howls:Math.floor(Math.random()*5),replies:Math.floor(Math.random()*3),
+    ghost:true
+  };
+  posts.unshift(ghost);
+  savePosts(posts);
+  renderFeed();
+}
+
+// Schedule ghost drip: first drop after 90s, then every 2.5-5 min randomly
+function scheduleGhostDrip(){
+  const delay=150000+Math.random()*150000; // 2.5-5 min
+  setTimeout(()=>{ghostDrip();scheduleGhostDrip();},delay);
+}
+
 function seedGhostPosts(){
   // Clear old ghost posts older than 24h
   const cut=Date.now()-24*3600*1000;
@@ -2351,7 +2384,7 @@ function seedGhostPosts(){
 
   // Count existing ghost posts
   const existingGhost=posts.filter(p=>p.ghost).length;
-  if(existingGhost>=20)return; // already seeded
+  if(existingGhost>=18)return; // already well seeded
 
   // How many to add
   const toAdd=Math.floor(Math.random()*11)+20; // 20-30
@@ -2440,6 +2473,7 @@ document.addEventListener('DOMContentLoaded',function init(){
   tickOnline();
   // Ghost typers start immediately, always running
   setTimeout(startGhostTypers, 800);
+  setTimeout(scheduleGhostDrip, 90000); // first drip after 90s
 });
 </script>
 
