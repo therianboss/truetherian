@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Memoria del Bosque · True Therian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070a06;--tp:rgba(232,224,208,.92);--tm:rgba(232,224,208,.45);
+    --am:#c8a95a;--am30:rgba(200,169,90,.3);--moss:#2a3020;
+    --card:rgba(255,255,255,.03);--glow:rgba(200,169,90,.08);
+    --green:rgba(80,120,60,.15);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--tp);
+    font-family:'Crimson Pro',Georgia,serif;
+    min-height:100vh;
+    background-image:
+      radial-gradient(ellipse 60% 40% at 50% 0%,rgba(40,60,25,.4),transparent),
+      radial-gradient(ellipse 40% 30% at 20% 80%,rgba(30,50,20,.3),transparent);
+  }
+
+  /* ── NAV ── */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 32px;
+    background:rgba(7,10,6,.85);
+    border-bottom:1px solid rgba(200,169,90,.1);
+    backdrop-filter:blur(12px);
+  }
+  .nav-logo{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.28em;color:var(--am);text-decoration:none}
+  .nav-back{
+    display:flex;align-items:center;gap:8px;
+    font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--tm);text-decoration:none;transition:color .3s;
+  }
+  .nav-back:hover{color:var(--am)}
+  .nav-user{
+    font-size:.72rem;color:var(--tm);cursor:pointer;
+    background:none;border:1px solid rgba(200,169,90,.15);
+    padding:5px 14px;letter-spacing:.14em;text-transform:uppercase;
+    transition:all .3s;font-family:'Crimson Pro',serif;
+  }
+  .nav-user:hover{color:var(--am);border-color:var(--am30)}
+
+  /* ── HERO ── */
+  .mem-hero{
+    padding:120px 32px 60px;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .mem-hero::before{
+    content:'';position:absolute;inset:0;
+    background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8a95a' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events:none;
+  }
+  .mem-label{
+    font-size:.62rem;letter-spacing:.4em;text-transform:uppercase;
+    color:var(--am);margin-bottom:14px;display:block;
+  }
+  .mem-title{
+    font-family:'Cinzel',serif;font-size:clamp(2rem,5vw,3.5rem);
+    font-weight:400;line-height:1.1;color:var(--tp);
+    margin-bottom:16px;
+  }
+  .mem-title em{color:var(--am);font-style:normal}
+  .mem-sub{
+    font-size:1.05rem;color:var(--tm);
+    max-width:520px;margin:0 auto 32px;line-height:1.8;
+    font-style:italic;
+  }
+  .mem-stats{
+    display:inline-flex;gap:32px;flex-wrap:wrap;justify-content:center;
+    border:1px solid var(--am30);padding:14px 32px;
+    background:rgba(200,169,90,.04);
+  }
+  .mem-stat{text-align:center}
+  .mem-stat-n{font-family:'Cinzel',serif;font-size:1.6rem;color:var(--am);display:block}
+  .mem-stat-l{font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--tm)}
+
+  /* ── MAIN LAYOUT ── */
+  .mem-container{
+    max-width:900px;margin:0 auto;padding:40px 24px 80px;
+  }
+
+  /* ── FILTER BAR ── */
+  .mem-filter{
+    display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    margin-bottom:28px;padding:14px 18px;
+    background:var(--card);border:1px solid rgba(200,169,90,.1);
+  }
+  .mem-filter-label{
+    font-size:.6rem;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--tm);margin-right:4px;
+  }
+  .filter-pill{
+    background:none;border:1px solid rgba(255,255,255,.08);
+    color:var(--tm);padding:4px 12px;font-size:.7rem;
+    cursor:pointer;transition:all .25s;font-family:'Crimson Pro',serif;
+    letter-spacing:.08em;
+  }
+  .filter-pill:hover,.filter-pill.active{
+    background:rgba(200,169,90,.1);border-color:var(--am30);color:var(--am);
+  }
+  .mem-search{
+    margin-left:auto;background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.08);color:var(--tp);
+    padding:5px 12px;font-size:.78rem;font-family:'Crimson Pro',serif;
+    outline:none;width:180px;
+  }
+  .mem-search::placeholder{color:var(--tm)}
+
+  /* ── EMPTY STATE ── */
+  .mem-empty{
+    text-align:center;padding:80px 24px;
+    border:1px dashed rgba(200,169,90,.15);
+  }
+  .mem-empty-icon{font-size:3rem;margin-bottom:16px;display:block;opacity:.4}
+  .mem-empty-t{
+    font-family:'Cinzel',serif;font-size:1.1rem;color:var(--tm);
+    margin-bottom:8px;
+  }
+  .mem-empty-s{font-size:.86rem;color:rgba(232,224,208,.3);line-height:1.7;font-style:italic}
+  .mem-empty a{color:var(--am);text-decoration:none}
+
+  /* ── POST CARD ── */
+  .mem-grid{
+    display:grid;gap:16px;
+  }
+  .mem-card{
+    background:var(--card);
+    border:1px solid rgba(255,255,255,.06);
+    padding:20px;
+    position:relative;
+    transition:border-color .3s,transform .2s;
+    animation:fadeUp .4s ease both;
+  }
+  .mem-card:hover{
+    border-color:rgba(200,169,90,.2);
+    transform:translateY(-2px);
+  }
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(16px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  .mem-card-hdr{
+    display:flex;align-items:center;gap:12px;margin-bottom:12px;
+  }
+  .mem-card-av{
+    width:38px;height:38px;border-radius:50%;
+    background:linear-gradient(135deg,var(--moss),rgba(40,60,20,.6));
+    border:1px solid var(--am30);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Cinzel',serif;font-size:.85rem;color:var(--am);
+    overflow:hidden;flex-shrink:0;cursor:pointer;
+  }
+  .mem-card-meta{flex:1;min-width:0}
+  .mem-card-nick{
+    font-family:'Cinzel',serif;font-size:.82rem;color:var(--tp);
+    display:flex;align-items:center;gap:6px;flex-wrap:wrap;
+  }
+  .mem-card-time{font-size:.62rem;color:var(--tm);margin-top:2px}
+  .mem-card-tag{
+    font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--am);background:rgba(200,169,90,.08);
+    padding:2px 8px;border:1px solid var(--am30);
+  }
+  .mem-card-body{
+    font-size:.95rem;color:rgba(232,224,208,.8);
+    line-height:1.85;margin-bottom:14px;
+    font-style:italic;
+    border-left:2px solid rgba(200,169,90,.2);
+    padding-left:14px;
+  }
+  .mem-card-actions{
+    display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+  }
+  .mem-act{
+    background:none;border:1px solid rgba(255,255,255,.07);
+    color:var(--tm);padding:4px 11px;font-size:.68rem;
+    cursor:pointer;transition:all .25s;font-family:'Crimson Pro',serif;
+    letter-spacing:.1em;
+  }
+  .mem-act:hover{border-color:var(--am30);color:var(--am)}
+  .mem-act.danger:hover{border-color:rgba(229,57,53,.3);color:#ef9a9a}
+  .mem-howls{
+    margin-left:auto;font-size:.7rem;color:var(--am);
+    display:flex;align-items:center;gap:4px;
+  }
+  /* Saved date badge */
+  .mem-saved-badge{
+    position:absolute;top:14px;right:14px;
+    font-size:.58rem;color:var(--tm);
+    letter-spacing:.1em;
+  }
+
+  /* ── TOAST ── */
+  .toast{
+    position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);
+    background:rgba(12,16,10,.95);border:1px solid var(--am30);
+    color:var(--tp);padding:10px 22px;font-size:.78rem;
+    letter-spacing:.12em;z-index:999;opacity:0;transition:all .35s;
+    pointer-events:none;font-family:'Crimson Pro',serif;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.ok{border-color:rgba(80,180,80,.3)}
+  .toast.err{border-color:rgba(229,57,53,.3)}
+
+  /* ── LOGIN GATE ── */
+  .login-gate{
+    text-align:center;padding:70px 24px;
+    border:1px solid rgba(200,169,90,.1);
+    background:rgba(200,169,90,.03);
+    max-width:420px;margin:60px auto;
+  }
+  .login-gate h2{
+    font-family:'Cinzel',serif;font-size:1.3rem;color:var(--am);
+    margin-bottom:12px;font-weight:400;
+  }
+  .login-gate p{font-size:.88rem;color:var(--tm);line-height:1.75;margin-bottom:22px;font-style:italic}
+  .btn-gate{
+    display:inline-block;padding:10px 28px;
+    background:rgba(200,169,90,.1);border:1px solid var(--am30);
+    color:var(--am);text-decoration:none;font-size:.72rem;
+    letter-spacing:.2em;text-transform:uppercase;transition:all .3s;
+    font-family:'Crimson Pro',serif;cursor:pointer;
+  }
+  .btn-gate:hover{background:rgba(200,169,90,.18)}
+
+  /* ── FOOTER ── */
+  footer{
+    border-top:1px solid rgba(200,169,90,.08);
+    text-align:center;padding:24px;
+    font-size:.68rem;color:var(--tm);letter-spacing:.12em;
+  }
+  footer a{color:var(--am);text-decoration:none}
+
+  @media(max-width:640px){
+    nav{padding:12px 18px}
+    .mem-hero{padding:100px 18px 40px}
+    .mem-container{padding:24px 16px 60px}
+    .mem-filter{gap:6px}
+    .mem-search{width:100%;margin-left:0}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">ΘΔ True Therian</a>
+  <a href="index.html" class="nav-back">← Volver</a>
+  <button class="nav-user" id="navUserBtn" onclick="goToProfile()">Perfil</button>
+</nav>
+
+<!-- HERO -->
+<div class="mem-hero">
+  <span class="mem-label">🔖 Archivo Personal</span>
+  <h1 class="mem-title">Memoria <em>del Bosque</em></h1>
+  <p class="mem-sub">Los posts que marcas sobreviven al reset diario. Tu archivo personal de la manada.</p>
+  <div class="mem-stats" id="memStats">
+    <div class="mem-stat"><span class="mem-stat-n" id="statCount">—</span><span class="mem-stat-l">Guardados</span></div>
+    <div class="mem-stat"><span class="mem-stat-n" id="statSpecies">—</span><span class="mem-stat-l">Especies</span></div>
+    <div class="mem-stat"><span class="mem-stat-n" id="statTags">—</span><span class="mem-stat-l">Tags</span></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="mem-container">
+
+  <!-- FILTER -->
+  <div class="mem-filter">
+    <span class="mem-filter-label">Filtrar</span>
+    <button class="filter-pill active" data-tag="all" onclick="setFilter('all',this)">Todos</button>
+    <button class="filter-pill" data-tag="Shifts" onclick="setFilter('Shifts',this)">Shifts</button>
+    <button class="filter-pill" data-tag="Gear" onclick="setFilter('Gear',this)">Gear</button>
+    <button class="filter-pill" data-tag="Quadrobics" onclick="setFilter('Quadrobics',this)">Quadrobics</button>
+    <button class="filter-pill" data-tag="Reflexión" onclick="setFilter('Reflexión',this)">Reflexión</button>
+    <button class="filter-pill" data-tag="Pack" onclick="setFilter('Pack',this)">Pack</button>
+    <input type="text" class="mem-search" id="memSearch" placeholder="Buscar en memoria..." oninput="renderMemory()">
+  </div>
+
+  <!-- GRID -->
+  <div id="memGrid"></div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<footer>
+  <a href="index.html">True Therian · Social Link Life</a> &nbsp;·&nbsp;
+  <a href="privacidad.html">Privacidad</a> &nbsp;·&nbsp;
+  <a href="mensajeria.html">Mensajes</a>
+</footer>
+
+<script>
+const LS={
+  get:(k,d=null)=>{try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v);}catch(e){return d;}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}},
+};
+function getSession(){return LS.get('tt_session',null)}
+function getMem(){return LS.get('tt_mem',[])}
+function getSavedData(){return LS.get('tt_saved_data',{})}
+function saveMem(m){LS.set('tt_mem',m)}
+
+let curFilter='all';
+
+function setFilter(tag,btn){
+  curFilter=tag;
+  document.querySelectorAll('.filter-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMemory();
+}
+
+function timeAgo(ts){
+  const d=Date.now()-ts,m=Math.floor(d/60000),h=Math.floor(d/3600000),dy=Math.floor(d/86400000);
+  if(d<60000)return'ahora mismo';
+  if(h<1)return m+' min';
+  if(h<24)return h+'h';
+  if(dy<30)return dy+'d';
+  return new Date(ts).toLocaleDateString('es-ES');
+}
+function spEmoji(sp){return{Lupine:'🐺',Vulpine:'🦊',Equine:'🐴',Feline:'🐱',Ursid:'🐻',Avian:'🦅',Reptile:'🦎',Mythic:'✨',Other:'❓'}[sp]||'🐾';}
+
+function goToProfile(){window.location.href='index.html';}
+
+let toastT;
+function showToast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className='toast'+(type?' '+type:'');
+  clearTimeout(toastT);
+  requestAnimationFrame(()=>el.classList.add('show'));
+  toastT=setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+function removeFromMem(id){
+  saveMem(getMem().filter(x=>x!==id));
+  renderMemory();
+  showToast('Eliminado de Memoria');
+}
+
+function sharePost(p){
+  const txt=(p.nick||'?')+' en True Therian: "'+(p.body||'').slice(0,80)+'"';
+  if(navigator.share)navigator.share({title:'True Therian',text:txt,url:'https://truetherian.com'});
+  else if(navigator.clipboard)navigator.clipboard.writeText(txt).then(()=>showToast('Copiado ✓'));
+}
+
+function renderMemory(){
+  const u=getSession();
+  const grid=document.getElementById('memGrid');
+  if(!grid)return;
+
+  if(!u){
+    grid.innerHTML=`<div class="login-gate">
+      <h2>🔖 Tu Memoria Privada</h2>
+      <p>Inicia sesión para acceder a los posts que has guardado. Tu memoria personal sobrevive a cada reset diario.</p>
+      <a href="index.html" class="btn-gate">Ir a True Therian</a>
+    </div>`;
+    return;
+  }
+
+  const mem=getMem();
+  const sd=getSavedData();
+  const search=(document.getElementById('memSearch')||{}).value||'';
+
+  let posts=mem.map(id=>sd[id]).filter(Boolean);
+
+  // Filter by tag
+  if(curFilter!=='all')posts=posts.filter(p=>p.tag===curFilter);
+  // Search
+  if(search.trim()){
+    const q=search.toLowerCase();
+    posts=posts.filter(p=>(p.body||'').toLowerCase().includes(q)||(p.nick||'').toLowerCase().includes(q)||(p.tag||'').toLowerCase().includes(q));
+  }
+
+  // Stats
+  const allPosts=mem.map(id=>sd[id]).filter(Boolean);
+  const uniqueSpecies=new Set(allPosts.map(p=>p.species).filter(Boolean)).size;
+  const uniqueTags=new Set(allPosts.map(p=>p.tag).filter(Boolean)).size;
+  document.getElementById('statCount').textContent=allPosts.length;
+  document.getElementById('statSpecies').textContent=uniqueSpecies;
+  document.getElementById('statTags').textContent=uniqueTags;
+
+  if(!posts.length){
+    if(mem.length===0){
+      grid.innerHTML=`<div class="mem-empty">
+        <span class="mem-empty-icon">🌲</span>
+        <div class="mem-empty-t">El bosque está en silencio</div>
+        <div class="mem-empty-s">Aún no has guardado ningún post.<br>Usa el botón 🔖 en cualquier post del <a href="index.html#feed">Feed</a> para guardarlo aquí.</div>
+      </div>`;
+    }else{
+      grid.innerHTML=`<div class="mem-empty">
+        <span class="mem-empty-icon">🔍</span>
+        <div class="mem-empty-t">Sin resultados</div>
+        <div class="mem-empty-s">No hay posts que coincidan con el filtro seleccionado.</div>
+      </div>`;
+    }
+    return;
+  }
+
+  // Render cards
+  grid.innerHTML=posts.map((p,i)=>{
+    const avHTML=p.avatarSrc
+      ?`<img src="${p.avatarSrc}" style="width:100%;height:100%;object-fit:cover" alt="">`
+      :`<span>${(p.av||p.nick[0]||'?').toUpperCase()}</span>`;
+    return`<div class="mem-card" style="animation-delay:${i*0.05}s">
+      <span class="mem-saved-badge">Guardado ${timeAgo(p.savedAt||p.ts||0)}</span>
+      <div class="mem-card-hdr">
+        <div class="mem-card-av">${avHTML}</div>
+        <div class="mem-card-meta">
+          <div class="mem-card-nick">
+            ${p.nick||'?'}
+            ${p.species?`<span>${spEmoji(p.species)} ${p.species}</span>`:''}
+            <span class="mem-card-tag">#${p.tag||'?'}</span>
+          </div>
+          <div class="mem-card-time">${timeAgo(p.ts||0)}</div>
+        </div>
+      </div>
+      <div class="mem-card-body">${(p.body||'[post sin texto]').replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div>
+      <div class="mem-card-actions">
+        <button class="mem-act" onclick="sharePost(${JSON.stringify({nick:p.nick,body:(p.body||'').slice(0,80)}).replace(/"/g,'&quot;')})">↗ Compartir</button>
+        <button class="mem-act danger" onclick="removeFromMem('${p.id}')">✕ Quitar</button>
+        <div class="mem-howls">🐺 ${p.howls||0}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── INIT ──
+(function(){
+  const u=getSession();
+  const btn=document.getElementById('navUserBtn');
+  if(u&&btn)btn.textContent=u.nick;
+  renderMemory();
+})();
+</script>
+</body>
+</html>

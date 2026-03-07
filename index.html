@@ -404,7 +404,8 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
     <li><a href="#packfinder" onclick="closeNav()">Pack Finder</a></li>
     <li><a href="#que-es" onclick="closeNav()">¿Qué somos?</a></li>
     <li><a href="#galeria" onclick="closeNav()">Galería</a></li>
-    <li><a href="#memoria" onclick="closeNav()">Memoria</a></li>
+    <li><a href="memoria.html" onclick="closeNav()">Memoria</a></li>
+    <li><a href="mensajeria.html" onclick="closeNav()">💬 Mensajes</a></li>
     <li><a href="newsletter.html" onclick="closeNav()">Newsletter</a></li>
     <li><a href="privacidad.html" onclick="closeNav()">Privacidad</a></li>
   </ul>
@@ -460,6 +461,41 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
   <div class="scroll-hint"><div class="scroll-line"></div><span>Descender</span></div>
 </section>
 
+<section class="what-s" id="que-es">
+  <div class="cnt">
+    <div class="what-g">
+      <div class="what-t rv-l">
+        <p class="s-lbl">La Verdad</p>
+        <h2 class="s-h2">¿Qué significa ser <em>True Therian</em>?</h2>
+        <div class="div-am"></div>
+        <p>No es un juego de rol. Es el peso de una cola que no está, el frío de un cielo que nunca has volado y la euforia de un <em>shift</em> que te devuelve lo que la biología te negó.</p>
+        <p>Aquí respiramos nuestra naturaleza en comunidad. Cada especie, cada shift, cada vínculo tiene su espacio en <em>Social Link Life</em>.</p>
+        <p>Sin algoritmos. Sin ruido. Solo la manada.</p>
+        
+      </div>
+      <div class="what-v rv-r">
+        <div class="img-stk"><div class="am-acc"></div><img src="img11.jpg" alt="" loading="lazy"><img src="img15.jpg" alt="" loading="lazy"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pillars-s" id="especies">
+  <div class="cnt">
+    <div class="pillars-hdr rv">
+      <p class="s-lbl">Tu Especie</p>
+      <h2 class="s-h2">La <em>Manada</em> es diversa</h2>
+      <p>Lobos, zorros, équidos, aves — cada esencia tiene su historia. Aquí todas son sagradas.</p>
+    </div>
+    <div class="pillars-g rv">
+      <div class="pillar"><img src="img07.jpg" alt="" loading="lazy"><div class="pil-ov"><p class="pil-tag">#Lupine</p><p class="pil-nm">Cánidos &amp; Lobos</p><p class="pil-desc">La especie más numerosa. Instinto de pack, lealtad sin límites.</p></div><div class="pil-line"></div></div>
+      <div class="pillar"><img src="img08.jpg" alt="" loading="lazy"><div class="pil-ov"><p class="pil-tag">#Vulpine</p><p class="pil-nm">Zorros &amp; Vulpinos</p><p class="pil-desc">Inteligencia aguda, adaptabilidad infinita.</p></div><div class="pil-line"></div></div>
+      <div class="pillar"><img src="img03.jpg" alt="" loading="lazy"><div class="pil-ov"><p class="pil-tag">#Equine</p><p class="pil-nm">Équidos &amp; Caballos</p><p class="pil-desc">Libertad que no cabe en cuatro paredes.</p></div><div class="pil-line"></div></div>
+      <div class="pillar"><img src="img10.jpg" alt="" loading="lazy"><div class="pil-ov"><p class="pil-tag">#WildOther</p><p class="pil-nm">Otras Esencias</p><p class="pil-desc">Aves, osos, félidos, criaturas míticas.</p></div><div class="pil-line"></div></div>
+    </div>
+  </div>
+</section>
+
 <section class="compass-s" id="compass">
   <div class="compass-in cnt">
     <div class="rv-l">
@@ -472,19 +508,6 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
     <div class="comp-cv rv-r"><canvas id="compassCanvas" width="270" height="270"></canvas></div>
   </div>
 </section>
-
-<div class="mood-bar">
-  <span class="mood-lbl">Tu Shift Hoy</span>
-  <div class="mood-opts">
-    <button class="mood-opt" data-mood="Mental" onclick="setMood(this)">🧠 Mental</button>
-    <button class="mood-opt" data-mood="Phantom" onclick="setMood(this)">👻 Phantom</button>
-    <button class="mood-opt" data-mood="Dream" onclick="setMood(this)">🌙 Dream</button>
-    <button class="mood-opt" data-mood="Méditation" onclick="setMood(this)">🌿 Méditation</button>
-    <button class="mood-opt" data-mood="Cameo" onclick="setMood(this)">✨ Cameo</button>
-    <button class="mood-opt" data-mood="Feral" onclick="setMood(this)">🐾 Feral</button>
-  </div>
-  <span class="mood-cnt" id="moodCnt"></span>
-</div>
 
 <section class="feed-section" id="feed">
   <div class="cnt">
@@ -544,41 +567,6 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
   </div>
 </section>
 
-<section class="what-s" id="que-es">
-  <div class="cnt">
-    <div class="what-g">
-      <div class="what-t rv-l">
-        <p class="s-lbl">La Verdad</p>
-        <h2 class="s-h2">¿Qué significa ser <em>True Therian</em>?</h2>
-        <div class="div-am"></div>
-        <p>No es un juego de rol. Es el peso de una cola que no está, el frío de un cielo que nunca has volado y la euforia de un <em>shift</em> que te devuelve lo que la biología te negó.</p>
-        <p>Aquí respiramos nuestra naturaleza en comunidad. Cada especie, cada shift, cada vínculo tiene su espacio en <em>Social Link Life</em>.</p>
-        <p>Sin algoritmos. Sin ruido. Solo la manada.</p>
-        <a href="#feed" class="btn-am" style="margin-top:1.2rem;display:inline-block">Ver el Feed</a>
-      </div>
-      <div class="what-v rv-r">
-        <div class="img-stk"><div class="am-acc"></div><img src="img11.jpg" alt="" loading="lazy"><img src="img15.jpg" alt="" loading="lazy"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="pillars-s" id="especies">
-  <div class="cnt">
-    <div class="pillars-hdr rv">
-      <p class="s-lbl">Tu Especie</p>
-      <h2 class="s-h2">La <em>Manada</em> es diversa</h2>
-      <p>Lobos, zorros, équidos, aves — cada esencia tiene su historia. Aquí todas son sagradas.</p>
-    </div>
-    <div class="pillars-g rv">
-      <div class="pillar"><img src="img07.jpg" alt="" loading="lazy"><div class="pil-ov"><p class="pil-tag">#Lupine</p><p class="pil-nm">Cánidos &amp; Lobos</p><p class="pil-desc">La especie más numerosa. Instinto de pack, lealtad sin límites.</p></div><div class="pil-line"></div></div>
-      <div class="pillar"><img src="img08.jpg" alt="" loading="lazy"><div class="pil-ov"><p class="pil-tag">#Vulpine</p><p class="pil-nm">Zorros &amp; Vulpinos</p><p class="pil-desc">Inteligencia aguda, adaptabilidad infinita.</p></div><div class="pil-line"></div></div>
-      <div class="pillar"><img src="img03.jpg" alt="" loading="lazy"><div class="pil-ov"><p class="pil-tag">#Equine</p><p class="pil-nm">Équidos &amp; Caballos</p><p class="pil-desc">Libertad que no cabe en cuatro paredes.</p></div><div class="pil-line"></div></div>
-      <div class="pillar"><img src="img10.jpg" alt="" loading="lazy"><div class="pil-ov"><p class="pil-tag">#WildOther</p><p class="pil-nm">Otras Esencias</p><p class="pil-desc">Aves, osos, félidos, criaturas míticas.</p></div><div class="pil-line"></div></div>
-    </div>
-  </div>
-</section>
-
 <section class="gal-s" id="galeria">
   <div class="cnt">
     <div class="gal-hdr rv"><p class="s-lbl">La Manada en Imágenes</p><h2 class="s-h2">Somos <em>reales</em></h2></div>
@@ -600,7 +588,6 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
     </div>
   </div>
 </section>
-<div id="lb"><button id="lb-cls" onclick="closeLb()">✕</button><img id="lb-img" src="" alt=""></div>
 
 <section class="pack-s" id="codigo">
   <div class="pack-in">
@@ -624,13 +611,15 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
 <section class="mem-s" id="memoria">
   <div class="mem-in">
     <div class="rv">
-      <p class="s-lbl">Posts Guardados</p>
-      <h2 class="s-h2"><em>Memoria del Bosque</em></h2>
-      <p style="color:rgba(232,224,208,.63);font-size:.84rem;line-height:1.8;margin-top:.4rem">Guarda posts que te resuenen. Esta memoria no se borra con el reset diario. Solo tú la ves.</p>
-      <div class="mem-grid" id="memGrid"></div>
+      <p class="s-lbl">Recuerdos Eternos</p>
+      <h2 class="s-h2">Memoria <em>del Bosque</em></h2>
+      <p style="color:rgba(232,224,208,.7);line-height:1.85;font-size:.86rem;margin-top:.5rem">Posts que guardas sobreviven al reset diario. Tu memoria personal de la manada.</p>
+      <a href="memoria.html" class="btn-am" style="margin-top:1.2rem;display:inline-block">🔖 Abrir Memoria del Bosque</a>
     </div>
   </div>
 </section>
+
+
 
 <footer>
   <div class="foot-in">
@@ -653,7 +642,7 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
       <p>El refugio digital donde tu identidad animal y tu verdad humana coexisten sin máscaras.</p>
     </div>
     <div class="foot-col"><h4>Navegar</h4><ul><li><a href="index.html">Inicio</a></li><li><a href="#feed">Feed</a></li><li><a href="#galeria">Galería</a></li><li><a href="#packfinder">Pack Finder</a></li></ul></div>
-    <div class="foot-col"><h4>Comunidad</h4><ul><li><a href="newsletter.html">Newsletter</a></li><li><a href="#codigo">Código Manada</a></li><li><a href="#memoria">Memoria</a></li></ul></div>
+    <div class="foot-col"><h4>Comunidad</h4><ul><li><a href="newsletter.html">Newsletter</a></li><li><a href="#codigo">Código Manada</a></li><li><a href="memoria.html">Memoria</a></li></ul></div>
     <div class="foot-col"><h4>Legal</h4><ul><li><a href="privacidad.html">Política de Privacidad</a></li><li><a href="privacidad.html#cookies">Cookies</a></li><li><a href="privacidad.html#terminos">Términos</a></li></ul></div>
   </div>
   <div class="foot-bot">
@@ -683,7 +672,7 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
           <div id="avatarGrid" style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-height:200px;overflow-y:auto"></div>
           <button style="margin-top:8px;font-size:.64rem;color:var(--tm);background:none;border:1px solid rgba(255,255,255,.1);padding:4px 10px;cursor:pointer;width:100%" onclick="document.getElementById('avatarPicker').style.display='none'">Cerrar</button>
         </div>
-        <button class="m-btn" style="background:transparent;border:1px solid rgba(255,179,0,.2);color:var(--am);margin-bottom:7px" onclick="openInbox()">📬 Mensajes</button>
+        <a href="mensajeria.html" class="m-btn" style="background:transparent;border:1px solid rgba(255,179,0,.2);color:var(--am);margin-bottom:7px;display:block;text-align:center;text-decoration:none">📬 Mensajes</a>
         <div id="ceoNavBtn" style="display:none"><button class="m-btn" style="background:rgba(179,157,219,.1);border:1px solid rgba(179,157,219,.3);color:var(--ceo);margin-bottom:7px" onclick="openCEO()">⚡ Panel CEO</button></div>
 
         <!-- AJUSTES DE PERFIL -->
@@ -1053,7 +1042,8 @@ function tickOnline(){
 
 // ── NAV ──
 window.addEventListener('scroll',()=>{
-  document.getElementById('nav').classList.toggle('scrolled',scrollY>55);
+  const _nav=document.getElementById('nav');
+  if(_nav)_nav.classList.toggle('scrolled',scrollY>55);
 });
 function toggleNav(){document.getElementById('navLinks').classList.toggle('open');}
 function closeNav(){document.getElementById('navLinks').classList.remove('open');}
@@ -1084,9 +1074,9 @@ function showToast(msg,type=''){
 }
 
 // ── MODAL ──
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-document.querySelectorAll('.ovl').forEach(ov=>ov.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+function openModal(id){const _m=document.getElementById(id);if(_m)_m.classList.add('open');}
+function closeModal(id){const _m=document.getElementById(id);if(_m)_m.classList.remove('open');}
+// (moved into DOMContentLoaded below)
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.ovl.open').forEach(o=>o.classList.remove('open'));closeLb();}});
 
 // ── MOOD ──
@@ -1196,6 +1186,7 @@ function updateUserBtn(){
   const btn=document.getElementById('userBtn');
   const lbl=document.getElementById('userBtnLbl');
   const av=document.getElementById('cAvatar');
+  if(!btn||!lbl)return; // not on this page
   if(u){
     btn.classList.add('logged');
     if(u.email===CEO_EMAIL)btn.classList.add('ceo');
@@ -1696,12 +1687,27 @@ function renderMem(){
 // ── LIGHTBOX ──
 function openLb(src){document.getElementById('lb-img').src=src;document.getElementById('lb').classList.add('open');document.body.style.overflow='hidden';}
 function closeLb(){document.getElementById('lb').classList.remove('open');document.body.style.overflow='';}
-document.getElementById('lb').addEventListener('click',function(e){if(e.target===this)closeLb();});
+const _lb=document.getElementById('lb');if(_lb)_lb.addEventListener('click',function(e){if(e.target===this)closeLb();});
 
 // ── MESSAGES ──
 let convNick='';
 
+function openInboxLegacy(){  // kept for CEO panel internal use
+  closeModal('userModal');
+  const msgs=getMsgs();
+  if(window.CU){
+    const updated=msgs.map(m=>{if(m.to===window.CU.nick)m.read=true;return m;});
+    saveMsgs(updated);updateMsgBadge();
+  }
+  renderInbox();
+  document.getElementById('inboxView').style.display='block';
+  document.getElementById('convView').classList.remove('open');
+  openModal('msgModal');
+}
 function openInbox(){
+  window.location.href='mensajeria.html';
+}
+function openInbox_orig(){
   closeModal('userModal');
   const msgs=getMsgs();
   if(window.CU){
@@ -1785,7 +1791,7 @@ function sendMsg(){
 function startConvWith(nick){
   if(!window.CU){openUserModal();showToast('Inicia sesión para enviar mensajes','err');return;}
   if(nick===window.CU.nick){showToast('No puedes escribirte a ti mismo','err');return;}
-  convNick=nick;openInbox();openConv(nick);
+  window.location.href='mensajeria.html?with='+encodeURIComponent(nick);
 }
 
 // ── CEO PANEL ──
@@ -2256,13 +2262,17 @@ function startGhostTypers(){
 }
 
 // ── SMOOTH SCROLL ──
-document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
-  const tg=document.querySelector(a.getAttribute('href'));
-  if(tg){e.preventDefault();tg.scrollIntoView({behavior:'smooth'});}
-}));
+// smooth scroll moved inside DOMContentLoaded
 
 // ── INIT ──
-(function init(){
+document.addEventListener('DOMContentLoaded',function init(){
+  // Bind UI events now that DOM is ready
+  document.querySelectorAll('.ovl').forEach(ov=>ov.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
+  document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+    const hv=a.getAttribute('href');
+    if(!hv||hv==='#')return;
+    try{const tg=document.querySelector(hv);if(tg){e.preventDefault();tg.scrollIntoView({behavior:'smooth'});}}catch(err){}
+  }));
   checkFeedReset();
   seedDemoUsers();     // seed demo users for Pack Finder
   seedGhostPosts();    // seeds 20-30 auto posts
@@ -2271,14 +2281,19 @@ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',
   setInterval(updateFeedTimer,1000);
   setInterval(checkFeedReset,60000);
   renderFeed();        // render feed with ghost posts
-  renderMem();
+  if(document.getElementById('memGrid'))renderMem();
   renderCompass();
   updateUserBtn();
   tickOnline();
   // Ghost typers start immediately, always running
   setTimeout(startGhostTypers, 800);
-})();
+});
 </script>
 
+
+<!-- LIGHTBOX -->
+<div id="lb" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:300;align-items:center;justify-content:center;cursor:zoom-out" onclick="closeLb()">
+  <img id="lb-img" src="" style="max-width:92vw;max-height:88vh;object-fit:contain;border:1px solid rgba(255,179,0,.15)" alt="">
+</div>
 </body>
 </html>
