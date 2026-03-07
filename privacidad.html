@@ -7,7 +7,8 @@
 <title>Política de Privacidad · True Therian</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
+<style>html,body{overflow-x:hidden}
+
 :root{--ob:#0a0a0a;--moss:#1a2421;--am:#ffb300;--am10:rgba(255,179,0,.10);--am30:rgba(255,179,0,.30);--tp:#e8e0d0;--tm:#7a7060;--card:#111410}
 *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
 body{background:var(--ob);color:var(--tp);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden}
@@ -77,6 +78,27 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:40px
   .doc-wrap{padding:100px 20px 60px}
   footer{padding:30px 20px}
   .footer-bottom{flex-direction:column;text-align:center}
+}
+
+/* ══ MOBILE ════════════════════════════════════════════════ */
+@media(max-width:768px){
+  nav{padding:10px 14px;gap:8px;overflow:hidden}
+  .nav-logo{font-size:.82rem}
+  .nav-logo small{display:none}
+  .nav-links{
+    display:none;position:fixed;inset:0;
+    background:rgba(6,8,6,.99);flex-direction:column;
+    align-items:center;justify-content:center;
+    gap:1.6rem;z-index:9999;padding:24px;
+  }
+  .nav-links.open{display:flex}
+  .nav-links a{font-size:1rem}
+  .nav-ham{display:flex}
+  .nav-right{gap:5px}
+  .legal-wrap{padding:20px 14px 40px}
+  .legal-wrap h1{font-size:1.6rem}
+  .legal-wrap h2{font-size:1.1rem}
+  input,select,textarea{font-size:16px !important}
 }
 </style>
 </head>

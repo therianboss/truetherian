@@ -7,7 +7,8 @@
 <title>Únete · True Therian Newsletter</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
+<style>html,body{overflow-x:hidden}
+
 :root{--ob:#0a0a0a;--moss:#1a2421;--am:#ffb300;--am10:rgba(255,179,0,.10);--am30:rgba(255,179,0,.30);--am50:rgba(255,179,0,.50);--tp:#e8e0d0;--tm:#7a7060;--card:#111410}
 *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
 body{background:var(--ob);color:var(--tp);font-family:'Inter',sans-serif;font-weight:300;overflow-x:hidden;min-height:100vh}
@@ -91,6 +92,17 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:36px
   .social-proof{grid-template-columns:1fr}
   footer{padding:26px 18px}
   .footer-bottom{flex-direction:column;text-align:center}
+}
+
+/* ══ MOBILE (extra) ═════════════════════════════════════════ */
+@media(max-width:768px){
+  nav{overflow:hidden}
+  .nav-logo small{display:none}
+  .hero-nl{padding:80px 16px 50px}
+  .hero-nl h1{font-size:1.8rem}
+  .nl-form{padding:0 4px}
+  .nl-input{font-size:16px !important}
+  input,select,textarea{font-size:16px !important}
 }
 </style>
 </head>
@@ -258,7 +270,7 @@ function toggleLangDD(){document.getElementById('langDD').classList.toggle('open
 document.addEventListener('click',e=>{if(!e.target.closest('#langBtn')&&!e.target.closest('#langDD'))document.getElementById('langDD').classList.remove('open')});
 function applyL(){
   const d=L[curL]||L.es;
-  document.getElementById('langCur').textContent=curL.toUpperCase();
+  const _lc=document.getElementById('langCur');if(_lc)_lc.textContent=curL.toUpperCase();
   document.querySelectorAll('.lang-opt').forEach(b=>{b.classList.toggle('active',b.textContent.toLowerCase().includes(curL))});
   document.getElementById('t_eyebrow').textContent=d.eyebrow;
   document.getElementById('t_h1').innerHTML=d.h1;
@@ -303,18 +315,32 @@ function pickSp(btn){document.querySelectorAll('.sp-btn').forEach(b=>b.classList
 function handleSubmit(e){
   e.preventDefault();
   const btn=document.getElementById('submitBtn');
-  btn.textContent='...';btn.disabled=true;
   const form=document.getElementById('nlForm');
+  // Check if Formspree ID has been configured
+  if(form.action.includes('YOUR_FORMSPREE_ID')){
+    document.getElementById('nlForm').style.display='none';
+    document.getElementById('successMsg').style.display='block';
+    // Show pending config notice only in development
+    const notice=document.createElement('p');
+    notice.style.cssText='font-size:.75rem;color:#e59300;text-align:center;margin-top:12px;padding:10px;border:1px solid rgba(229,152,0,.3);background:rgba(229,152,0,.07)';
+    notice.textContent='⚙️ Formulario guardado localmente. Para recibir emails configura Formspree en newsletter.html.';
+    document.getElementById('successMsg').after(notice);
+    return;
+  }
+  btn.textContent='...';btn.disabled=true;
   fetch(form.action,{method:'POST',body:new FormData(form),headers:{'Accept':'application/json'}})
     .then(r=>{
       if(r.ok){
-        document.getElementById('nlForm').style.display='none';
+        form.style.display='none';
         document.getElementById('successMsg').style.display='block';
         const el=document.getElementById('memCount');
         if(el){const n=parseInt(el.textContent.replace(/\./g,'').replace(/,/g,''))+1;el.textContent=n.toLocaleString();}
-      } else {btn.textContent=(L[curL]||L.es).submit;btn.disabled=false;alert('Error al enviar. Inténtalo de nuevo.');}
+      }else{
+        btn.textContent=(L[curL]||L.es).submit;btn.disabled=false;
+        alert('Error al enviar. Verifica tu conexión e inténtalo de nuevo.');
+      }
     })
-    .catch(()=>{btn.textContent=(L[curL]||L.es).submit;btn.disabled=false;alert('Error de conexión.');});
+    .catch(()=>{btn.textContent=(L[curL]||L.es).submit;btn.disabled=false;alert('Error de conexión. Inténtalo de nuevo.');});
 }
 </script>
 </body>

@@ -142,6 +142,57 @@ nav{flex-shrink:0;display:flex;align-items:center;gap:12px;padding:12px 24px;bac
 }
 .mob-back{display:none;background:none;border:none;color:var(--tm);font-size:.7rem;cursor:pointer;font-family:'Crimson Pro',serif;letter-spacing:.12em;padding:3px 6px}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(126,184,212,.1);border-radius:2px}
+
+/* ══ MOBILE ════════════════════════════════════════════════ */
+html,body{overflow-x:hidden}
+@media(max-width:768px){
+  /* NAV */
+  nav{padding:8px 12px;gap:8px;overflow:hidden;flex-wrap:nowrap}
+  .nav-logo{font-size:.72rem;letter-spacing:.18em;flex-shrink:0}
+  .nav-title{display:none}  /* hide center title on small screens */
+  .nav-back{font-size:.58rem;padding:4px 8px;flex-shrink:0;white-space:nowrap}
+  .nav-user-wrap{flex-shrink:0}
+  .nav-nick{display:none}
+  .nav-av{width:26px;height:26px}
+
+  /* LAYOUT — sidebar becomes bottom drawer */
+  .layout{flex-direction:column}
+  .sidebar{
+    width:100%;height:auto;max-height:50vh;
+    border-right:none;border-top:1px solid rgba(77,184,232,.12);
+    order:2;
+  }
+  .chat-area{order:1;flex:1;min-height:0}
+
+  /* MODALS */
+  .ovl{padding:0;align-items:flex-end}
+  .modal,.new-msg-modal{
+    width:100%;max-width:100% !important;
+    border-radius:14px 14px 0 0;border-bottom:none;
+    max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  }
+  input,select,textarea{font-size:16px !important}
+
+  /* SIDEBAR */
+  .sb-header{padding:10px 12px}
+  .conv-item{padding:10px 12px}
+  
+  /* CHAT */
+  .chat-header{padding:10px 12px}
+  .bubble{max-width:90%}
+  .composer-bar{padding:8px 10px;gap:6px}
+  .composer-bar input{font-size:16px !important}
+  .send-btn{padding:8px 14px;font-size:.72rem}
+
+  /* CHAR HINT */
+  .ch-hint{font-size:.58rem}
+}
+@media(max-width:480px){
+  .nav-logo{font-size:.65rem}
+  .layout{flex-direction:column}
+  .sidebar{max-height:45vh}
+  .bubble{max-width:95%}
+}
 </style>
 
 </head>

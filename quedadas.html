@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Puntos de Encuentro · True Therian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{
+  --bg:#04060a;--tp:rgba(210,230,245,.92);--tm:rgba(210,230,245,.42);
+  --acc:#4db8e8;--acc20:rgba(77,184,232,.22);--acc08:rgba(77,184,232,.08);
+  --gold:#c8a95a;--gold20:rgba(200,169,90,.2);
+  --green:#56e39f;--green20:rgba(86,227,159,.2);
+  --red:#e05c6a;--red20:rgba(224,92,106,.2);
+  --card:rgba(255,255,255,.04);--border:rgba(255,255,255,.08);
+  --night:rgba(4,8,16,.85);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'Crimson Pro',Georgia,serif;color:var(--tp);display:flex;flex-direction:column}
+
+/* ── SCANLINE OVERLAY ── */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:1000;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);
+}
+
+/* ── NAV ── */
+nav{
+  flex-shrink:0;height:50px;display:flex;align-items:center;gap:14px;
+  padding:0 20px;z-index:500;
+  background:rgba(4,6,10,.92);
+  border-bottom:1px solid rgba(77,184,232,.15);
+  backdrop-filter:blur(16px);
+}
+.nav-logo{font-family:'Cinzel',serif;font-size:.82rem;letter-spacing:.28em;color:var(--acc);text-decoration:none;flex-shrink:0}
+.nav-sep{width:1px;height:20px;background:var(--border);flex-shrink:0}
+.nav-title{font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--tm)}
+.nav-live{
+  display:flex;align-items:center;gap:6px;margin-left:auto;
+  font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--green);
+}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse-live 2s infinite}
+@keyframes pulse-live{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.nav-back{
+  font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--tm);
+  text-decoration:none;border:1px solid var(--border);padding:4px 10px;transition:all .3s;flex-shrink:0;
+}
+.nav-back:hover{color:var(--acc);border-color:var(--acc20)}
+.nav-user-btn{
+  background:var(--acc08);border:1px solid var(--acc20);color:var(--acc);
+  padding:4px 12px;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+  cursor:pointer;font-family:'Crimson Pro',serif;transition:all .25s;flex-shrink:0;
+}
+.nav-user-btn:hover{background:var(--acc20)}
+
+/* ── MAIN LAYOUT ── */
+.main{flex:1;display:flex;min-height:0;position:relative}
+
+/* ── MAP ── */
+#map{flex:1;z-index:1;min-width:0}
+#map .leaflet-tile-pane{filter:saturate(.55) brightness(.65) hue-rotate(200deg)}
+
+/* Custom marker */
+.meet-marker-wrap{position:relative}
+.meet-pulse{
+  position:absolute;
+  border-radius:50%;
+  animation:meet-ring 2.2s ease-out infinite;
+  pointer-events:none;
+}
+@keyframes meet-ring{
+  0%{transform:translate(-50%,-50%) scale(.5);opacity:.9}
+  100%{transform:translate(-50%,-50%) scale(3.5);opacity:0}
+}
+.meet-dot{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.8);
+  cursor:pointer;transition:transform .2s;
+  position:relative;z-index:2;
+  box-shadow:0 0 12px currentColor, 0 0 24px currentColor;
+}
+.meet-dot:hover{transform:scale(1.4)}
+.meet-dot.demo{background:var(--acc);border-color:rgba(77,184,232,.6)}
+.meet-dot.user{background:var(--gold);border-color:rgba(200,169,90,.6)}
+.meet-dot.imminent{background:var(--red);border-color:rgba(224,92,106,.6)}
+.meet-label-popup{
+  background:rgba(4,8,16,.9)!important;
+  border:1px solid rgba(77,184,232,.3)!important;
+  border-radius:0!important;
+  color:rgba(210,230,245,.9)!important;
+  font-family:'Cinzel',serif!important;
+  font-size:.64rem!important;
+  letter-spacing:.12em!important;
+  padding:4px 8px!important;
+  box-shadow:0 0 20px rgba(77,184,232,.15)!important;
+  white-space:nowrap;
+}
+.leaflet-popup-content-wrapper{
+  background:rgba(4,8,16,.95)!important;
+  border:1px solid var(--acc20)!important;
+  border-radius:0!important;
+  color:var(--tp)!important;
+  box-shadow:0 0 30px rgba(77,184,232,.2)!important;
+  padding:0!important;
+}
+.leaflet-popup-tip{display:none!important}
+.leaflet-popup-content{margin:0!important;width:auto!important}
+.leaflet-popup-close-button{color:var(--tm)!important;font-size:1rem!important;top:8px!important;right:8px!important}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:360px;flex-shrink:0;display:flex;flex-direction:column;
+  background:var(--night);border-left:1px solid rgba(77,184,232,.12);
+  z-index:2;overflow:hidden;
+}
+
+/* Sidebar tabs */
+.sb-tabs{
+  flex-shrink:0;display:flex;border-bottom:1px solid var(--border);
+}
+.sb-tab{
+  flex:1;padding:12px 8px;font-family:'Cinzel',serif;font-size:.6rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--tm);
+  background:none;border:none;cursor:pointer;transition:all .25s;
+  border-bottom:2px solid transparent;
+}
+.sb-tab:hover{color:var(--tp)}
+.sb-tab.active{color:var(--acc);border-bottom-color:var(--acc)}
+
+/* Sidebar panels */
+.sb-panel{display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden}
+.sb-panel.active{display:flex}
+
+/* Stats bar */
+.sb-stats{
+  flex-shrink:0;display:flex;gap:0;
+  border-bottom:1px solid var(--border);
+}
+.sb-stat{
+  flex:1;padding:10px 12px;border-right:1px solid var(--border);text-align:center;
+}
+.sb-stat:last-child{border-right:none}
+.sb-stat-n{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--acc);display:block}
+.sb-stat-l{font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tm)}
+
+/* Search */
+.sb-search{flex-shrink:0;padding:10px 14px;border-bottom:1px solid var(--border)}
+.sb-search-inp{
+  width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--tp);padding:7px 10px;font-size:.82rem;font-family:'Crimson Pro',serif;
+  outline:none;transition:border .25s;
+}
+.sb-search-inp:focus{border-color:var(--acc20)}
+.sb-search-inp::placeholder{color:var(--tm)}
+.sb-filter-row{
+  display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;
+}
+.filter-chip{
+  background:none;border:1px solid var(--border);color:var(--tm);
+  padding:3px 9px;font-size:.62rem;cursor:pointer;transition:all .2s;
+  font-family:'Crimson Pro',serif;letter-spacing:.08em;
+}
+.filter-chip:hover,.filter-chip.on{background:var(--acc08);border-color:var(--acc20);color:var(--acc)}
+
+/* Meet list */
+.meet-list{flex:1;overflow-y:auto;padding:0}
+.meet-list::-webkit-scrollbar{width:3px}
+.meet-list::-webkit-scrollbar-thumb{background:rgba(77,184,232,.15)}
+
+.meet-item{
+  padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.04);
+  cursor:pointer;transition:background .2s;display:flex;gap:10px;
+  position:relative;
+}
+.meet-item:hover{background:rgba(77,184,232,.04)}
+.meet-item.active{background:rgba(77,184,232,.06);border-left:2px solid var(--acc)}
+.meet-item.imminent{border-left:2px solid var(--red)}
+.meet-item.imminent .mi-time{color:var(--red)}
+
+.mi-dot{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px;
+  box-shadow:0 0 6px currentColor;
+}
+.mi-dot.demo{background:var(--acc);color:var(--acc)}
+.mi-dot.user{background:var(--gold);color:var(--gold)}
+.mi-dot.imminent{background:var(--red);color:var(--red)}
+
+.mi-body{flex:1;min-width:0}
+.mi-city{
+  font-family:'Cinzel',serif;font-size:.78rem;color:var(--tp);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  letter-spacing:.06em;
+}
+.mi-place{font-size:.72rem;color:var(--tm);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mi-time{
+  font-size:.64rem;color:var(--acc);margin-top:4px;
+  display:flex;align-items:center;gap:5px;
+}
+.mi-countdown{
+  font-family:'Cinzel',serif;font-size:.7rem;
+  background:rgba(77,184,232,.08);border:1px solid rgba(77,184,232,.15);
+  padding:2px 7px;
+}
+.mi-countdown.imminent{background:rgba(224,92,106,.08);border-color:var(--red20);color:var(--red)}
+.mi-flag{font-size:.8rem}
+
+/* Meet detail popup (in map popup) */
+.mp-box{width:320px;font-family:'Crimson Pro',serif}
+.mp-satellite{
+  width:100%;height:160px;object-fit:cover;display:block;
+  border-bottom:1px solid var(--acc20);
+  background:#0a1020;
+}
+.mp-satellite-wrap{position:relative;overflow:hidden}
+.mp-sat-label{
+  position:absolute;bottom:6px;left:8px;
+  font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(77,184,232,.7);background:rgba(4,8,16,.8);padding:2px 6px;
+}
+.mp-content{padding:14px}
+.mp-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.mp-city{font-family:'Cinzel',serif;font-size:.95rem;color:var(--acc);letter-spacing:.1em}
+.mp-place{font-size:.82rem;color:var(--tm);margin-top:2px}
+.mp-badge{
+  font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;
+  padding:3px 8px;border:1px solid;
+}
+.mp-badge.demo{color:var(--acc);border-color:var(--acc20)}
+.mp-badge.user{color:var(--gold);border-color:var(--gold20)}
+.mp-divider{height:1px;background:var(--border);margin:10px 0}
+.mp-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:.82rem}
+.mp-row-icon{font-size:.9rem;flex-shrink:0;width:18px;text-align:center}
+.mp-row-val{color:var(--tp)}
+.mp-row-lbl{color:var(--tm);font-size:.72rem;margin-left:auto}
+.mp-comment{
+  font-size:.86rem;color:rgba(210,230,245,.7);font-style:italic;
+  line-height:1.7;padding:10px;background:rgba(255,255,255,.03);
+  border-left:2px solid var(--acc20);margin:10px 0;
+}
+.mp-countdown-big{
+  text-align:center;padding:12px;
+  background:rgba(77,184,232,.06);border:1px solid rgba(77,184,232,.15);
+  margin-top:10px;
+}
+.mp-countdown-label{font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--tm)}
+.mp-countdown-val{
+  font-family:'Cinzel',serif;font-size:1.3rem;color:var(--acc);
+  display:block;margin-top:4px;letter-spacing:.1em;
+}
+.mp-countdown-big.red{background:rgba(224,92,106,.08);border-color:var(--red20)}
+.mp-countdown-big.red .mp-countdown-val{color:var(--red)}
+.mp-attendees{
+  display:flex;align-items:center;gap:6px;margin-top:10px;
+  font-size:.72rem;color:var(--tm);
+}
+
+/* ADD FORM */
+.add-form{flex:1;overflow-y:auto;padding:14px}
+.add-form::-webkit-scrollbar{width:3px}
+.add-form::-webkit-scrollbar-thumb{background:rgba(77,184,232,.1)}
+.form-title{
+  font-family:'Cinzel',serif;font-size:.72rem;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--acc);margin-bottom:14px;
+  padding-bottom:8px;border-bottom:1px solid var(--border);
+}
+.form-field{margin-bottom:12px}
+.form-field label{
+  display:block;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--tm);margin-bottom:5px;
+}
+.form-field input,.form-field select,.form-field textarea{
+  width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--tp);padding:8px 10px;font-size:.84rem;
+  font-family:'Crimson Pro',serif;outline:none;transition:border .25s;
+}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--acc20)}
+.form-field input::placeholder,.form-field textarea::placeholder{color:var(--tm)}
+.form-field select{cursor:pointer}
+.form-field select option{background:#0d1520;color:var(--tp)}
+.form-field textarea{resize:none;min-height:70px;line-height:1.6}
+.form-row{display:flex;gap:8px}
+.form-row .form-field{flex:1}
+.form-hint{font-size:.62rem;color:var(--tm);margin-top:4px;font-style:italic}
+.form-err{
+  display:none;font-size:.72rem;color:var(--red);
+  background:rgba(224,92,106,.07);border:1px solid var(--red20);
+  padding:6px 10px;margin-bottom:10px;
+}
+.form-err.show{display:block}
+.form-submit{
+  width:100%;background:var(--acc08);border:1px solid var(--acc20);
+  color:var(--acc);padding:10px;font-size:.7rem;letter-spacing:.2em;
+  text-transform:uppercase;cursor:pointer;font-family:'Crimson Pro',serif;
+  transition:all .3s;margin-top:6px;
+}
+.form-submit:hover{background:var(--acc20)}
+.form-login-gate{
+  text-align:center;padding:30px 16px;
+  background:rgba(77,184,232,.04);border:1px solid var(--acc20);
+  margin:14px;
+}
+.form-login-gate p{font-size:.84rem;color:var(--tm);line-height:1.7;font-style:italic;margin-bottom:14px}
+.form-login-gate a{color:var(--acc);text-decoration:none;border:1px solid var(--acc20);padding:6px 16px;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;font-family:'Cinzel',serif}
+
+/* MAP HUD OVERLAY */
+.map-hud{
+  position:absolute;bottom:20px;left:20px;z-index:400;
+  display:flex;flex-direction:column;gap:8px;pointer-events:none;
+}
+.hud-pill{
+  background:rgba(4,8,16,.88);border:1px solid rgba(77,184,232,.2);
+  padding:5px 12px;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(77,184,232,.7);backdrop-filter:blur(8px);
+  display:flex;align-items:center;gap:8px;
+}
+.hud-dot{width:6px;height:6px;border-radius:50%}
+.hud-dot.blue{background:var(--acc)}
+.hud-dot.gold{background:var(--gold)}
+.hud-dot.red{background:var(--red)}
+.map-coord{
+  position:absolute;bottom:20px;right:380px;z-index:400;
+  background:rgba(4,8,16,.75);border:1px solid var(--border);
+  padding:4px 10px;font-size:.58rem;letter-spacing:.14em;
+  color:var(--tm);backdrop-filter:blur(8px);pointer-events:none;
+  font-family:'Cinzel',serif;
+}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:rgba(4,8,16,.96);border:1px solid var(--border);
+  color:var(--tp);padding:8px 18px;font-size:.74rem;letter-spacing:.1em;
+  z-index:999;opacity:0;transition:all .3s;pointer-events:none;
+  font-family:'Crimson Pro',serif;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:rgba(86,227,159,.3);color:var(--green)}
+.toast.err{border-color:var(--red20);color:var(--red)}
+
+
+.mob-toggle{
+  display:none;position:absolute;top:60px;right:10px;z-index:350;
+  background:rgba(4,8,16,.9);border:1px solid var(--acc20);color:var(--acc);
+  width:40px;height:40px;align-items:center;justify-content:center;
+  font-size:1rem;cursor:pointer;
+}
+
+/* LOADING SKELETON */
+.skel{
+  background:linear-gradient(90deg,rgba(255,255,255,.03) 25%,rgba(255,255,255,.06) 50%,rgba(255,255,255,.03) 75%);
+  background-size:200% 100%;
+  animation:skel-anim 1.5s infinite;
+  height:12px;border-radius:2px;margin:4px 0;
+}
+@keyframes skel-anim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:rgba(77,184,232,.1);border-radius:2px}
+
+/* ══ MOBILE ════════════════════════════════════════════════ */
+html,body{overflow-x:hidden}
+@media(max-width:768px){
+  /* NAV — hide non-essential items */
+  nav{padding:8px 12px;gap:6px;overflow:hidden}
+  .nav-logo{font-size:.7rem;letter-spacing:.16em;flex-shrink:0}
+  .nav-sep{display:none}
+  .nav-title{display:none}
+  .nav-live{display:none}
+  .nav-back{font-size:.56rem;padding:3px 7px;flex-shrink:0;white-space:nowrap}
+  .nav-user-btn{font-size:.56rem;padding:4px 8px;flex-shrink:0;white-space:nowrap}
+
+  /* MAIN LAYOUT — map top, sidebar bottom */
+  .main{flex-direction:column}
+  #map{flex:none;height:55vmax;min-height:280px}
+  .sidebar{
+    width:100%;height:auto;
+    border-left:none;border-top:1px solid rgba(77,184,232,.12);
+    max-height:50vh;flex-shrink:0;
+    overflow-y:auto;
+  }
+  .mob-toggle{display:none !important} /* not needed anymore */
+  .map-hud{bottom:calc(50vmax + 8px);left:8px}
+  .hud-pill{font-size:.52rem;padding:3px 8px}
+  .map-coord{display:none}
+  
+  /* SIDEBAR internals */
+  .sb-tab{font-size:.54rem;padding:9px 4px;letter-spacing:.12em}
+  .sb-stats{border-bottom:1px solid var(--border)}
+  .sb-stat{padding:7px 8px}
+  .sb-stat-n{font-size:1rem}
+  .sb-stat-l{font-size:.5rem}
+  .sb-search{padding:8px 10px}
+  .sb-search-inp{font-size:16px !important}
+  .filter-chip{font-size:.58rem;padding:3px 7px}
+  .meet-item{padding:10px 10px}
+  .mi-city{font-size:.72rem}
+  .mi-place{font-size:.66rem}
+  
+  /* ADD FORM */
+  .add-form{padding:10px}
+  .form-field input,.form-field select,.form-field textarea{font-size:16px !important}
+  .form-row{flex-direction:column;gap:0}
+  
+  /* POPUPS */
+  .leaflet-popup{max-width:88vw !important}
+  .mp-box{width:min(300px,82vw)}
+  .mp-satellite{height:130px}
+  
+  input,select,textarea{font-size:16px !important}
+}
+@media(max-width:480px){
+  #map{height:50vmax;min-height:250px}
+  .sidebar{max-height:48vh}
+  .nav-logo{font-size:.62rem}
+  .mp-box{width:min(280px,90vw)}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-logo">ΘΔ True Therian</a>
+  <div class="nav-sep"></div>
+  <span class="nav-title">Puntos de Encuentro · Pack Meets</span>
+  <div class="nav-live"><span class="live-dot"></span> En vivo</div>
+  <a href="index.html" class="nav-back">← Manada</a>
+  <button class="nav-user-btn" id="navUserBtn" onclick="window.location.href='index.html'">Perfil</button>
+</nav>
+
+<div class="main">
+  <!-- MAP -->
+  <div id="map"></div>
+
+  <!-- MAP HUD -->
+  <div class="map-hud">
+    <div class="hud-pill"><span class="hud-dot blue"></span> Quedada comunidad</div>
+    <div class="hud-pill"><span class="hud-dot gold"></span> Quedada usuario</div>
+    <div class="hud-pill"><span class="hud-dot red"></span> Inminente (&lt;2h)</div>
+  </div>
+  <div class="map-coord" id="mapCoord">LAT — LON</div>
+
+  <!-- MOBILE TOGGLE -->
+  <button class="mob-toggle" id="mobToggle" onclick="toggleSidebar()">☰</button>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sb-tabs">
+      <button class="sb-tab active" onclick="switchTab('list',this)">📍 Quedadas</button>
+      <button class="sb-tab" onclick="switchTab('add',this)">＋ Crear</button>
+    </div>
+
+    <!-- LIST PANEL -->
+    <div class="sb-panel active" id="panList">
+      <div class="sb-stats">
+        <div class="sb-stat"><span class="sb-stat-n" id="statActive">—</span><span class="sb-stat-l">Activas</span></div>
+        <div class="sb-stat"><span class="sb-stat-n" id="statCountries">—</span><span class="sb-stat-l">Países</span></div>
+        <div class="sb-stat"><span class="sb-stat-n" id="statToday">—</span><span class="sb-stat-l">Hoy</span></div>
+      </div>
+      <div class="sb-search">
+        <input type="text" class="sb-search-inp" id="meetSearch" placeholder="Buscar ciudad, país, parque..." oninput="filterMeets(this.value)">
+        <div class="sb-filter-row">
+          <button class="filter-chip on" data-f="all" onclick="setFilter('all',this)">Todas</button>
+          <button class="filter-chip" data-f="today" onclick="setFilter('today',this)">Hoy</button>
+          <button class="filter-chip" data-f="imminent" onclick="setFilter('imminent',this)">Inminentes</button>
+          <button class="filter-chip" data-f="user" onclick="setFilter('user',this)">Usuarios</button>
+        </div>
+      </div>
+      <div class="meet-list" id="meetList"></div>
+    </div>
+
+    <!-- ADD PANEL -->
+    <div class="sb-panel" id="panAdd">
+      <div class="add-form" id="addFormWrap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  TRUE THERIAN · PACK MEETS · quedadas.html
+// ══════════════════════════════════════════════════════════════
+
+const LS={
+  get:(k,d=null)=>{try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v);}catch(e){return d;}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}},
+};
+const getSession=()=>LS.get('tt_session',null);
+
+// ── HELPERS ──
+function timeStr(ts){
+  const d=new Date(ts);
+  return d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'})+' · '+
+         d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+}
+function countdown(ts){
+  const diff=ts-Date.now();
+  if(diff<=0)return'AHORA';
+  const h=Math.floor(diff/3600000);
+  const m=Math.floor((diff%3600000)/60000);
+  const s=Math.floor((diff%60000)/1000);
+  if(h>24){const d=Math.floor(h/24);return d+'d '+(h%24)+'h';}
+  if(h>0)return h+'h '+m+'m';
+  if(m>0)return m+'m '+s+'s';
+  return s+'s';
+}
+function isImminent(ts){return ts-Date.now()<7200000&&ts>Date.now();}
+function isActive(ts){return ts>Date.now();}
+function isToday(ts){
+  const d=new Date(ts),n=new Date();
+  return d.getDate()===n.getDate()&&d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();
+}
+
+// ── DEMO MEETS DATA ──
+// 40 quedadas demo distribuidas globalmente, siempre en futuro (relativas a now)
+function makeDemoTime(hoursFromNow){
+  return Date.now() + hoursFromNow*3600000;
+}
+
+const DEMO_MEETS_BASE = [
+  // EUROPA
+  {id:'d01',city:'Madrid',country:'España',flag:'🇪🇸',place:'Parque del Retiro — Estanque Grande',lat:40.4153,lng:-3.6845,comment:'Quedada lunar junto al estanque. Traed ropa cómoda y sed vosotros mismos 🐺',species:'Lupine',lang:'es',h:3},
+  {id:'d02',city:'Barcelona',country:'España',flag:'🇪🇸',place:'Parc de la Ciutadella — Cascada',lat:41.3870,lng:2.1880,comment:'Shift en el parque más therian de BCN. Bienvenidos todos los theriantypes 🦊',species:'Vulpine',lang:'es',h:8},
+  {id:'d03',city:'Londres',country:'Reino Unido',flag:'🇬🇧',place:'Hyde Park — Serpentine Lake',lat:51.5053,lng:-0.1694,comment:'Monthly pack meet by the lake. All therians welcome, bring a friend 🦅',species:'Avian',lang:'en',h:14},
+  {id:'d04',city:'París',country:'Francia',flag:'🇫🇷',place:'Bois de Boulogne — Lac Inférieur',lat:48.8575,lng:2.2468,comment:'Rencontre mensuelle des thérians parisiens 🐱',species:'Feline',lang:'fr',h:6},
+  {id:'d05',city:'Berlín',country:'Alemania',flag:'🇩🇪',place:'Tiergarten — Großer Stern',lat:52.5145,lng:13.3501,comment:'Therian Treffen im Tiergarten. Kommt alle! 🐻',species:'Ursid',lang:'de',h:20},
+  {id:'d06',city:'Ámsterdam',country:'Países Bajos',flag:'🇳🇱',place:'Vondelpark — Openluchttheater',lat:52.3583,lng:4.8690,comment:'Pack gathering in the park. Wolves, foxes, all welcome 🌿',species:'Lupine',lang:'en',h:11},
+  {id:'d07',city:'Roma',country:'Italia',flag:'🇮🇹',place:'Villa Borghese — Giardino del Lago',lat:41.9139,lng:12.4912,comment:'Incontro terian al tramonto 🦎',species:'Reptile',lang:'it',h:28},
+  {id:'d08',city:'Viena',country:'Austria',flag:'🇦🇹',place:'Prater — Hauptallee',lat:48.2103,lng:16.3989,comment:'Wien Therian Treffen. Alle Tiertypen willkommen 🌙',species:'Vulpine',lang:'de',h:36},
+  {id:'d09',city:'Lisboa',country:'Portugal',flag:'🇵🇹',place:'Parque Eduardo VII — Estufa Fria',lat:38.7259,lng:-9.1523,comment:'Encontro lunar de theriantropos em Lisboa 🐺',species:'Lupine',lang:'pt',h:17},
+  {id:'d10',city:'Varsovia',country:'Polonia',flag:'🇵🇱',place:'Łazienki Park — Pałac na Wyspie',lat:52.2154,lng:21.0354,comment:'Spotkanie therian w Łazienkach 🦊',species:'Vulpine',lang:'pl',h:22},
+  // ASIA
+  {id:'d11',city:'Tokio',country:'Japón',flag:'🇯🇵',place:'Yoyogi Park — Meiji Shrine Forest',lat:35.6712,lng:139.6942,comment:'テリアン集会。代々木公園で会いましょう 🦊',species:'Vulpine',lang:'ja',h:4},
+  {id:'d12',city:'Tokio',country:'Japón',flag:'🇯🇵',place:'Shinjuku Gyoen — English Garden',lat:35.6851,lng:139.7106,comment:'第二グループ — 夜の公園でシフトを共有します 🐺',species:'Lupine',lang:'ja',h:9},
+  {id:'d13',city:'Seúl',country:'Corea del Sur',flag:'🇰🇷',place:'Olympic Park — Mongchon Earthen Fortress',lat:37.5195,lng:127.1218,comment:'서울 테리안 모임 🌙',species:'Feline',lang:'ko',h:13},
+  {id:'d14',city:'Pekín',country:'China',flag:'🇨🇳',place:'Temple of Heaven Park',lat:39.8822,lng:116.4066,comment:'北京狼人聚会 🐺',species:'Lupine',lang:'zh',h:25},
+  {id:'d15',city:'Shanghái',country:'China',flag:'🇨🇳',place:'Century Park — Central Lake',lat:31.2185,lng:121.5443,comment:'上海百年公园狼群聚会 🦊',species:'Vulpine',lang:'zh',h:31},
+  {id:'d16',city:'Singapur',country:'Singapur',flag:'🇸🇬',place:'Gardens by the Bay — Supertree Grove',lat:1.2816,lng:103.8636,comment:'SG Therian Pack meet under the supertrees 🌿',species:'Mythic',lang:'en',h:18},
+  {id:'d17',city:'Bangkok',country:'Tailandia',flag:'🇹🇭',place:'Lumphini Park — Lake',lat:13.7290,lng:100.5413,comment:'Bangkok therian gathering at sunset 🐍',species:'Reptile',lang:'en',h:10},
+  {id:'d18',city:'Bombay',country:'India',flag:'🇮🇳',place:'Sanjay Gandhi National Park',lat:19.2147,lng:72.9106,comment:'Mumbai pack meet in the forest 🐆',species:'Feline',lang:'en',h:16},
+  // AMÉRICAS
+  {id:'d19',city:'Ciudad de México',country:'México',flag:'🇲🇽',place:'Bosque de Chapultepec — Lago Mayor',lat:19.4099,lng:-99.1809,comment:'Quedada lunar en Chapultepec. Todos los theriantypes 🐺',species:'Lupine',lang:'es',h:5},
+  {id:'d20',city:'São Paulo',country:'Brasil',flag:'🇧🇷',place:'Parque Ibirapuera — Marquise',lat:-23.5873,lng:-46.6576,comment:'Encontro therian no Ibirapuera 🦊',species:'Vulpine',lang:'pt',h:12},
+  {id:'d21',city:'Buenos Aires',country:'Argentina',flag:'🇦🇷',place:'Bosques de Palermo — Lago de los Patos',lat:-34.5748,lng:-58.4213,comment:'Manada porteña en Palermo 🐺',species:'Lupine',lang:'es',h:7},
+  {id:'d22',city:'Nueva York',country:'EEUU',flag:'🇺🇸',place:'Central Park — Sheep Meadow',lat:40.7712,lng:-73.9813,comment:'NYC therian pack meet! All species welcome 🦅',species:'Avian',lang:'en',h:2},
+  {id:'d23',city:'Los Ángeles',country:'EEUU',flag:'🇺🇸',place:'Griffith Park — Greek Theatre trail',lat:34.1180,lng:-118.2997,comment:'LA Therian gathering in the hills 🦁',species:'Feline',lang:'en',h:19},
+  {id:'d24',city:'Chicago',country:'EEUU',flag:'🇺🇸',place:'Lincoln Park — South Pond',lat:41.9239,lng:-87.6341,comment:'Chicago pack by the pond 🐻',species:'Ursid',lang:'en',h:27},
+  {id:'d25',city:'Bogotá',country:'Colombia',flag:'🇨🇴',place:'Parque Simón Bolívar — Lago',lat:4.6583,lng:-74.0987,comment:'Pack bogotano en el parque 🌿',species:'Lupine',lang:'es',h:15},
+  {id:'d26',city:'Lima',country:'Perú',flag:'🇵🇪',place:'Parque de las Leyendas',lat:-12.0853,lng:-77.0833,comment:'Manada limeña en Leyendas 🦊',species:'Vulpine',lang:'es',h:23},
+  {id:'d27',city:'Santiago',country:'Chile',flag:'🇨🇱',place:'Parque Metropolitano — Zoo',lat:-33.4244,lng:-70.6388,comment:'Pack chileno en el cerro San Cristóbal 🐺',species:'Lupine',lang:'es',h:30},
+  // OCEANÍA
+  {id:'d28',city:'Sídney',country:'Australia',flag:'🇦🇺',place:'Royal Botanic Garden — Mrs Macquaries Chair',lat:-33.8642,lng:151.2166,comment:'Sydney therian sunrise meet 🦘',species:'Other',lang:'en',h:1.5},
+  {id:'d29',city:'Melbourne',country:'Australia',flag:'🇦🇺',place:'Royal Botanic Gardens Victoria',lat:-37.8307,lng:144.9796,comment:'Melbourne pack — all fursonas welcome 🦅',species:'Avian',lang:'en',h:26},
+  {id:'d30',city:'Auckland',country:'Nueva Zelanda',flag:'🇳🇿',place:'Auckland Domain — Winter Gardens',lat:-36.8592,lng:174.7713,comment:'NZ therian gathering in the domain 🌿',species:'Other',lang:'en',h:21},
+  // AFRICA & MIDDLE EAST
+  {id:'d31',city:'Ciudad del Cabo',country:'Sudáfrica',flag:'🇿🇦',place:'Kirstenbosch National Botanical Garden',lat:-33.9881,lng:18.4322,comment:'Cape Town therian meet at the mountain 🦁',species:'Feline',lang:'en',h:33},
+  {id:'d32',city:'Nairobi',country:'Kenia',flag:'🇰🇪',place:'Karura Forest — Waterfall',lat:-1.2346,lng:36.8225,comment:'Nairobi forest therian gathering 🐘',species:'Other',lang:'en',h:40},
+  {id:'d33',city:'Dubái',country:'EAU',flag:'🇦🇪',place:'Zabeel Park — Central Area',lat:25.2294,lng:55.3084,comment:'Dubai pack meets in the park 🌙',species:'Mythic',lang:'en',h:24},
+  {id:'d34',city:'Tel Aviv',country:'Israel',flag:'🇮🇱',place:'Park HaYarkon — North Area',lat:32.1009,lng:34.8054,comment:'Tel Aviv pack meet 🦊',species:'Vulpine',lang:'en',h:29},
+  // MORE EUROPE
+  {id:'d35',city:'Moscú',country:'Rusia',flag:'🇷🇺',place:'Gorky Park — Riverside',lat:55.7303,lng:37.5985,comment:'Московская стая в Парке Горького 🐺',species:'Lupine',lang:'ru',h:32},
+  {id:'d36',city:'Estambul',country:'Turquía',flag:'🇹🇷',place:'Emirgan Park — Upper Gazebo',lat:41.1084,lng:29.0508,comment:'İstanbul therian buluşması 🦊',species:'Vulpine',lang:'tr',h:38},
+  {id:'d37',city:'Copenhague',country:'Dinamarca',flag:'🇩🇰',place:'Fælledparken — Fountain',lat:55.6980,lng:12.5698,comment:'Copenhagen therian møde 🐻',species:'Ursid',lang:'da',h:44},
+  {id:'d38',city:'Varsovia',country:'Polonia',flag:'🇵🇱',place:'Kampinoski Forest Edge',lat:52.3012,lng:20.7584,comment:'Second Warsaw meet — forest edition 🐺',species:'Lupine',lang:'pl',h:48},
+  {id:'d39',city:'Atenas',country:'Grecia',flag:'🇬🇷',place:'National Garden — Roman Baths',lat:37.9718,lng:23.7351,comment:'Ελληνική συνάντηση θηριανθρώπων 🦁',species:'Mythic',lang:'el',h:52},
+  {id:'d40',city:'Ámsterdam',country:'Países Bajos',flag:'🇳🇱',place:'Amsterdamse Bos — Main Entrance',lat:52.3208,lng:4.8388,comment:'Second Amsterdam meet — forest pack 🦊',species:'Vulpine',lang:'en',h:56},
+];
+
+function getDemoMeets(){
+  const now=Date.now();
+  return DEMO_MEETS_BASE.map(m=>({
+    ...m,
+    ts: now + m.h*3600000,
+    demo:true,
+    author:'TT_Community',
+  }));
+}
+
+function getUserMeets(){
+  return LS.get('tt_meets',[]).filter(m=>m.ts>Date.now());
+}
+
+function getAllMeets(){
+  return [...getDemoMeets(),...getUserMeets()].sort((a,b)=>a.ts-b.ts);
+}
+
+// ── MAP SETUP ──
+let map, activeMarkerId=null;
+const markers={};
+
+function initMap(){
+  map=L.map('map',{
+    center:[20,10],zoom:3,
+    zoomControl:false,
+    attributionControl:false,
+  });
+
+  // Satellite/dark tile
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    maxZoom:19,subdomains:'abcd',
+  }).addTo(map);
+
+  L.control.zoom({position:'bottomleft'}).addTo(map);
+
+  // Coord display
+  map.on('mousemove',e=>{
+    const el=document.getElementById('mapCoord');
+    if(el)el.textContent=e.latlng.lat.toFixed(4)+' / '+e.latlng.lng.toFixed(4);
+  });
+
+  // Close popups on map click
+  map.on('click',()=>map.closePopup());
+}
+
+function makeDivIcon(meet){
+  const imm=isImminent(meet.ts);
+  const cls=imm?'imminent':meet.demo?'demo':'user';
+  const color=imm?'#e05c6a':meet.demo?'#4db8e8':'#c8a95a';
+  const html=`
+    <div style="position:relative;width:14px;height:14px">
+      <div style="position:absolute;top:50%;left:50%;width:32px;height:32px;border-radius:50%;border:1.5px solid ${color};opacity:.5;transform:translate(-50%,-50%);animation:meet-ring 2.2s ease-out infinite;"></div>
+      <div style="position:absolute;top:50%;left:50%;width:14px;height:14px;border-radius:50%;background:${color};border:2px solid rgba(255,255,255,.8);transform:translate(-50%,-50%);box-shadow:0 0 10px ${color},0 0 20px ${color};cursor:pointer;"></div>
+    </div>`;
+  return L.divIcon({html,className:'',iconSize:[14,14],iconAnchor:[7,7]});
+}
+
+function getSatelliteUrl(lat,lng,zoom=14){
+  // Use OpenStreetMap static map approach via staticmap  
+  const z=zoom,x=Math.floor((lng+180)/360*Math.pow(2,z)),
+    y=Math.floor((1-Math.log(Math.tan(lat*Math.PI/180)+1/Math.cos(lat*Math.PI/180))/Math.PI)/2*Math.pow(2,z));
+  // Use a mosaic of tiles for the preview
+  return `https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`;
+}
+
+function buildPopupHTML(m){
+  const imm=isImminent(m.ts);
+  const satUrl=getSatelliteUrl(m.lat,m.lng,15);
+  const cd=countdown(m.ts);
+  const badge=m.demo?'<span class="mp-badge demo">Comunidad</span>':'<span class="mp-badge user">Usuario</span>';
+  return `
+<div class="mp-box">
+  <div class="mp-satellite-wrap">
+    <img class="mp-satellite" src="${satUrl}" alt="${m.place}" onerror="this.src='https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/13/${Math.floor((1-Math.log(Math.tan(m.lat*Math.PI/180)+1/Math.cos(m.lat*Math.PI/180))/Math.PI)/2*Math.pow(2,13))}/${Math.floor((m.lng+180)/360*Math.pow(2,13))}'">
+    <span class="mp-sat-label">📡 Vista satelital</span>
+  </div>
+  <div class="mp-content">
+    <div class="mp-header">
+      <div>
+        <div class="mp-city">${m.flag||''} ${m.city}, ${m.country}</div>
+        <div class="mp-place">📍 ${m.place}</div>
+      </div>
+      ${badge}
+    </div>
+    <div class="mp-divider"></div>
+    <div class="mp-row"><span class="mp-row-icon">📅</span><span class="mp-row-val">${timeStr(m.ts)}</span></div>
+    <div class="mp-row"><span class="mp-row-icon">👤</span><span class="mp-row-val">${m.author}</span><span class="mp-row-lbl">${m.species||''}</span></div>
+    ${m.comment?`<div class="mp-comment">"${m.comment}"</div>`:''}
+    <div class="mp-countdown-big ${imm?'red':''}">
+      <div class="mp-countdown-label">${imm?'⚡ INMINENTE — COMIENZA EN':'Cuenta regresiva'}</div>
+      <span class="mp-countdown-val" data-ts="${m.ts}">${cd}</span>
+    </div>
+    <div class="mp-attendees">🐾 Quedada abierta a todos los theriantypes</div>
+  </div>
+</div>`;
+}
+
+function addMarker(m){
+  if(markers[m.id]){markers[m.id].remove();delete markers[m.id];}
+  const icon=makeDivIcon(m);
+  const marker=L.marker([m.lat,m.lng],{icon,title:m.city+' — '+m.place}).addTo(map);
+  if(!marker||!marker.bindTooltip)return;
+  
+  // Tooltip
+  marker.bindTooltip(`<span style="font-family:'Cinzel',serif;font-size:.64rem;letter-spacing:.1em;color:rgba(210,230,245,.9)">${m.flag||''} ${m.city} · ${countdown(m.ts)}</span>`,{
+    permanent:false,direction:'top',offset:[0,-10],
+    className:'meet-label-popup'
+  });
+
+  if(!marker.on)return;
+  marker.on('click',()=>{
+    activeMarkerId=m.id;
+    const popupContent=buildPopupHTML(m);
+    L.popup({maxWidth:340,closeButton:true,offset:[0,-8]})
+      .setLatLng([m.lat,m.lng])
+      .setContent(popupContent)
+      .openOn(map);
+    // Highlight in list
+    document.querySelectorAll('.meet-item').forEach(el=>el.classList.remove('active'));
+    const listItem=document.getElementById('mi_'+m.id);
+    if(listItem){listItem.classList.add('active');listItem.scrollIntoView({behavior:'smooth',block:'nearest'});}
+  });
+  markers[m.id]=marker;
+}
+
+function renderAllMarkers(){
+  const meets=getAllMeets();
+  // Remove old
+  Object.values(markers).forEach(m=>m.remove());
+  Object.keys(markers).forEach(k=>delete markers[k]);
+  meets.forEach(m=>addMarker(m));
+}
+
+// ── SIDEBAR LIST ──
+let curFilter='all', curSearch='';
+
+function setFilter(f,btn){
+  curFilter=f;
+  document.querySelectorAll('.filter-chip').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  renderList();
+}
+function filterMeets(q){curSearch=q;renderList();}
+
+function renderList(){
+  const list=document.getElementById('meetList');
+  if(!list)return;
+  let meets=getAllMeets();
+  // Filter
+  if(curSearch){
+    const q=curSearch.toLowerCase();
+    meets=meets.filter(m=>(m.city+m.country+m.place+m.comment).toLowerCase().includes(q));
+  }
+  if(curFilter==='today')meets=meets.filter(m=>isToday(m.ts));
+  if(curFilter==='imminent')meets=meets.filter(m=>isImminent(m.ts));
+  if(curFilter==='user')meets=meets.filter(m=>!m.demo);
+
+  // Stats
+  const all=getAllMeets();
+  const el_a=document.getElementById('statActive');
+  const el_c=document.getElementById('statCountries');
+  const el_t=document.getElementById('statToday');
+  if(el_a)el_a.textContent=all.length;
+  if(el_c)el_c.textContent=new Set(all.map(m=>m.country)).size;
+  if(el_t)el_t.textContent=all.filter(m=>isToday(m.ts)).length;
+
+  if(!meets.length){
+    list.innerHTML='<div style="text-align:center;padding:40px 16px;font-size:.84rem;color:var(--tm);font-style:italic">Sin quedadas en este filtro</div>';
+    return;
+  }
+  list.innerHTML=meets.map((m,i)=>{
+    const imm=isImminent(m.ts);
+    const dot=imm?'imminent':m.demo?'demo':'user';
+    return`<div class="meet-item ${imm?'imminent':''}" id="mi_${m.id}" onclick="focusMeet('${m.id}')" style="animation-delay:${i*.03}s">
+      <div class="mi-dot ${dot}"></div>
+      <div class="mi-body">
+        <div class="mi-city">${m.flag||''} ${m.city} <span style="font-size:.62rem;color:var(--tm);font-weight:normal">${m.country}</span></div>
+        <div class="mi-place">${m.place}</div>
+        <div class="mi-time">
+          <span>${new Date(m.ts).toLocaleDateString('es-ES',{day:'numeric',month:'short'})} ${new Date(m.ts).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</span>
+          <span class="mi-countdown ${imm?'imminent':''}" data-ts="${m.ts}" id="cd_${m.id}">${countdown(m.ts)}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function focusMeet(id){
+  const all=getAllMeets();
+  const m=all.find(x=>x.id===id);
+  if(!m)return;
+  map.flyTo([m.lat,m.lng],14,{duration:1.2});
+  setTimeout(()=>{
+    if(markers[id]){markers[id].fire('click');}
+  },1300);
+  document.querySelectorAll('.meet-item').forEach(el=>el.classList.remove('active'));
+  const li=document.getElementById('mi_'+id);
+  if(li)li.classList.add('active');
+}
+
+// ── COUNTDOWN TICKER ──
+function tickCountdowns(){
+  document.querySelectorAll('[data-ts]').forEach(el=>{
+    const ts=parseInt(el.dataset.ts);
+    el.textContent=countdown(ts);
+  });
+  // Update popup if open
+  const popupVal=document.querySelector('.mp-countdown-val[data-ts]');
+  if(popupVal){
+    const ts=parseInt(popupVal.dataset.ts);
+    popupVal.textContent=countdown(ts);
+    if(isImminent(ts))popupVal.closest('.mp-countdown-big').classList.add('red');
+  }
+}
+
+// ── ADD FORM ──
+function renderAddForm(){
+  const wrap=document.getElementById('addFormWrap');
+  if(!wrap)return;
+  const CU=getSession();
+  if(!CU){
+    wrap.innerHTML=`<div class="form-login-gate">
+      <p>Para crear una quedada necesitas estar registrado en True Therian. ¡Es gratis!</p>
+      <a href="index.html">🐾 Ir a True Therian</a>
+    </div>`;
+    return;
+  }
+
+  const now=new Date();
+  const minDT=new Date(now.getTime()+3600000).toISOString().slice(0,16);
+  wrap.innerHTML=`
+<div class="form-title">📍 Crear Punto de Encuentro</div>
+<div class="form-err" id="addErr"></div>
+<div class="form-field">
+  <label>Ciudad *</label>
+  <input type="text" id="fCity" placeholder="Ej: Madrid" maxlength="60">
+</div>
+<div class="form-row">
+  <div class="form-field">
+    <label>País *</label>
+    <input type="text" id="fCountry" placeholder="España" maxlength="50">
+  </div>
+  <div class="form-field">
+    <label>Emoji bandera</label>
+    <input type="text" id="fFlag" placeholder="🇪🇸" maxlength="4">
+  </div>
+</div>
+<div class="form-field">
+  <label>Lugar específico *</label>
+  <input type="text" id="fPlace" placeholder="Parque del Retiro — Estanque Grande" maxlength="100">
+  <div class="form-hint">Sé preciso para que otros te encuentren fácilmente</div>
+</div>
+<div class="form-row">
+  <div class="form-field">
+    <label>Latitud *</label>
+    <input type="number" id="fLat" placeholder="40.4153" step="0.0001">
+  </div>
+  <div class="form-field">
+    <label>Longitud *</label>
+    <input type="number" id="fLng" placeholder="-3.6845" step="0.0001">
+  </div>
+</div>
+<div class="form-hint" style="margin-top:-6px;margin-bottom:12px">Puedes obtener las coordenadas haciendo clic derecho en <a href="https://maps.google.com" target="_blank" style="color:var(--acc)">Google Maps</a></div>
+<div class="form-field">
+  <label>Fecha y hora *</label>
+  <input type="datetime-local" id="fDate" min="${minDT}">
+</div>
+<div class="form-field">
+  <label>Tu especie therian</label>
+  <select id="fSpecies">
+    <option value="">— Cualquiera —</option>
+    <option>Lupine 🐺</option>
+    <option>Vulpine 🦊</option>
+    <option>Feline 🐱</option>
+    <option>Equine 🐴</option>
+    <option>Ursid 🐻</option>
+    <option>Avian 🦅</option>
+    <option>Reptile 🦎</option>
+    <option>Mythic ✨</option>
+    <option>Other 🐾</option>
+  </select>
+</div>
+<div class="form-field">
+  <label>Mensaje / comentario</label>
+  <textarea id="fComment" placeholder="Describe la quedada: ambiente, qué haremos, cómo reconocerse..." maxlength="300"></textarea>
+</div>
+<div class="form-hint">Todos los therians del mundo podrán ver esta quedada en el mapa.</div>
+<button class="form-submit" onclick="submitMeet()">Publicar Punto de Encuentro 🐾</button>`;
+}
+
+function submitMeet(){
+  const CU=getSession();
+  if(!CU){showToast('Inicia sesión primero','err');return;}
+
+  const city=(document.getElementById('fCity')||{}).value||'';
+  const country=(document.getElementById('fCountry')||{}).value||'';
+  const flag=(document.getElementById('fFlag')||{}).value||'';
+  const place=(document.getElementById('fPlace')||{}).value||'';
+  const lat=parseFloat((document.getElementById('fLat')||{}).value||'');
+  const lng=parseFloat((document.getElementById('fLng')||{}).value||'');
+  const dateVal=(document.getElementById('fDate')||{}).value||'';
+  const species=(document.getElementById('fSpecies')||{}).value||'';
+  const comment=(document.getElementById('fComment')||{}).value||'';
+
+  const err=document.getElementById('addErr');
+  function showE(msg){if(err){err.textContent=msg;err.classList.add('show');}showToast(msg,'err');}
+  if(err)err.classList.remove('show');
+
+  if(!city||!country||!place||!dateVal){showE('Rellena los campos obligatorios (*)');return;}
+  if(isNaN(lat)||isNaN(lng)||lat<-90||lat>90||lng<-180||lng>180){showE('Coordenadas inválidas — usa Google Maps para obtenerlas');return;}
+  const ts=new Date(dateVal).getTime();
+  if(isNaN(ts)||ts<=Date.now()+1800000){showE('La fecha debe ser al menos 30 minutos en el futuro');return;}
+  if(ts>Date.now()+90*24*3600000){showE('Máximo 90 días en el futuro');return;}
+
+  const meet={
+    id:'u'+Date.now()+Math.random().toString(36).slice(2,5),
+    city,country,flag,place,lat,lng,ts,species,comment,
+    demo:false,author:CU.nick,
+  };
+  const meets=LS.get('tt_meets',[]);
+  meets.push(meet);
+  LS.set('tt_meets',meets);
+
+  addMarker(meet);
+  renderList();
+  map.flyTo([lat,lng],14,{duration:1.5});
+  setTimeout(()=>{if(markers[meet.id])markers[meet.id].fire('click');},1700);
+  showToast('¡Quedada publicada en el mapa! 🐾','ok');
+  switchTab('list',document.querySelector('.sb-tab'));
+}
+
+// ── TAB SWITCH ──
+function switchTab(name,btn){
+  document.querySelectorAll('.sb-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sb-panel').forEach(p=>p.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  const panel=name==='list'?document.getElementById('panList'):document.getElementById('panAdd');
+  if(panel)panel.classList.add('active');
+  if(name==='add')renderAddForm();
+}
+
+// ── MOBILE ──
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  if(sb)sb.classList.toggle('open');
+}
+
+// ── TOAST ──
+let toastT;
+function showToast(msg,type=''){
+  const el=document.getElementById('toast');
+  if(!el)return;
+  el.textContent=msg;el.className='toast'+(type?' '+type:'');
+  clearTimeout(toastT);
+  requestAnimationFrame(()=>el.classList.add('show'));
+  toastT=setTimeout(()=>el.classList.remove('show'),3500);
+}
+
+// ── CLEAN EXPIRED USER MEETS ──
+function cleanExpired(){
+  const meets=LS.get('tt_meets',[]).filter(m=>m.ts>Date.now());
+  LS.set('tt_meets',meets);
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded',function(){
+  // Nav
+  const CU=getSession();
+  const navBtn=document.getElementById('navUserBtn');
+  if(navBtn)navBtn.textContent=CU?CU.nick:'Perfil';
+
+  cleanExpired();
+  initMap();
+  renderAllMarkers();
+  renderList();
+
+  // Fly to a random interesting meet on load
+  const all=getAllMeets();
+  if(all.length){
+    const pick=all[Math.floor(Math.random()*Math.min(all.length,10))];
+    setTimeout(()=>map.flyTo([pick.lat,pick.lng],4,{duration:3}),500);
+  }
+
+  // Countdown ticker
+  setInterval(tickCountdowns,1000);
+
+  // Refresh markers every 5 minutes
+  setInterval(()=>{cleanExpired();renderAllMarkers();renderList();},300000);
+});
+</script>
+</body>
+</html>

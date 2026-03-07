@@ -248,6 +248,43 @@
     .mem-filter{gap:6px}
     .mem-search{width:100%;margin-left:0}
   }
+
+/* ══ MOBILE ════════════════════════════════════════════════ */
+html,body{overflow-x:hidden}
+@media(max-width:768px){
+  /* NAV */
+  nav{padding:8px 12px;gap:8px;overflow:hidden}
+  .nav-logo{font-size:.72rem;letter-spacing:.18em}
+  .nav-back{font-size:.58rem;padding:4px 8px;white-space:nowrap}
+  .nav-user{font-size:.58rem;padding:4px 8px;white-space:nowrap}
+
+  /* CONTENT */
+  .mem-header{padding:16px 14px 0}
+  .mem-header h1{font-size:1.4rem}
+  .mem-stats{flex-wrap:wrap;gap:8px}
+  .stat-pill{font-size:.6rem;padding:5px 10px}
+  .search-bar{padding:0 14px 12px}
+  .search-bar input{font-size:16px !important}
+  .filter-tags{padding:0 14px 10px;flex-wrap:wrap;gap:5px}
+  .filter-tag{font-size:.58rem;padding:3px 8px}
+  .mem-grid{padding:0 10px 20px}
+  .mem-grid-inner{grid-template-columns:1fr !important}
+  .mem-card{padding:14px}
+  .mem-card-footer{flex-wrap:wrap;gap:6px}
+  
+  /* MODALS */
+  .ovl{padding:0;align-items:flex-end}
+  .modal{
+    width:100%;max-width:100% !important;
+    border-radius:14px 14px 0 0;border-bottom:none;
+    max-height:90vh;overflow-y:auto;
+  }
+  input,select,textarea{font-size:16px !important}
+}
+@media(max-width:480px){
+  .mem-header h1{font-size:1.2rem}
+  .nav-logo{font-size:.65rem}
+}
 </style>
 </head>
 <body>
