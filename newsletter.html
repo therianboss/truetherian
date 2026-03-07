@@ -7,7 +7,119 @@
 <title>Únete · True Therian Newsletter</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<style>html,body{overflow-x:hidden}
+<style>nav{
+  position:fixed;top:0;left:0;right:0;z-index:300;
+  padding:0 32px;height:58px;display:flex;align-items:center;
+  background:rgba(8,10,8,.82);backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,179,0,.1);
+  transition:background .4s,box-shadow .4s;gap:0;
+}
+nav.scrolled{
+  background:rgba(6,8,6,.97);
+  box-shadow:0 2px 24px rgba(0,0,0,.5);
+  border-bottom-color:rgba(255,179,0,.18);
+}
+.nav-logo{
+  font-family:'Cinzel',serif;font-size:1rem;font-weight:700;
+  letter-spacing:.08em;color:var(--am);text-decoration:none;
+  line-height:1.2;flex-shrink:0;margin-right:28px;
+}
+.nav-logo small{
+  display:block;font-size:.38rem;font-family:'Inter',sans-serif;
+  font-weight:300;letter-spacing:.35em;color:rgba(232,224,208,.38);
+  text-transform:uppercase;
+}
+/* Desktop nav links — pill-style, clearly readable */
+.nav-links{
+  display:flex;gap:2px;list-style:none;align-items:center;flex:1;
+}
+.nav-links li a{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 11px;border-radius:6px;
+  font-size:.72rem;font-weight:400;letter-spacing:.06em;
+  color:rgba(232,224,208,.75);text-decoration:none;
+  transition:all .2s;white-space:nowrap;
+}
+.nav-links li a:hover{
+  background:rgba(255,179,0,.1);color:var(--am);
+}
+.nav-links li a.active{
+  background:rgba(255,179,0,.12);color:var(--am);
+}
+/* Icon characters before each link */
+.nav-links li a .ni{
+  font-size:.9rem;line-height:1;
+}
+.nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:auto;padding-left:16px}
+/* Lang button */
+.lang-wrap{position:relative}
+.lang-btn{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,179,0,.15);
+  color:rgba(232,224,208,.65);padding:5px 10px;cursor:pointer;
+  font-family:'Inter',sans-serif;font-size:.68rem;
+  display:flex;align-items:center;gap:5px;transition:all .2s;
+  border-radius:5px;
+}
+.lang-btn:hover{border-color:var(--am);color:var(--am);background:rgba(255,179,0,.08)}
+.lang-btn svg{width:13px;height:13px;fill:currentColor}
+.lang-dd{
+  position:absolute;top:calc(100% + 6px);right:0;
+  background:#0d100d;border:1px solid rgba(255,179,0,.18);
+  min-width:152px;z-index:600;display:none;
+  box-shadow:0 8px 32px rgba(0,0,0,.6);
+  border-radius:6px;overflow:hidden;
+}
+.lang-dd.open{display:block}
+.lang-opt{
+  display:block;padding:9px 14px;font-size:.7rem;
+  color:rgba(232,224,208,.7);cursor:pointer;width:100%;
+  background:none;border:none;font-family:'Inter',sans-serif;
+  text-align:left;transition:background .18s;
+}
+.lang-opt:hover,.lang-opt.cur{background:rgba(255,179,0,.1);color:var(--am)}
+/* User button — more prominent */
+.user-btn{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,179,0,.08);
+  border:1px solid rgba(255,179,0,.25);
+  color:rgba(232,224,208,.85);
+  padding:6px 14px;cursor:pointer;
+  font-family:'Inter',sans-serif;font-size:.7rem;
+  letter-spacing:.06em;text-transform:none;
+  transition:all .22s;border-radius:6px;
+  white-space:nowrap;
+}
+.user-btn svg{flex-shrink:0}
+.user-btn:hover,.user-btn.logged{
+  border-color:var(--am);color:var(--am);
+  background:rgba(255,179,0,.14);
+}
+.user-btn.logged{font-weight:500}
+.user-btn.ceo{
+  border-color:var(--ceo)!important;color:var(--ceo)!important;
+  background:rgba(179,157,219,.1)!important;
+}
+.msg-dot{
+  background:var(--red);color:#fff;font-size:.5rem;
+  border-radius:50%;width:14px;height:14px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-weight:700;margin-left:2px;
+}
+.nav-cta{
+  background:var(--am);color:var(--ob);border:none;
+  padding:7px 16px;font-size:.68rem;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;
+  font-family:'Inter',sans-serif;font-weight:600;
+  transition:all .25s;text-decoration:none;border-radius:5px;
+  white-space:nowrap;
+}
+.nav-cta:hover{box-shadow:0 0 18px rgba(255,179,0,.45);background:#ffd040}
+.nav-ham{
+  display:none;flex-direction:column;gap:5px;
+  cursor:pointer;background:none;border:none;padding:6px;
+}
+.nav-ham span{display:block;width:22px;height:1.5px;background:var(--am);transition:all .3s;border-radius:2px}
+html,body{overflow-x:hidden}
 
 :root{--ob:#0a0a0a;--moss:#1a2421;--am:#ffb300;--am10:rgba(255,179,0,.10);--am30:rgba(255,179,0,.30);--am50:rgba(255,179,0,.50);--tp:#e8e0d0;--tm:#7a7060;--card:#111410}
 *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
@@ -16,24 +128,13 @@ body::before{content:'ΘΔ';position:fixed;top:50%;left:50%;transform:translate(
 .fog{position:fixed;pointer-events:none;z-index:50}
 .fog.t{top:0;left:0;right:0;height:100px;background:linear-gradient(to bottom,rgba(10,10,10,.95),transparent)}
 .fog.b{bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,rgba(10,10,10,.95),transparent)}
-nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,8,8,.97);border-bottom:1px solid rgba(255,179,0,.12);gap:12px}
-.nav-logo{font-family:'Cinzel',serif;font-size:1.2rem;font-weight:900;letter-spacing:.1em;color:var(--am);text-decoration:none;line-height:1.2;display:inline-block;animation:heartbeat 3s ease-in-out infinite}
 .nav-logo small{display:block;font-size:.46rem;font-family:'Inter',sans-serif;font-weight:300;letter-spacing:.4em;color:var(--tm);text-transform:uppercase}
 @keyframes heartbeat{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(255,179,0,.3))}40%{transform:scale(1.05);filter:drop-shadow(0 0 22px rgba(255,179,0,.7))}55%{transform:scale(1)}70%{transform:scale(1.02);filter:drop-shadow(0 0 14px rgba(255,179,0,.5))}}
-.nav-links{display:flex;gap:1.8rem;list-style:none;align-items:center}
 .nav-links a{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--tm);text-decoration:none;transition:color .3s}
 .nav-links a:hover,.nav-links a.active{color:var(--am)}
-.nav-right{display:flex;align-items:center;gap:10px}
-.lang-btn{position:relative;background:none;border:1px solid rgba(255,179,0,.2);color:var(--tm);padding:6px 10px;cursor:pointer;font-family:'Inter',sans-serif;font-size:.68rem;display:flex;align-items:center;gap:6px;transition:all .3s}
 .lang-btn:hover{border-color:var(--am);color:var(--am)}
 .lang-btn svg{width:13px;height:13px;fill:currentColor}
-.lang-dropdown{position:absolute;top:calc(100%+6px);right:0;background:#0e110e;border:1px solid rgba(255,179,0,.2);min-width:155px;z-index:500;display:none}
-.lang-dropdown.open{display:block}
-.lang-opt{display:block;padding:9px 14px;font-size:.72rem;color:var(--tm);cursor:pointer;width:100%;background:none;border:none;font-family:'Inter',sans-serif;text-align:left;transition:all .2s}
-.lang-opt:hover,.lang-opt.active{background:var(--am10);color:var(--am)}
-.nav-ham{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;z-index:400}
-.nav-ham span{display:block;width:22px;height:1px;background:var(--am)}
-.page-wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:120px 24px 80px;position:relative;z-index:1}
+.lang-opt:hover,.page-wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:120px 24px 80px;position:relative;z-index:1}
 .nl-hero{text-align:center;max-width:660px;margin:0 auto 50px}
 .nl-eyebrow{font-size:.6rem;letter-spacing:.5em;text-transform:uppercase;color:var(--am);margin-bottom:1.2rem;text-shadow:0 0 15px var(--am30)}
 .nl-h1{font-family:'Cinzel',serif;font-size:clamp(2rem,6vw,4rem);font-weight:900;line-height:1.1;background:linear-gradient(145deg,#fff 20%,#f0c060 55%,var(--am) 80%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1rem}
@@ -82,58 +183,108 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:36px
 .rv{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
 .rv.v{opacity:1;transform:translateY(0)}
 @media(max-width:768px){
-  nav{padding:12px 16px}
-  .nav-links{display:none;position:fixed;inset:0;background:rgba(10,10,10,.98);flex-direction:column;align-items:center;justify-content:center;gap:2rem;z-index:300}
-  .nav-links.open{display:flex}
-  .nav-ham{display:flex}
   .nl-card{padding:24px 18px}
   .fields-row{grid-template-columns:1fr}
   .sp-grid{grid-template-columns:repeat(2,1fr)}
   .social-proof{grid-template-columns:1fr}
   footer{padding:26px 18px}
   .footer-bottom{flex-direction:column;text-align:center}
-}
+  nav{padding:10px 14px;gap:0;overflow:hidden}
+  nav > *{flex-shrink:1;min-width:0}
+  .nav-logo{font-size:.8rem;white-space:nowrap;flex-shrink:0}
+  .nav-logo small{display:none}
+  .nav-links{
+    display:none;position:fixed;inset:0;top:0;
+    background:rgba(6,8,6,.99);flex-direction:column;
+    align-items:center;justify-content:center;
+    gap:1.8rem;z-index:9999;padding:30px 20px;
+    overflow-y:auto;
+  }
+  .nav-links.open{display:flex}
+  .nav-links li{width:100%;text-align:center}
+  .nav-links li a{font-size:1rem;letter-spacing:.04em;display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:8px;justify-content:center}
+  .nav-right{gap:4px;flex-shrink:0;margin-left:auto}
+  .nav-cta{display:none}
+  .nav-ham{display:flex}
+  .lang-wrap{display:none}
+  .user-btn{padding:5px 9px;font-size:.58rem;white-space:nowrap}
+  .msg-dot{font-size:.5rem}
 
 /* ══ MOBILE (extra) ═════════════════════════════════════════ */
 @media(max-width:768px){
-  nav{overflow:hidden}
-  .nav-logo small{display:none}
   .hero-nl{padding:80px 16px 50px}
   .hero-nl h1{font-size:1.8rem}
   .nl-form{padding:0 4px}
   .nl-input{font-size:16px !important}
   input,select,textarea{font-size:16px !important}
+  nav{padding:10px 14px;gap:0;overflow:hidden}
+  nav > *{flex-shrink:1;min-width:0}
+  .nav-logo{font-size:.8rem;white-space:nowrap;flex-shrink:0}
+  .nav-logo small{display:none}
+  .nav-links{
+    display:none;position:fixed;inset:0;top:0;
+    background:rgba(6,8,6,.99);flex-direction:column;
+    align-items:center;justify-content:center;
+    gap:1.8rem;z-index:9999;padding:30px 20px;
+    overflow-y:auto;
+  }
+  .nav-links.open{display:flex}
+  .nav-links li{width:100%;text-align:center}
+  .nav-links li a{font-size:1rem;letter-spacing:.04em;display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:8px;justify-content:center}
+  .nav-right{gap:4px;flex-shrink:0;margin-left:auto}
+  .nav-cta{display:none}
+  .nav-ham{display:flex}
+  .lang-wrap{display:none}
+  .user-btn{padding:5px 9px;font-size:.58rem;white-space:nowrap}
+  .msg-dot{font-size:.5rem}
+
 }
-</style>
+}</style>
 </head>
 <body>
 <div class="fog t"></div><div class="fog b"></div>
 
-<nav>
+<nav id="nav">
   <a href="index.html" class="nav-logo">True Therian<small>Social Link Life</small></a>
   <ul class="nav-links" id="navLinks">
-    <li><a href="index.html" id="nl_home">Inicio</a></li>
-    <li><a href="index.html#feed" id="nl_feed">Manada</a></li>
-    <li><a href="index.html#packfinder" id="nl_finder">Pack Finder</a></li>
-    <li><a href="newsletter.html" class="active" id="nl_newsletter">Newsletter</a></li>
-    <li><a href="privacidad.html" id="nl_privacy">Privacidad</a></li>
+    <li><a href="#feed" onclick="closeNav()"><span class="ni">🐺</span> Manada</a></li>
+    <li><a href="#packfinder" onclick="closeNav()"><span class="ni">🔍</span> Pack Finder</a></li>
+    <li><a href="#que-es" onclick="closeNav()"><span class="ni">✦</span> ¿Qué somos?</a></li>
+    <li><a href="#galeria" onclick="closeNav()"><span class="ni">🌿</span> Galería</a></li>
+    <li><a href="memoria.html" onclick="closeNav()"><span class="ni">🔖</span> Memoria</a></li>
+    <li><a href="mensajeria.html" onclick="closeNav()"><span class="ni">💬</span> Mensajes</a></li>
+    <li><a href="gathermap.html" onclick="closeNav()"><span class="ni">🗺</span> GatherMap</a></li>
+    <li style="border-top:1px solid rgba(255,179,0,.08);padding-top:.6rem;margin-top:.4rem;display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center">
+      <button onclick="setLang('es');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇪🇸 ES</button>
+      <button onclick="setLang('en');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇬🇧 EN</button>
+      <button onclick="setLang('pt');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇧🇷 PT</button>
+      <button onclick="setLang('fr');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇫🇷 FR</button>
+      <button onclick="setLang('de');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇩🇪 DE</button>
+      <button onclick="setLang('ja');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇯🇵 JA</button>
+    </li>
   </ul>
   <div class="nav-right">
-    <div style="position:relative">
+    <div class="lang-wrap">
       <button class="lang-btn" id="langBtn" onclick="toggleLangDD()">
         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
         <span id="langCur">ES</span>
       </button>
-      <div class="lang-dropdown" id="langDD">
-        <button class="lang-opt active" onclick="setL('es')">🇪🇸 Español</button>
-        <button class="lang-opt" onclick="setL('en')">🇬🇧 English</button>
-        <button class="lang-opt" onclick="setL('pt')">🇧🇷 Português</button>
-        <button class="lang-opt" onclick="setL('fr')">🇫🇷 Français</button>
-        <button class="lang-opt" onclick="setL('de')">🇩🇪 Deutsch</button>
-        <button class="lang-opt" onclick="setL('ja')">🇯🇵 日本語</button>
+      <div class="lang-dd" id="langDD">
+        <button class="lang-opt cur" onclick="setLang('es')">🇪🇸 Español</button>
+        <button class="lang-opt" onclick="setLang('en')">🇬🇧 English</button>
+        <button class="lang-opt" onclick="setLang('pt')">🇧🇷 Português</button>
+        <button class="lang-opt" onclick="setLang('fr')">🇫🇷 Français</button>
+        <button class="lang-opt" onclick="setLang('de')">🇩🇪 Deutsch</button>
+        <button class="lang-opt" onclick="setLang('ja')">🇯🇵 日本語</button>
       </div>
     </div>
-    <button class="nav-ham" onclick="document.getElementById('navLinks').classList.toggle('open')"><span></span><span></span><span></span></button>
+    <button class="user-btn" id="userBtn" onclick="openUserModal()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+      <span id="userBtnLbl">Entrar</span>
+      <span class="msg-dot" id="msgDot" style="display:none">0</span>
+    </button>
+    <a href="newsletter.html" class="nav-cta">Unirte</a>
+    <button class="nav-ham" id="navHam" onclick="toggleNav()"><span></span><span></span><span></span></button>
   </div>
 </nav>
 
@@ -255,6 +406,30 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:36px
 </footer>
 
 <script>
+// ── NAV ──
+function toggleNav(){
+  const nl=document.getElementById('navLinks');
+  const hm=document.getElementById('navHam');
+  if(!nl||!hm)return;
+  nl.classList.toggle('open');
+  hm.classList.toggle('open');
+}
+function closeNav(){
+  const nl=document.getElementById('navLinks');
+  const hm=document.getElementById('navHam');
+  if(nl)nl.classList.remove('open');
+  if(hm)hm.classList.remove('open');
+}
+function toggleLangDD(){
+  const dd=document.getElementById('langDD');
+  if(dd)dd.classList.toggle('open');
+}
+document.addEventListener('click',function(e){
+  const lb=document.getElementById('langBtn');
+  const dd=document.getElementById('langDD');
+  if(dd&&lb&&!lb.contains(e.target)&&!dd.contains(e.target))dd.classList.remove('open');
+});
+
 // Lang
 const L={
   es:{home:'Inicio',feed:'Manada',finder:'Pack Finder',newsletter:'Newsletter',privacy:'Privacidad',eyebrow:'ΘΔ — Únete a la Manada',h1:'Newsletter<br>True Therian',intro:'El primer paso para encontrar a los tuyos es <em>decir tu nombre</em>.<br>Dinos cómo te llamas en la manada, tu especie, dónde vives.',lbl_nick:'Nombre en la Manada *',lbl_country:'País *',opt_country:'Selecciona tu país',lbl_city:'Ciudad',lbl_email:'Email *',lbl_species:'Tu Especie Therian',sp_other:'❓ Otra',lbl_msg:'Mensaje opcional',lbl_consent:'Acepto la <a href="privacidad.html" target="_blank">Política de Privacidad</a> y consiento el tratamiento de mis datos. *',submit:'Unirme a la Manada ΘΔ',s_h:'Bienvenido a la <em>Manada</em>',s_p:'Tu esencia ha sido registrada. En breve recibirás noticias en tu email.',s_btn:'Volver al Feed',sp1:'Miembros',sp2:'Países',sp3:'Especies',f_home:'Inicio',f_feed:'Feed',f_nl:'Newsletter',f_priv:'Privacidad'},

@@ -18,31 +18,118 @@ body::before{content:'ΘΔ';position:fixed;top:50%;left:50%;transform:translate(
 .fog.b{bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,rgba(10,10,10,.95),transparent)}
 .fog.l{top:0;left:0;bottom:0;width:60px;background:linear-gradient(to right,rgba(10,10,10,.7),transparent)}
 .fog.r{top:0;right:0;bottom:0;width:60px;background:linear-gradient(to left,rgba(10,10,10,.7),transparent)}
-nav{position:fixed;top:0;left:0;right:0;z-index:300;padding:13px 36px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,border .4s;gap:10px}
-nav.scrolled{background:rgba(8,8,8,.97);border-bottom:1px solid rgba(255,179,0,.12)}
-.nav-logo{font-family:'Cinzel',serif;font-size:1.1rem;font-weight:900;letter-spacing:.1em;color:var(--am);text-decoration:none;line-height:1.2;flex-shrink:0;animation:heartbeat 3s ease-in-out infinite}
-.nav-logo small{display:block;font-size:.43rem;font-family:'Inter',sans-serif;font-weight:300;letter-spacing:.38em;color:var(--tm);text-transform:uppercase}
-@keyframes heartbeat{0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(255,179,0,.3))}40%{transform:scale(1.05);filter:drop-shadow(0 0 22px rgba(255,179,0,.7))}70%{transform:scale(1.02)}}
-.nav-links{display:flex;gap:1.4rem;list-style:none;align-items:center;flex-wrap:wrap}
-.nav-links a{font-size:.63rem;letter-spacing:.17em;text-transform:uppercase;color:var(--tm);text-decoration:none;transition:color .3s}
-.nav-links a:hover{color:var(--am)}
-.nav-right{display:flex;align-items:center;gap:7px;flex-shrink:0}
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:300;
+  padding:0 32px;height:58px;display:flex;align-items:center;
+  background:rgba(8,10,8,.82);backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,179,0,.1);
+  transition:background .4s,box-shadow .4s;gap:0;
+}
+nav.scrolled{
+  background:rgba(6,8,6,.97);
+  box-shadow:0 2px 24px rgba(0,0,0,.5);
+  border-bottom-color:rgba(255,179,0,.18);
+}
+.nav-logo{
+  font-family:'Cinzel',serif;font-size:1rem;font-weight:700;
+  letter-spacing:.08em;color:var(--am);text-decoration:none;
+  line-height:1.2;flex-shrink:0;margin-right:28px;
+}
+.nav-logo small{
+  display:block;font-size:.38rem;font-family:'Inter',sans-serif;
+  font-weight:300;letter-spacing:.35em;color:rgba(232,224,208,.38);
+  text-transform:uppercase;
+}
+/* Desktop nav links — pill-style, clearly readable */
+.nav-links{
+  display:flex;gap:2px;list-style:none;align-items:center;flex:1;
+}
+.nav-links li a{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 11px;border-radius:6px;
+  font-size:.72rem;font-weight:400;letter-spacing:.06em;
+  color:rgba(232,224,208,.75);text-decoration:none;
+  transition:all .2s;white-space:nowrap;
+}
+.nav-links li a:hover{
+  background:rgba(255,179,0,.1);color:var(--am);
+}
+.nav-links li a.active{
+  background:rgba(255,179,0,.12);color:var(--am);
+}
+/* Icon characters before each link */
+.nav-links li a .ni{
+  font-size:.9rem;line-height:1;
+}
+.nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:auto;padding-left:16px}
+/* Lang button */
 .lang-wrap{position:relative}
-.lang-btn{background:none;border:1px solid rgba(255,179,0,.2);color:var(--tm);padding:5px 9px;cursor:pointer;font-family:'Inter',sans-serif;font-size:.63rem;display:flex;align-items:center;gap:5px;transition:all .3s}
-.lang-btn:hover{border-color:var(--am);color:var(--am)}
-.lang-btn svg{width:12px;height:12px;fill:currentColor}
-.lang-dd{position:absolute;top:calc(100% + 5px);right:0;background:#0e110e;border:1px solid rgba(255,179,0,.2);min-width:148px;z-index:600;display:none}
+.lang-btn{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,179,0,.15);
+  color:rgba(232,224,208,.65);padding:5px 10px;cursor:pointer;
+  font-family:'Inter',sans-serif;font-size:.68rem;
+  display:flex;align-items:center;gap:5px;transition:all .2s;
+  border-radius:5px;
+}
+.lang-btn:hover{border-color:var(--am);color:var(--am);background:rgba(255,179,0,.08)}
+.lang-btn svg{width:13px;height:13px;fill:currentColor}
+.lang-dd{
+  position:absolute;top:calc(100% + 6px);right:0;
+  background:#0d100d;border:1px solid rgba(255,179,0,.18);
+  min-width:152px;z-index:600;display:none;
+  box-shadow:0 8px 32px rgba(0,0,0,.6);
+  border-radius:6px;overflow:hidden;
+}
 .lang-dd.open{display:block}
-.lang-opt{display:block;padding:8px 12px;font-size:.68rem;color:var(--tm);cursor:pointer;width:100%;background:none;border:none;font-family:'Inter',sans-serif;text-align:left;transition:background .2s}
-.lang-opt:hover,.lang-opt.cur{background:var(--am10);color:var(--am)}
-.user-btn{background:none;border:1px solid rgba(255,179,0,.2);color:var(--tm);padding:5px 11px;cursor:pointer;font-family:'Inter',sans-serif;font-size:.63rem;letter-spacing:.1em;text-transform:uppercase;transition:all .3s;display:flex;align-items:center;gap:5px;white-space:nowrap}
-.user-btn:hover,.user-btn.logged{border-color:var(--am);color:var(--am);background:var(--am10)}
-.user-btn.ceo{border-color:var(--ceo)!important;color:var(--ceo)!important;background:rgba(179,157,219,.07)!important}
-.msg-dot{background:var(--red);color:#fff;font-size:.52rem;border-radius:50%;width:13px;height:13px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
-.nav-cta{background:var(--am);color:var(--ob);border:none;padding:6px 15px;font-size:.63rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:all .3s;text-decoration:none;white-space:nowrap}
-.nav-cta:hover{box-shadow:0 0 22px var(--am30)}
-.nav-ham{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
-.nav-ham span{display:block;width:21px;height:1px;background:var(--am)}
+.lang-opt{
+  display:block;padding:9px 14px;font-size:.7rem;
+  color:rgba(232,224,208,.7);cursor:pointer;width:100%;
+  background:none;border:none;font-family:'Inter',sans-serif;
+  text-align:left;transition:background .18s;
+}
+.lang-opt:hover,.lang-opt.cur{background:rgba(255,179,0,.1);color:var(--am)}
+/* User button — more prominent */
+.user-btn{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,179,0,.08);
+  border:1px solid rgba(255,179,0,.25);
+  color:rgba(232,224,208,.85);
+  padding:6px 14px;cursor:pointer;
+  font-family:'Inter',sans-serif;font-size:.7rem;
+  letter-spacing:.06em;text-transform:none;
+  transition:all .22s;border-radius:6px;
+  white-space:nowrap;
+}
+.user-btn svg{flex-shrink:0}
+.user-btn:hover,.user-btn.logged{
+  border-color:var(--am);color:var(--am);
+  background:rgba(255,179,0,.14);
+}
+.user-btn.logged{font-weight:500}
+.user-btn.ceo{
+  border-color:var(--ceo)!important;color:var(--ceo)!important;
+  background:rgba(179,157,219,.1)!important;
+}
+.msg-dot{
+  background:var(--red);color:#fff;font-size:.5rem;
+  border-radius:50%;width:14px;height:14px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-weight:700;margin-left:2px;
+}
+.nav-cta{
+  background:var(--am);color:var(--ob);border:none;
+  padding:7px 16px;font-size:.68rem;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;
+  font-family:'Inter',sans-serif;font-weight:600;
+  transition:all .25s;text-decoration:none;border-radius:5px;
+  white-space:nowrap;
+}
+.nav-cta:hover{box-shadow:0 0 18px rgba(255,179,0,.45);background:#ffd040}
+.nav-ham{
+  display:none;flex-direction:column;gap:5px;
+  cursor:pointer;background:none;border:none;padding:6px;
+}
+.nav-ham span{display:block;width:22px;height:1.5px;background:var(--am);transition:all .3s;border-radius:2px}
 .essence-banner{background:linear-gradient(135deg,var(--moss),rgba(10,10,10,.8));border-bottom:1px solid rgba(255,179,0,.14);padding:8px 36px;text-align:center;position:relative;z-index:100;display:flex;align-items:center;justify-content:center;gap:13px;flex-wrap:wrap}
 .ess-lbl{font-size:.54rem;letter-spacing:.38em;text-transform:uppercase;color:var(--am);flex-shrink:0}
 .ess-txt{font-size:.78rem;color:rgba(232,224,208,.85);font-style:italic;flex:1;min-width:160px}
@@ -139,6 +226,7 @@ section{position:relative;z-index:1;padding:90px 34px}
 .bdg.sp{background:var(--am10);color:var(--am);border:1px solid rgba(255,179,0,.19)}
 .bdg.mood{background:rgba(67,160,71,.09);color:#81c784;border:1px solid rgba(67,160,71,.19)}
 .bdg.ceo{background:rgba(179,157,219,.12);color:var(--ceo);border:1px solid rgba(179,157,219,.28)}
+.bdg.gm{background:rgba(77,184,232,.09);color:#5bc8f0;border:1px solid rgba(77,184,232,.22)}
 .post-time{font-size:.62rem;color:var(--tm);margin-top:2px}
 .post-body{padding:0 16px 11px;line-height:1.83;font-size:.86rem;color:rgba(232,224,208,.82)}
 .post-tag{display:inline-block;margin:0 16px 9px;font-size:.54rem;letter-spacing:.24em;text-transform:uppercase;color:var(--am);border:1px solid var(--am10);padding:2px 7px}
@@ -544,22 +632,20 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
 <nav id="nav">
   <a href="index.html" class="nav-logo">True Therian<small>Social Link Life</small></a>
   <ul class="nav-links" id="navLinks">
-    <li><a href="#feed" onclick="closeNav()">Manada</a></li>
-    <li><a href="#packfinder" onclick="closeNav()">Pack Finder</a></li>
-    <li><a href="#que-es" onclick="closeNav()">¿Qué somos?</a></li>
-    <li><a href="#galeria" onclick="closeNav()">Galería</a></li>
-    <li><a href="memoria.html" onclick="closeNav()">Memoria</a></li>
-    <li><a href="mensajeria.html" onclick="closeNav()">💬 Mensajes</a></li>
-    <li><a href="quedadas.html" onclick="closeNav()">🗺 Encuentros</a></li>
-    <li><a href="newsletter.html" onclick="closeNav()">Newsletter</a></li>
-    <li><a href="privacidad.html" onclick="closeNav()">Privacidad</a></li>
-    <li style="border-top:1px solid rgba(255,179,0,.1);padding-top:1rem;display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center">
-      <button onclick="setLang('es');closeNav()" style="background:none;border:1px solid rgba(255,179,0,.2);color:var(--tm);padding:4px 8px;font-size:.7rem;cursor:pointer">🇪🇸 ES</button>
-      <button onclick="setLang('en');closeNav()" style="background:none;border:1px solid rgba(255,179,0,.2);color:var(--tm);padding:4px 8px;font-size:.7rem;cursor:pointer">🇬🇧 EN</button>
-      <button onclick="setLang('pt');closeNav()" style="background:none;border:1px solid rgba(255,179,0,.2);color:var(--tm);padding:4px 8px;font-size:.7rem;cursor:pointer">🇧🇷 PT</button>
-      <button onclick="setLang('fr');closeNav()" style="background:none;border:1px solid rgba(255,179,0,.2);color:var(--tm);padding:4px 8px;font-size:.7rem;cursor:pointer">🇫🇷 FR</button>
-      <button onclick="setLang('de');closeNav()" style="background:none;border:1px solid rgba(255,179,0,.2);color:var(--tm);padding:4px 8px;font-size:.7rem;cursor:pointer">🇩🇪 DE</button>
-      <button onclick="setLang('ja');closeNav()" style="background:none;border:1px solid rgba(255,179,0,.2);color:var(--tm);padding:4px 8px;font-size:.7rem;cursor:pointer">🇯🇵 JA</button>
+    <li><a href="#feed" onclick="closeNav()"><span class="ni">🐺</span> Manada</a></li>
+    <li><a href="#packfinder" onclick="closeNav()"><span class="ni">🔍</span> Pack Finder</a></li>
+    <li><a href="#que-es" onclick="closeNav()"><span class="ni">✦</span> ¿Qué somos?</a></li>
+    <li><a href="#galeria" onclick="closeNav()"><span class="ni">🌿</span> Galería</a></li>
+    <li><a href="memoria.html" onclick="closeNav()"><span class="ni">🔖</span> Memoria</a></li>
+    <li><a href="mensajeria.html" onclick="closeNav()"><span class="ni">💬</span> Mensajes</a></li>
+    <li><a href="gathermap.html" onclick="closeNav()"><span class="ni">🗺</span> GatherMap</a></li>
+    <li style="border-top:1px solid rgba(255,179,0,.08);padding-top:.6rem;margin-top:.4rem;display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center">
+      <button onclick="setLang('es');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇪🇸 ES</button>
+      <button onclick="setLang('en');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇬🇧 EN</button>
+      <button onclick="setLang('pt');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇧🇷 PT</button>
+      <button onclick="setLang('fr');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇫🇷 FR</button>
+      <button onclick="setLang('de');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇩🇪 DE</button>
+      <button onclick="setLang('ja');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇯🇵 JA</button>
     </li>
   </ul>
   <div class="nav-right">
@@ -578,7 +664,7 @@ footer{background:var(--ob);border-top:1px solid rgba(255,179,0,.1);padding:46px
       </div>
     </div>
     <button class="user-btn" id="userBtn" onclick="openUserModal()">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
       <span id="userBtnLbl">Entrar</span>
       <span class="msg-dot" id="msgDot" style="display:none">0</span>
     </button>
@@ -1334,6 +1420,15 @@ function loadProfileSettings(){
 }
 
 // ── USER BUTTON ──
+// ── MARK ACTIVE NAV LINK ──
+function markActiveNav(){
+  const hash = location.hash||'#inicio';
+  document.querySelectorAll('.nav-links a[href^="#"]').forEach(a=>{
+    a.classList.toggle('active', a.getAttribute('href')===hash);
+  });
+}
+window.addEventListener('hashchange', markActiveNav);
+
 function updateUserBtn(){
   const u=window.CU;
   const btn=document.getElementById('userBtn');
@@ -1740,11 +1835,12 @@ function buildPostHTML(p){
           ${p.species?`<span class="bdg sp">${spEmoji(p.species)} ${p.species}</span>`:''}
           ${p.mood?`<span class="bdg mood">${p.mood}</span>`:''}
           ${isCEOPost?`<span class="bdg ceo">⚡ CEO</span>`:''}
+  ${p.gathermap?`<span class="bdg gm">📍 GatherMap</span>`:''}
         </div>
         <div class="post-time">${timeAgo(p.ts)}</div>
       </div>
     </div>
-    ${body?`<div class="post-body">${body}</div>`:''}
+    ${body?`<div class="post-body" style="${p.gathermap?'white-space:pre-line':''}"> ${body}</div>`:''}
     <span class="post-tag">#${p.tag}</span>
     ${p.embedSrc?`<div style="width:100%;overflow:hidden"><iframe class="post-emb" src="${p.embedSrc}" allow="autoplay" sandbox="allow-scripts allow-same-origin allow-popups" loading="lazy" title="embed"></iframe></div>`:''}
     <div class="post-actions">
@@ -2472,6 +2568,7 @@ document.addEventListener('DOMContentLoaded',function init(){
   updateUserBtn();
   tickOnline();
   // Ghost typers start immediately, always running
+  markActiveNav();
   setTimeout(startGhostTypers, 800);
   setTimeout(scheduleGhostDrip, 90000); // first drip after 90s
 });

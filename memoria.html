@@ -6,7 +6,119 @@
 <title>Memoria del Bosque · True Therian</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
-<style>
+<style>nav{
+  position:fixed;top:0;left:0;right:0;z-index:300;
+  padding:0 32px;height:58px;display:flex;align-items:center;
+  background:rgba(8,10,8,.82);backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,179,0,.1);
+  transition:background .4s,box-shadow .4s;gap:0;
+}
+nav.scrolled{
+  background:rgba(6,8,6,.97);
+  box-shadow:0 2px 24px rgba(0,0,0,.5);
+  border-bottom-color:rgba(255,179,0,.18);
+}
+.nav-logo{
+  font-family:'Cinzel',serif;font-size:1rem;font-weight:700;
+  letter-spacing:.08em;color:var(--am);text-decoration:none;
+  line-height:1.2;flex-shrink:0;margin-right:28px;
+}
+.nav-logo small{
+  display:block;font-size:.38rem;font-family:'Inter',sans-serif;
+  font-weight:300;letter-spacing:.35em;color:rgba(232,224,208,.38);
+  text-transform:uppercase;
+}
+/* Desktop nav links — pill-style, clearly readable */
+.nav-links{
+  display:flex;gap:2px;list-style:none;align-items:center;flex:1;
+}
+.nav-links li a{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 11px;border-radius:6px;
+  font-size:.72rem;font-weight:400;letter-spacing:.06em;
+  color:rgba(232,224,208,.75);text-decoration:none;
+  transition:all .2s;white-space:nowrap;
+}
+.nav-links li a:hover{
+  background:rgba(255,179,0,.1);color:var(--am);
+}
+.nav-links li a.active{
+  background:rgba(255,179,0,.12);color:var(--am);
+}
+/* Icon characters before each link */
+.nav-links li a .ni{
+  font-size:.9rem;line-height:1;
+}
+.nav-right{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:auto;padding-left:16px}
+/* Lang button */
+.lang-wrap{position:relative}
+.lang-btn{
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,179,0,.15);
+  color:rgba(232,224,208,.65);padding:5px 10px;cursor:pointer;
+  font-family:'Inter',sans-serif;font-size:.68rem;
+  display:flex;align-items:center;gap:5px;transition:all .2s;
+  border-radius:5px;
+}
+.lang-btn:hover{border-color:var(--am);color:var(--am);background:rgba(255,179,0,.08)}
+.lang-btn svg{width:13px;height:13px;fill:currentColor}
+.lang-dd{
+  position:absolute;top:calc(100% + 6px);right:0;
+  background:#0d100d;border:1px solid rgba(255,179,0,.18);
+  min-width:152px;z-index:600;display:none;
+  box-shadow:0 8px 32px rgba(0,0,0,.6);
+  border-radius:6px;overflow:hidden;
+}
+.lang-dd.open{display:block}
+.lang-opt{
+  display:block;padding:9px 14px;font-size:.7rem;
+  color:rgba(232,224,208,.7);cursor:pointer;width:100%;
+  background:none;border:none;font-family:'Inter',sans-serif;
+  text-align:left;transition:background .18s;
+}
+.lang-opt:hover,.lang-opt.cur{background:rgba(255,179,0,.1);color:var(--am)}
+/* User button — more prominent */
+.user-btn{
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,179,0,.08);
+  border:1px solid rgba(255,179,0,.25);
+  color:rgba(232,224,208,.85);
+  padding:6px 14px;cursor:pointer;
+  font-family:'Inter',sans-serif;font-size:.7rem;
+  letter-spacing:.06em;text-transform:none;
+  transition:all .22s;border-radius:6px;
+  white-space:nowrap;
+}
+.user-btn svg{flex-shrink:0}
+.user-btn:hover,.user-btn.logged{
+  border-color:var(--am);color:var(--am);
+  background:rgba(255,179,0,.14);
+}
+.user-btn.logged{font-weight:500}
+.user-btn.ceo{
+  border-color:var(--ceo)!important;color:var(--ceo)!important;
+  background:rgba(179,157,219,.1)!important;
+}
+.msg-dot{
+  background:var(--red);color:#fff;font-size:.5rem;
+  border-radius:50%;width:14px;height:14px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-weight:700;margin-left:2px;
+}
+.nav-cta{
+  background:var(--am);color:var(--ob);border:none;
+  padding:7px 16px;font-size:.68rem;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;
+  font-family:'Inter',sans-serif;font-weight:600;
+  transition:all .25s;text-decoration:none;border-radius:5px;
+  white-space:nowrap;
+}
+.nav-cta:hover{box-shadow:0 0 18px rgba(255,179,0,.45);background:#ffd040}
+.nav-ham{
+  display:none;flex-direction:column;gap:5px;
+  cursor:pointer;background:none;border:none;padding:6px;
+}
+.nav-ham span{display:block;width:22px;height:1.5px;background:var(--am);transition:all .3s;border-radius:2px}
+
   :root{
     --bg:#070a06;--tp:rgba(232,224,208,.92);--tm:rgba(232,224,208,.45);
     --am:#c8a95a;--am30:rgba(200,169,90,.3);--moss:#2a3020;
@@ -25,29 +137,6 @@
   }
 
   /* ── NAV ── */
-  nav{
-    position:fixed;top:0;left:0;right:0;z-index:100;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:14px 32px;
-    background:rgba(7,10,6,.85);
-    border-bottom:1px solid rgba(200,169,90,.1);
-    backdrop-filter:blur(12px);
-  }
-  .nav-logo{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.28em;color:var(--am);text-decoration:none}
-  .nav-back{
-    display:flex;align-items:center;gap:8px;
-    font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--tm);text-decoration:none;transition:color .3s;
-  }
-  .nav-back:hover{color:var(--am)}
-  .nav-user{
-    font-size:.72rem;color:var(--tm);cursor:pointer;
-    background:none;border:1px solid rgba(200,169,90,.15);
-    padding:5px 14px;letter-spacing:.14em;text-transform:uppercase;
-    transition:all .3s;font-family:'Crimson Pro',serif;
-  }
-  .nav-user:hover{color:var(--am);border-color:var(--am30)}
-
   /* ── HERO ── */
   .mem-hero{
     padding:120px 32px 60px;
@@ -242,7 +331,6 @@
   footer a{color:var(--am);text-decoration:none}
 
   @media(max-width:640px){
-    nav{padding:12px 18px}
     .mem-hero{padding:100px 18px 40px}
     .mem-container{padding:24px 16px 60px}
     .mem-filter{gap:6px}
@@ -253,11 +341,6 @@
 html,body{overflow-x:hidden}
 @media(max-width:768px){
   /* NAV */
-  nav{padding:8px 12px;gap:8px;overflow:hidden}
-  .nav-logo{font-size:.72rem;letter-spacing:.18em}
-  .nav-back{font-size:.58rem;padding:4px 8px;white-space:nowrap}
-  .nav-user{font-size:.58rem;padding:4px 8px;white-space:nowrap}
-
   /* CONTENT */
   .mem-header{padding:16px 14px 0}
   .mem-header h1{font-size:1.4rem}
@@ -282,18 +365,56 @@ html,body{overflow-x:hidden}
   input,select,textarea{font-size:16px !important}
 }
 @media(max-width:480px){
-  .mem-header h1{font-size:1.2rem}
-  .nav-logo{font-size:.65rem}
+  .mem-header h1{font-size:1.2rem
 }
+  }
 </style>
 </head>
 <body>
 
 <!-- NAV -->
-<nav>
-  <a href="index.html" class="nav-logo">ΘΔ True Therian</a>
-  <a href="index.html" class="nav-back">← Volver</a>
-  <button class="nav-user" id="navUserBtn" onclick="goToProfile()">Perfil</button>
+<nav id="nav">
+  <a href="index.html" class="nav-logo">True Therian<small>Social Link Life</small></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#feed" onclick="closeNav()"><span class="ni">🐺</span> Manada</a></li>
+    <li><a href="#packfinder" onclick="closeNav()"><span class="ni">🔍</span> Pack Finder</a></li>
+    <li><a href="#que-es" onclick="closeNav()"><span class="ni">✦</span> ¿Qué somos?</a></li>
+    <li><a href="#galeria" onclick="closeNav()"><span class="ni">🌿</span> Galería</a></li>
+    <li><a href="memoria.html" onclick="closeNav()"><span class="ni">🔖</span> Memoria</a></li>
+    <li><a href="mensajeria.html" onclick="closeNav()"><span class="ni">💬</span> Mensajes</a></li>
+    <li><a href="gathermap.html" onclick="closeNav()"><span class="ni">🗺</span> GatherMap</a></li>
+    <li style="border-top:1px solid rgba(255,179,0,.08);padding-top:.6rem;margin-top:.4rem;display:flex;gap:.6rem;flex-wrap:wrap;justify-content:center">
+      <button onclick="setLang('es');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇪🇸 ES</button>
+      <button onclick="setLang('en');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇬🇧 EN</button>
+      <button onclick="setLang('pt');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇧🇷 PT</button>
+      <button onclick="setLang('fr');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇫🇷 FR</button>
+      <button onclick="setLang('de');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇩🇪 DE</button>
+      <button onclick="setLang('ja');closeNav()" style="background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.2);color:rgba(232,224,208,.7);padding:4px 9px;font-size:.68rem;cursor:pointer;border-radius:4px">🇯🇵 JA</button>
+    </li>
+  </ul>
+  <div class="nav-right">
+    <div class="lang-wrap">
+      <button class="lang-btn" id="langBtn" onclick="toggleLangDD()">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        <span id="langCur">ES</span>
+      </button>
+      <div class="lang-dd" id="langDD">
+        <button class="lang-opt cur" onclick="setLang('es')">🇪🇸 Español</button>
+        <button class="lang-opt" onclick="setLang('en')">🇬🇧 English</button>
+        <button class="lang-opt" onclick="setLang('pt')">🇧🇷 Português</button>
+        <button class="lang-opt" onclick="setLang('fr')">🇫🇷 Français</button>
+        <button class="lang-opt" onclick="setLang('de')">🇩🇪 Deutsch</button>
+        <button class="lang-opt" onclick="setLang('ja')">🇯🇵 日本語</button>
+      </div>
+    </div>
+    <button class="user-btn" id="userBtn" onclick="openUserModal()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+      <span id="userBtnLbl">Entrar</span>
+      <span class="msg-dot" id="msgDot" style="display:none">0</span>
+    </button>
+    <a href="newsletter.html" class="nav-cta">Unirte</a>
+    <button class="nav-ham" id="navHam" onclick="toggleNav()"><span></span><span></span><span></span></button>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -338,6 +459,30 @@ html,body{overflow-x:hidden}
 </footer>
 
 <script>
+// ── NAV ──
+function toggleNav(){
+  const nl=document.getElementById('navLinks');
+  const hm=document.getElementById('navHam');
+  if(!nl||!hm)return;
+  nl.classList.toggle('open');
+  hm.classList.toggle('open');
+}
+function closeNav(){
+  const nl=document.getElementById('navLinks');
+  const hm=document.getElementById('navHam');
+  if(nl)nl.classList.remove('open');
+  if(hm)hm.classList.remove('open');
+}
+function toggleLangDD(){
+  const dd=document.getElementById('langDD');
+  if(dd)dd.classList.toggle('open');
+}
+document.addEventListener('click',function(e){
+  const lb=document.getElementById('langBtn');
+  const dd=document.getElementById('langDD');
+  if(dd&&lb&&!lb.contains(e.target)&&!dd.contains(e.target))dd.classList.remove('open');
+});
+
 const LS={
   get:(k,d=null)=>{try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v);}catch(e){return d;}},
   set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}},
