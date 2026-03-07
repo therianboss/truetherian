@@ -314,6 +314,94 @@ html,body{overflow-x:hidden}
 
 </head>
 <body>
+<script>
+
+// ══════════════════════════════════════════════
+// UNIVERSAL SESSION + NAV — runs on every page
+// ══════════════════════════════════════════════
+(function(){
+  // ── Read session ──
+  var CU = null;
+  try { var s = localStorage.getItem('tt_session'); if(s) CU = JSON.parse(s); } catch(e){}
+  window.CU = CU;
+
+  // ── Update nav user button ──
+  function updateNavUser(){
+    var btn  = document.getElementById('userBtn');
+    var lbl  = document.getElementById('userBtnLbl');
+    var dot  = document.getElementById('msgDot');
+    if(!btn || !lbl) return;
+    if(CU){
+      lbl.textContent = CU.nick;
+      btn.classList.add('logged');
+      try{
+        var msgs = JSON.parse(localStorage.getItem('tt_msgs') || '[]');
+        var unread = msgs.filter(function(m){ return m.to === CU.nick && !m.read; }).length;
+        if(dot){ dot.textContent = unread; dot.style.display = unread ? 'inline-flex' : 'none'; }
+      }catch(e){ if(dot) dot.style.display='none'; }
+    } else {
+      lbl.textContent = 'Entrar';
+      btn.classList.remove('logged','ceo');
+      if(dot) dot.style.display = 'none';
+    }
+  }
+
+  // ── User button: go to index.html to open profile/login ──
+  function bindUserBtn(){
+    var btn = document.getElementById('userBtn');
+    if(!btn) return;
+    // Only bind if this page doesn't already have openUserModal
+    if(typeof window.openUserModal !== 'function'){
+      btn.addEventListener('click', function(){
+        window.location.href = 'index.html?openUser=1';
+      });
+    }
+  }
+
+  // ── Lang ──
+  window.setLang = function(lang){
+    try{ localStorage.setItem('tt_lang', lang); }catch(e){}
+    var cur = document.getElementById('langCur');
+    if(cur) cur.textContent = lang.toUpperCase();
+    var dd = document.getElementById('langDD');
+    if(dd) dd.classList.remove('open');
+    document.querySelectorAll('.lang-opt').forEach(function(b){
+      b.classList.toggle('cur', b.textContent.trim().toLowerCase().includes(lang));
+    });
+  };
+
+  // Restore saved lang on load
+  try{
+    var sl = localStorage.getItem('tt_lang');
+    if(sl){ var cur2=document.getElementById('langCur'); if(cur2) cur2.textContent=sl.toUpperCase(); }
+  }catch(e){}
+
+  // ── Hamburger ──
+  window.toggleNav = function(){
+    var nl=document.getElementById('navLinks'),hm=document.getElementById('navHam');
+    if(!nl||!hm)return;
+    nl.classList.toggle('open'); hm.classList.toggle('open');
+  };
+  window.closeNav = function(){
+    var nl=document.getElementById('navLinks'),hm=document.getElementById('navHam');
+    if(nl)nl.classList.remove('open'); if(hm)hm.classList.remove('open');
+  };
+  window.toggleLangDD = function(){
+    var dd=document.getElementById('langDD'); if(dd)dd.classList.toggle('open');
+  };
+
+  // Close lang dropdown on outside click
+  document.addEventListener('click',function(e){
+    var lb=document.getElementById('langBtn'),dd=document.getElementById('langDD');
+    if(dd&&lb&&!lb.contains(e.target)&&!dd.contains(e.target))dd.classList.remove('open');
+  });
+
+  // Run
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){ updateNavUser(); bindUserBtn(); });
+  } else { updateNavUser(); bindUserBtn(); }
+})();
+</script>
 <nav id="nav">
   <a href="index.html" class="nav-logo">True Therian<small>Social Link Life</small></a>
   <ul class="nav-links" id="navLinks">
@@ -424,22 +512,6 @@ html,body{overflow-x:hidden}
 <div class="toast" id="toast"></div>
 
 <script>
-// ── Lang (nav) ──
-function setLang(lang){
-  try{localStorage.setItem('tt_lang',lang);}catch(e){}
-  const cur=document.getElementById('langCur');
-  if(cur)cur.textContent=lang.toUpperCase();
-  const dd=document.getElementById('langDD');
-  if(dd)dd.classList.remove('open');
-}
-// ── NAV ──
-function toggleNav(){
-  const nl=document.getElementById('navLinks');
-  const hm=document.getElementById('navHam');
-  if(!nl||!hm)return;
-  nl.classList.toggle('open');
-  hm.classList.toggle('open');
-}
 function closeNav(){
   const nl=document.getElementById('navLinks');
   const hm=document.getElementById('navHam');

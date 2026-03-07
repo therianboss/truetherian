@@ -2569,6 +2569,11 @@ document.addEventListener('DOMContentLoaded',function init(){
   tickOnline();
   // Ghost typers start immediately, always running
   markActiveNav();
+  // Auto-open user modal if redirected from another page
+  if(location.search.includes('openUser=1')){
+    history.replaceState(null,'',location.pathname);
+    setTimeout(()=>openUserModal(), 400);
+  }
   setTimeout(startGhostTypers, 800);
   setTimeout(scheduleGhostDrip, 90000); // first drip after 90s
 });

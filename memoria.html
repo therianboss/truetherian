@@ -459,22 +459,6 @@ html,body{overflow-x:hidden}
 </footer>
 
 <script>
-// ── Lang (nav) ──
-function setLang(lang){
-  try{localStorage.setItem('tt_lang',lang);}catch(e){}
-  const cur=document.getElementById('langCur');
-  if(cur)cur.textContent=lang.toUpperCase();
-  const dd=document.getElementById('langDD');
-  if(dd)dd.classList.remove('open');
-}
-// ── NAV ──
-function toggleNav(){
-  const nl=document.getElementById('navLinks');
-  const hm=document.getElementById('navHam');
-  if(!nl||!hm)return;
-  nl.classList.toggle('open');
-  hm.classList.toggle('open');
-}
 function closeNav(){
   const nl=document.getElementById('navLinks');
   const hm=document.getElementById('navHam');
